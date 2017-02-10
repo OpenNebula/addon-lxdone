@@ -1,0 +1,56 @@
+{
+    "architecture": "x86_64",
+    "creation_date": 1478058540,
+    "properties": {
+        "architecture": "x86_64",
+        "description": "ubuntu xenial x86_64 (default) (20161102_03:49)",
+        "name": "ubuntu-xenial-x86_64-default-20161102_03:49",
+        "os": "ubuntu",
+        "release": "xenial",
+        "variant": "default"
+    },
+    "templates": {
+        "/etc/hostname": {
+            "template": "hostname.tpl",
+            "when": [
+		"start"
+            ]
+        },
+        "/etc/hosts": {
+            "template": "hosts.tpl",
+            "when": [
+		"start"
+            ]
+        },
+        "/etc/init/console.override": {
+            "template": "upstart-override.tpl",
+            "when": [
+                "create"
+            ]
+        },
+        "/etc/init/tty1.override": {
+            "template": "upstart-override.tpl",
+            "when": [
+                "create"
+            ]
+        },
+        "/etc/init/tty2.override": {
+            "template": "upstart-override.tpl",
+            "when": [
+                "create"
+            ]
+        },
+        "/etc/init/tty3.override": {
+            "template": "upstart-override.tpl",
+            "when": [
+                "create"
+            ]
+        },
+        "/etc/init/tty4.override": {
+            "template": "upstart-override.tpl",
+            "when": [
+                "create"
+            ]
+        }
+    }
+}
