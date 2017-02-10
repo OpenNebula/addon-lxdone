@@ -4,16 +4,16 @@
 
 <br />
 
-[![lxdone](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/release-1702-3c97f3.svg)](https://linuxcontainers.org/lxd/)
+[![lxdone](https://img.shields.io/badge/release-1702-3c97f3?style=flat-square)](https://linuxcontainers.org/lxd/)
 [![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=I%20want%20freedom.%20I%20want%20efficiency.%20Faster%20private%20clouds%20for%20everyone.%20%23LXDoNe%20%2B%20%40opennebula%20%3D%20performance%20⚡️%20https%3A%2F%2Fgithub.com/OpenNebula/addon-lxdone%2F&source=webclient)
 
-[![LXD](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/lxd-LTS-orange.svg)](https://linuxcontainers.org/lxd/)
-[![Ceph](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/ceph-LTS-red.svg)](https://ceph.com)
-[![OpenNebula](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/one-5.2.1-blue.svg)](https://opennebula.org)
+[![LXD](https://img.shields.io/badge/lxd-LTS-orange?style=flat-square)](https://linuxcontainers.org/lxd/)
+[![Ceph](https://img.shields.io/badge/ceph-LTS-red?style=flat-square)](https://ceph.com)
+[![OpenNebula](https://img.shields.io/badge/one-5.2.1-blue?style=flat-square)](https://opennebula.org)
 
-[![pylxd](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/pylxd-2.0.5-brightgreen.svg)](https://pylxd.readthedocs.io/en/stable/)
+[![pylxd](https://img.shields.io/badge/pylxd-2.0.5-brightgreen?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
 
-[![VNC](https://img.shields.io/badge/LXD-LTS-orange.svg?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
+[![VNC](https://img.shields.io/badge/VNC-svncterm-yellow?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
 
 <br />
 # Introduction
