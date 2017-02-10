@@ -13,10 +13,7 @@
 
 [![pylxd](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/pylxd-2.0.5-brightgreen.svg)](https://pylxd.readthedocs.io/en/stable/)
 
-[![VNC](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/VNC-svncterm-yellow.svg)](https://pylxd.readthedocs.io/en/stable/)
-
-[[VNC](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/VNC-svncterm-yellow.svg)](https://pylxd.readthedocs.io/en/stable/)
-
+[![VNC](https://img.shields.io/badge/LXD-LTS-orange.svg?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
 
 <br />
 # Introduction
