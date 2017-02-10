@@ -14,7 +14,13 @@
 [![pylxd](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/pylxd-2.0.5-brightgreen.svg)](https://pylxd.readthedocs.io/en/stable/)
 [![pylxd](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/VNC-svncterm-yellow.svg)](https://pylxd.readthedocs.io/en/stable/)
 
-[![first-timers-only Friendly](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
+[![badge](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/VNC-svncterm-yellow.svg)](https://pylxd.readthedocs.io/en/stable/)
+[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
+[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
+[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
+[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
+[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
+
 <br />
 # Introduction
 **LXDoNe** is an addon for OpenNebula to manage **LXD** Containers. It fits in the Virtualization and Monitorization Driver section according to OpenNebula's Architecture. It uses the **pylxd** API for several container tasks. This addon is the continuation of [LXCoNe](https://github.com/OpenNebula/addon-lxcone/), an addon for **LXC**.
