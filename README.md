@@ -14,12 +14,7 @@
 [![pylxd](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/pylxd-2.0.5-brightgreen.svg)](https://pylxd.readthedocs.io/en/stable/)
 [![pylxd](https://github.com/OpenNebula/addon-lxdone/blob/master/picts/VNC-svncterm-yellow.svg)](https://pylxd.readthedocs.io/en/stable/)
 
-[![badge](picts/VNC-svncterm-yellow.svg)](https://pylxd.readthedocs.io/en/stable/)
-[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
-[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
-[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
-[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
-[![badge](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
+|build-status| |docs|
 
 <br />
 # Introduction
