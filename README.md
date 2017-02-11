@@ -1,4 +1,4 @@
-# Addon LXDoNe
+# LXDoNe
 
 <a href="https://github.com/OpenNebula/addon-lxdone"><img src="picts/LXDoNe-logo-final.png" align="left" hspace="10" vspace="6"></a>
 
