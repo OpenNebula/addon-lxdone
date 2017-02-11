@@ -75,3 +75,12 @@ If you want to contribute feel free to request new features, the TODO list is st
 - **Sergio Vega Gutiérrez** [sergiojvg92@gmail.com](mailto:sergiojvg92@gmail.com?subject=LXDoNe)
 - **José Manuel de la Fé Herrero** [jmdelafe92@gmail.com](mailto:jmdelafe92@gmail.com?subject=LXDoNe)
 - **Daniel Clavijo Coca** [dann1telecom@gmail.com](mailto:dann1telecom@gmail.com?subject=LXDoNe)
+
+# License
+**Copyright 2016-2017**   Daniel Clavijo Coca, Sergio Vega Gutiérrez, José Manuel de la Fé Herrero
+
+Licensed under the Apache license, version 2.0 (the "license"); You may not use this file except in compliance with the license. You may obtain a copy of the license at:
+
+http://www.apache.org/licenses/LICENSE-2.0.html
+
+Unless required by applicable law or agreed to in writing, software distributed under the license is distributed on an "as is" basis, without warranties or conditions of any kind, either express or implied. See the license for the specific language governing permissions and limitations under the license.
