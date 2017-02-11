@@ -72,6 +72,6 @@ Also there are some Ansible scripts for automatic deployment.
 If you want to contribute feel free to request new features, the TODO list is stated according to our priority order. Check the [Flowchart](https://github.com/OpenNebula/addon-lxdone/tree/master/flow_chart) to get a bettter understanding of the driver internals, pictures starting with **one-**    ex. [one-deploy.png](https://github.com/OpenNebula/addon-lxdone/tree/master/flow_chart/one-deploy.png) ressemble the scripts overview. 
 
 # Developers
-- **Sergio Vega Gutiérrez** (sergiojvg92@gmail.com)
-- **José Manuel de la Fé Herrero** (jmdelafe92@gmail.com)
-- **Daniel Clavijo Coca** (dann1telecom@gmail.com)
+- **Sergio Vega Gutiérrez** [sergiojvg92@gmail.com](mailto:sergiojvg92@gmail.com?subject=LXDoNe)
+- **José Manuel de la Fé Herrero** [jmdelafe92@gmail.com](mailto:jmdelafe92@gmail.com?subject=LXDoNe)
+- **Daniel Clavijo Coca** [dann1telecom@gmail.com](mailto:dann1telecom@gmail.com?subject=LXDoNe)
