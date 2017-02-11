@@ -12,7 +12,7 @@
 [![OpenNebula](https://img.shields.io/badge/one-5.2.1-blue.svg?style=flat-square)](https://opennebula.org)
 
 [![pylxd](https://img.shields.io/badge/pylxd-2.0.5-brightgreen.svg?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
-[![VNC](https://img.shields.io/badge/VNC-svncterm-yellow.svg?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
+[![VNC](https://img.shields.io/badge/VNC-svncterm-yellow.svg?style=flat-square)]
 
 <br />
 # Introduction
