@@ -30,7 +30,7 @@ Install and configure an NFS server on the computer where the frontend is instal
 Copy scripts to oneadmin drivers directory: 
 
 ```
-$ cp -rpa addon-lxdone-master/remotes/ /var/lib/one/
+$ cp -rpa addon-lxdone-master/src/remotes/ /var/lib/one/
 ```
 
 Set the appropriate permissions
@@ -46,7 +46,7 @@ Set the appropriate permissions
 Replace /var/lib/one/remotes/vnm.rb file.
 
 ```
-$ cp -rpa addon-lxdone-master/opennebula_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
+$ cp -rpa addon-lxdone-master/src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
 # chown oneadmin:oneadmin /var/lib/one/remotes/vnm/nic.rb
 # chmod 755 /var/lib/one/remotes/vnm/nic.rb
 ```
