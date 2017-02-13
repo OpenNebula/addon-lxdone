@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/bin/bash
 
 # -------------------------------------------------------------------------- #
 # Copyright 2016-2017                                                        #
@@ -18,17 +18,10 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-import lxd_common as lc
+source $(dirname $0)/../../scripts_common.sh
 
-queue = open('/var/lib/lxd/lxdone_start_queue', mode='r')
-deployments = queue.readlines()
-queue.close()
+VM_ID=$3
 
-for line in deployments:
-    VM_ID = str(line.rpartition('/')[0]).rpartition('/')[2]
-    try:
-        lc.sp.call('python /var/tmp/one/vmm/lib/deploy ' + line)
-        info = 'Power failure recovery SUCCESS'
-    except Exception as e:
-        info = e
-    lc.log_info(VM_ID, info)
+exec_and_log "lxc stop one-$VM_ID"
+
+exec_and_log "lxc start one-$VM_ID"
