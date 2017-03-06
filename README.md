@@ -15,7 +15,7 @@
 [![VNC](https://img.shields.io/badge/VNC-svncterm-yellow.svg?style=flat-square)](https://github.com/dealfonso/svncterm)
 
 <br />
-# Deription
+# Description
 
 **LXDoNe** is an addon for OpenNebula to manage **LXD** Containers. It fits in the Virtualization and Monitorization Driver section according to OpenNebula's Architecture. It uses the **pylxd** API for several container tasks. This addon is the continuation of [LXCoNe](https://github.com/OpenNebula/addon-lxcone/), an addon for **LXC**. Check the [blog entry](https://opennebula.org/blog/) in OpenNebula official site.
 
@@ -25,7 +25,7 @@
 
 [LXD](https://linuxcontainers.org/lxd/) is a daemon which provides a REST API to drive **LXC** containers. Containers are lightweight OS-level Virtualization instances, they behave like Virtual Machines but don't suffer from hardware emulation processing penalties by sharing the kernel with the host. They run bare-metal-like, simple containers can boot up in 2 seconds consuming less than 32MB of RAM and a minimal fraction of a CPU Core. Check out this [performance comparison against KVM](https://insights.ubuntu.com/2015/05/18/lxd-crushes-kvm-in-density-and-speed/) if you don't know much about LXD.
 
-# Development && Contribution
+# Development & Contribution
 If you want to contribute feel free to request new features, the TODO list is stated according to our priority order. Check the [Flowchart](picts/flow_chart) to get a bettter understanding of the driver internals, pictures starting with **one- **    ex. [one-deploy.png](picts/flow_chart/one-deploy.png) ressemble the scripts overview. The action scripts are written in python, there is a script  [lxd_common.py](src/remotes/vmm/lxd/lxd_common.py) containing lots of functions used by the action scripts ex. [lxd_common.py](src/remotes/vmm/lxd/deploy.py) which is executed when starting a VM, tus reducing the code, if you want to add code and it could be used by several action scripts then add it here.
 
 # Developers
@@ -109,15 +109,6 @@ Required packages:
 # Setup
 Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 Also there are some Ansible scripts for automatic deployment.
-
-# Contributing
-If you want to contribute feel free to request new features, the TODO list is stated according to our priority order. Check the [Flowchart](https://github.com/OpenNebula/addon-lxdone/tree/master/picts/flow_chart) to get a bettter understanding of the driver internals, pictures starting with **one-**    ex. [one-deploy.png](https://github.com/OpenNebula/addon-lxdone/tree/master/picts/flow_chart/one-deploy.png) ressemble the scripts overview. 
-
-# Developers
-- **Sergio Vega Gutiérrez** [![champion](https://img.shields.io/badge/one-champion-blue.svg?style=flat-square)](https://opennebula.org/community/community-champions/)
- [sergiojvg92@gmail.com](mailto:sergiojvg92@gmail.com?subject=LXDoNe)
-- **José Manuel de la Fé Herrero** [jmdelafe92@gmail.com](mailto:jmdelafe92@gmail.com?subject=LXDoNe)
-- **Daniel Clavijo Coca** [dann1telecom@gmail.com](mailto:dann1telecom@gmail.com?subject=LXDoNe)
 
 # License
 **Copyright 2016-2017**   Daniel Clavijo Coca, Sergio Vega Gutiérrez, José Manuel de la Fé Herrero
