@@ -5,7 +5,7 @@
 <br />
 
 [![LXDoNe](https://img.shields.io/badge/release-1702-3c97f3.svg?style=flat-square)](https://github.com/OpenNebula/addon-lxdone/releases)
-[3witter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=I%20want%20freedom.%20I%20want%20efficiency.%20Faster%20private%20clouds%20for%20everyone.%20%23LXDoNe%20%2B%20%40opennebula%20%3D%20performance%20⚡️%20https%3A%2F%2Fgithub.com/OpenNebula/addon-lxdone%2F&source=webclient)
+[![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=I%20want%20freedom.%20I%20want%20efficiency.%20Faster%20private%20clouds%20for%20everyone.%20%23LXDoNe%20%2B%20%40opennebula%20%3D%20performance%20⚡️%20https%3A%2F%2Fgithub.com/OpenNebula/addon-lxdone%2F&source=webclient)
 
 [![LXD](https://img.shields.io/badge/lxd-LTS-orange.svg?style=flat-square)](https://linuxcontainers.org/lxd/)
 [![Ceph](https://img.shields.io/badge/ceph-LTS-red.svg?style=flat-square)](https://ceph.com)
