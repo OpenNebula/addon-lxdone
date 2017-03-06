@@ -1,14 +1,14 @@
 # Virtual Appliance Creation
-This is the structure of a **LXDoNe** image, the same as a unified **LXD** tarball: 
+This is the structure of a **LXDoNe** image, the same as a unified **LXD** tarball:
 
 ![](picts/image.png)
 
-templates directory contains some start hooks that populates files such as **/etc/hosts** and **/etc/hostname**, metadata.yaml contains some required metadata and rootfs  is a basic linux filesystem. **LXDoNe** uses modified metadata. This structure can be accomplished by several ways: 
+templates directory contains some start hooks that populates files such as **/etc/hosts** and **/etc/hostname**, metadata.yaml contains some required metadata and rootfs  is a basic linux filesystem. **LXDoNe** uses modified metadata. This structure can be accomplished by several ways. LXDoNe 1702-1 features a script for automatic Virtual Appliance creation, just run as root **image-handling/build-img.sh** you will be asked for size, release and repository, example values are *600M*, *xenial* and *http://archive.ubuntu.com/ubuntu*, those are the default ones if you just press Enter key. The script will result in a raw image called **lxdone.img** ready for OpenNebula, you can ignore the rest of this text unless this script has failed more than once for you or you have containers you want to use:
 
 - **Standard base image(_Simple_)**: use a standard image from https://linuxcontainers.org/images, and dump it into a raw block device
 - **Bootstrap(_Quick_)**: generate a rootfs using debootstrap. This is the recommended choice if you have a lack of bandwidth, as previous one will download an 85M tarball, so you only need a repository, although it may take a while due to every package needs to be configured by debootstrap.
 - **LXCoNe and LXC**: if you have used **LXCoNe** or you just switched from **LXC** to **LXD** and already have a container you want for OpenNebula.
-- **Custom container(_Thorough_)**: create a lxd container and tweak it in order to have your custom virtual appliance. In this option you'll use lxd directly, so if it is the first time you use **LXD** it is the recommended choice, also if you already have used **LXD** and have a container you want for OpenNebula. 
+- **Custom container(_Thorough_)**: create a lxd container and tweak it in order to have your custom virtual appliance. In this option you'll use lxd directly, so if it is the first time you use **LXD** it is the recommended choice, also if you already have used **LXD** and have a container you want for OpenNebula.
 - **MarketPlace(_Easy_)**: Download lxdone virtual appliance to your datastore. (Coming soon)
 
 ## Block Device creation
@@ -17,7 +17,7 @@ At the end of every one of the previous methods you'll have to save your work in
 ```
 # truncate -s <size_in_GB>G /tmp/lxdone.img
 # losetup /dev/loop0 /tmp/lxdone.img
-# mkfs.ext4 /dev/loop0 
+# mkfs.ext4 /dev/loop0
 # mount /dev/loop0 /mnt/
 ```
 
@@ -80,7 +80,7 @@ The goal is to reutilize the existing linux filesystem generated with **LXC** an
 
 ### LXCoNe
 
-Given a lxcone.img raw image containing a linux filesystem. 
+Given a lxcone.img raw image containing a linux filesystem.
 
 Mount the old container
 
@@ -97,9 +97,9 @@ Structure as **LXDoNe** demands
 ```
 
 ### LXC
-**LXC** containers rootfs are located by default in **/var/lib/lxc/container/rootfs**, if they were created as standard directories, if they were created as loop devices, the filesystem should be in the block  **/var/lib/lxc/container/rootdev** 
+**LXC** containers rootfs are located by default in **/var/lib/lxc/container/rootfs**, if they were created as standard directories, if they were created as loop devices, the filesystem should be in the block  **/var/lib/lxc/container/rootdev**
 
-#### Standard Directories 
+#### Standard Directories
 Follow **Block Device Creation** at the beginning of this Document. Then
 
 ```
@@ -133,7 +133,7 @@ If you already have a custom container go to the end of the mehod to dump the co
 #### Note:
 The above command downloads a base image from [linuxcontainers.org](https://images.linuxcontainers.org).
 
-Now you should have a container named **lxdone** running and . To check the container state: 
+Now you should have a container named **lxdone** running and . To check the container state:
 
 ```
 # lxc list
@@ -161,7 +161,7 @@ $ lxc config device add lxdone eth0 nic nictype=bridged parent=lxcbr0
 By default all commands in a LXD container are executed by root
 
 ```
-# lxc exec lxdone bash 
+# lxc exec lxdone bash
 # root@lxdone:
 ```
 
@@ -170,7 +170,7 @@ Customize your container all you want
 
 ```
 root@lxdone: apt install one-context
-root@lxdone: passwd 
+root@lxdone: passwd
 ......
 ......
 root@lxdone: exit

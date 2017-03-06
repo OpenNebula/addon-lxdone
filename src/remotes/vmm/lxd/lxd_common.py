@@ -18,18 +18,20 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-from pylxd.client import Client
+import os
 import subprocess as sp
-import xml.etree.ElementTree as ET
 import sys
+import xml.etree.ElementTree as ET
 from datetime import datetime as dt
 from time import time
-import os
+
+from pylxd.client import Client
 
 
 # MISC
 def log_info(info, VM_ID):
-    'Writes $info at the end of file /var/log/one/$VM_ID.log this is the Virtual Machine log file seen in Sunstone'
+    'Writes $info at the end of file /var/log/one/$VM_ID.log this is the Virtual Machine log file \
+    seen in Sunstone'
     log = open('/var/log/one/' + VM_ID + '.log', mode='a')
     moment = dt.today().strftime("%a %b %d %H:%M:%S %Y")
     log.write(moment + " " + str(info) + '\n')
@@ -52,7 +54,8 @@ def vnc_start(VM_ID, dicc):
                 VNC_PASSWD = "-passwd " + VNC_PASSWD
             else:
                 VNC_PASSWD = ""
-            sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' + VM_ID + " " + VNC_PORT, shell=True)
+            sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' +
+                     VM_ID + " " + VNC_PORT, shell=True)
         except Exception as e:
             log_info(e, VM_ID)
 
@@ -120,7 +123,8 @@ def storage_sysmap(DISK_ID, DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE):
 
     disk = None
     if DISK_TYPE == "FILE":
-        disk = "/var/lib/one/datastores/" + DS_ID + "/" + VM_ID + "/" + 'disk.' + DISK_ID
+        disk = "/var/lib/one/datastores/" + DS_ID + \
+            "/" + VM_ID + "/" + 'disk.' + DISK_ID
         disk = storage_pre("losetup -f --show " + disk)
     elif DISK_TYPE == "BLOCK":
         pass
@@ -145,13 +149,15 @@ def storage_lazer(device):
     'Returns the target device based on minor and major number'
     major = device['major']
     minor = device['minor']
-    return sp.check_output('udevadm info -rq name /sys/dev/block/' + major + ':' + minor, shell=True).strip('\n')
+    return sp.check_output('udevadm info -rq name /sys/dev/block/' + major + ':' + minor,
+                           shell=True).strip('\n')
 
 
 # STORAGE COMPOSED
 def storage_rootfs_mount(VM_ID, DISK_TYPE, DS_ID, DISK_SOURCE, DISK_CLONE):
     'Mounts rootfs for container one-$VM_ID'
-    source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE)
+    source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE,
+                            VM_ID, DS_ID, DISK_CLONE)
     target = '/var/lib/lxd/containers/' + "one-" + VM_ID
     sp.call("mount " + source + " " + target, shell=True)
     return {'user.rootfs': source}
@@ -166,11 +172,13 @@ def storage_rootfs_umount(DISK_TYPE, container_config):
 
 # LXD CONFIG MAPPING
 def map_disk(DISK_TARGET, path):
-    'Creates a dictionary for LXD containing $path disk configuration, $DISK_TARGET will be $path inside the container'
+    'Creates a dictionary for LXD containing $path disk configuration, $DISK_TARGET will be $path \
+    inside the container'
     dev_stat = os.stat(path)
     major = str(os.major(dev_stat.st_rdev))
     minor = str(os.minor(dev_stat.st_rdev))
-    return {DISK_TARGET: {'path': '/dev/' + DISK_TARGET, 'type': 'unix-block', 'minor': minor, 'major': major}}
+    return {DISK_TARGET: {'path': '/dev/' + DISK_TARGET, 'type': 'unix-block', 'minor': minor,
+                          'major': major}}
 
 
 def map_cpu(CPU):
@@ -200,8 +208,8 @@ def map_xml(xml):
 
 def map_nic(nic_name, NIC_BRIDGE, NIC_MAC, NIC_TARGET):
     'Creates a dicitionary for LXD containing $nic_name network interface configuration'
-    return {nic_name: {'name': nic_name, 'type': 'nic', 'hwaddr': NIC_MAC, 'nictype': 'bridged', 'parent': NIC_BRIDGE,
-                       'host_name': NIC_TARGET}}
+    return {nic_name: {'name': nic_name, 'type': 'nic', 'hwaddr': NIC_MAC, 'nictype': 'bridged',
+                       'parent': NIC_BRIDGE, 'host_name': NIC_TARGET}}
 
 
 def unmap(container_devices, device_name):
