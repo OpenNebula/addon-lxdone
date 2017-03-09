@@ -1,4 +1,31 @@
 # Virtual Appliance Creation
+<details>
+<summary>Table of Contents</summary>
+<!-- MarkdownTOC -->
+
+- [Block Device creation](#block-device-creation)
+    - [Selected method procedure](#selected-method-procedure)
+        - [Warning:](#warning)
+        - [Note:](#note)
+- [Standard Base Image](#standard-base-image)
+- [Bootstrap](#bootstrap)
+- [LXCoNe and LXC](#lxcone-and-lxc)
+    - [LXCoNe](#lxcone)
+    - [LXC](#lxc)
+        - [Standard Directories](#standard-directories)
+        - [Loop device](#loop-device)
+- [Custom container](#custom-container)
+    - [Creation](#creation)
+        - [Note:](#note-1)
+    - [Networking \(optional\)](#networking-optional)
+    - [Shell spawn](#shell-spawn)
+        - [Container tweaking:](#container-tweaking)
+    - [Dump container into raw image](#dump-container-into-raw-image)
+
+<!-- /MarkdownTOC -->
+
+</details>
+
 This is the structure of a **LXDoNe** image, the same as a unified **LXD** tarball:
 
 ![](picts/image.png)
@@ -11,6 +38,7 @@ templates directory contains some start hooks that populates files such as **/et
 - **Custom container(_Thorough_)**: create a lxd container and tweak it in order to have your custom virtual appliance. In this option you'll use lxd directly, so if it is the first time you use **LXD** it is the recommended choice, also if you already have used **LXD** and have a container you want for OpenNebula.
 - **MarketPlace(_Easy_)**: Download lxdone virtual appliance to your datastore. (Coming soon)
 
+<a name="block-device-creation"></a>
 ## Block Device creation
 At the end of every one of the previous methods you'll have to save your work in a raw image that will be uploaded to a Datastore. So regardless the method you choose you'll have to do this before beginning the method, except for **LXCoNe**:
 
@@ -21,6 +49,7 @@ At the end of every one of the previous methods you'll have to save your work in
 # mount /dev/loop0 /mnt/
 ```
 
+<a name="selected-method-procedure"></a>
 ### Selected method procedure
 
 And this after ending the method. This is valid for **LXCoNe**
@@ -31,9 +60,11 @@ And this after ending the method. This is valid for **LXCoNe**
 # losetup -d /dev/loop0
 ```
 
+<a name="warning"></a>
 #### Warning:
 Standard containers fit into 400M images, at the end of each method you'll have to dump something into the raw image, so check there are no errors in the shell output regarding the image ran out of space.
 
+<a name="note"></a>
 #### Note:
 To enable contextualization you'll need to modifiy **/etc/one-context.d/10-network** after [installing one-context package](https://docs.opennebula.org/5.2/operation/vm_setup/kvm.html). Replace get_interface_mac() function with this one:
 
@@ -45,6 +76,7 @@ get_interface_mac()
 ```
 
 
+<a name="standard-base-image"></a>
 ## Standard Base Image
 
 Fetch the image from the image repository
@@ -59,6 +91,7 @@ Untar the image in the raw block device
 # tar -xpf lxdone.tar.gz --one-top-level=/mnt/
 ```
 
+<a name="bootstrap"></a>
 ## Bootstrap
 
 Install debbootsrap
@@ -74,10 +107,12 @@ Generate rootfs. It will take a while to complete.
 ```
 
 
+<a name="lxcone-and-lxc"></a>
 ## LXCoNe and LXC
 
 The goal is to reutilize the existing linux filesystem generated with **LXC** and transform your old **LXC** container into a new **LXD** container.
 
+<a name="lxcone"></a>
 ### LXCoNe
 
 Given a lxcone.img raw image containing a linux filesystem.
@@ -96,9 +131,11 @@ Structure as **LXDoNe** demands
 # mv /mnt/* /mnt/rootfs
 ```
 
+<a name="lxc"></a>
 ### LXC
 **LXC** containers rootfs are located by default in **/var/lib/lxc/container/rootfs**, if they were created as standard directories, if they were created as loop devices, the filesystem should be in the block  **/var/lib/lxc/container/rootdev**
 
+<a name="standard-directories"></a>
 #### Standard Directories
 Follow **Block Device Creation** at the beginning of this Document. Then
 
@@ -106,6 +143,7 @@ Follow **Block Device Creation** at the beginning of this Document. Then
 # rsync -av /var/lib/lxc/container/rootfs/ /mnt
 ```
 
+<a name="loop-device"></a>
 #### Loop device
 
 Mount the loop device
@@ -122,14 +160,17 @@ Structure as **LXDoNe** demands
 # mv /mnt/* /mnt/rootfs
 ```
 
+<a name="custom-container"></a>
 ## Custom container
 If you already have a custom container go to the end of the mehod to dump the container into the raw image. Your container is located in **/var/lib/lxd/containers/*your_container/***
 
+<a name="creation"></a>
 ### Creation
 ```
 # lxc launch images:16.04 lxdone
 ```
 
+<a name="note-1"></a>
 #### Note:
 The above command downloads a base image from [linuxcontainers.org](https://images.linuxcontainers.org).
 
@@ -149,6 +190,7 @@ The output should be like this:
 +---------+---------+---------------------+------+------------+-----------+
 ```
 
+<a name="networking-optional"></a>
 ### Networking (optional)
 If you want to enable networking the container, just add a nic.
 
@@ -156,6 +198,7 @@ If you want to enable networking the container, just add a nic.
 $ lxc config device add lxdone eth0 nic nictype=bridged parent=lxcbr0
 ```
 
+<a name="shell-spawn"></a>
 ### Shell spawn
 
 By default all commands in a LXD container are executed by root
@@ -165,6 +208,7 @@ By default all commands in a LXD container are executed by root
 # root@lxdone:
 ```
 
+<a name="container-tweaking"></a>
 #### Container tweaking:
 Customize your container all you want
 
@@ -177,6 +221,7 @@ root@lxdone: exit
 # lxc stop lxdone
 ```
 
+<a name="dump-container-into-raw-image"></a>
 ### Dump container into raw image
 ```
 # rsync -av /var/lib/lxd/containers/lxdone/ /mnt/
