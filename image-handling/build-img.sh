@@ -13,7 +13,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 
-for i in "size" "release" "repository" ; do
+for i in "size (default=600MB)" "release (default=xenial)" "repository (default=http://archive.ubuntu.com/ubuntu/)" ; do
     echo "Enter "$i
     read $i
 done
