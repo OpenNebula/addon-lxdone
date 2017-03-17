@@ -6,8 +6,7 @@ The purpose of this guide is to create a fully functional working environment. Y
 -   Read ***Notes*** sections attached to some steps, before using the shell
 -   Access to [LXD image repository](https://images.linuxcontainers.org/images) is required for some container creation methods when downloading a Linux filesystem tarball.
 
-<details>
-<summary>Table of Contents</summary>
+## Table of Contents
 <!-- MarkdownTOC -->
 
 - [1 - Frontend setup](#1---frontend-setup)
@@ -42,7 +41,6 @@ The purpose of this guide is to create a fully functional working environment. Y
 
 <!-- /MarkdownTOC -->
 
-</details>
 
 <a name="1---frontend-setup"></a>
 # 1 - Frontend setup
