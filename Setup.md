@@ -10,36 +10,49 @@ The purpose of this guide is to create a fully functional working environment. Y
 <summary>Table of Contents</summary>
 <!-- MarkdownTOC -->
 
-- 1 - Frontend setup
-    - 1.1 Installation
-    - 1.2 Logs
-    - 1.4 LXDoNe integration
-- 2 - Virtualization Node setup
-    - 2.1 Install required packages
-    - 2.2 VNC server \(optional\)
-    - 2.3 LXD Bridge \(optional\)
-    - 2.4 oneadmin
-    - 2.5 Loop devices
-    - 2.6 LXD
-    - 2.7 Log
-- 3 - Virtual Appliance
-- 4 - Usage
-    - 4.1 Image Upload
-    - 4.2 Virtualization node
-    - 4.4 Virtual network
-    - 4.5 Template creation
-    - 4.6 Deploy
+- [1 - Frontend setup](#1---frontend-setup)
+    - [1.1 Installation](#11-installation)
+    - [1.2 Logs](#12-logs)
+        - [1.3 Enable LXD](#13-enable-lxd)
+    - [1.4 LXDoNe integration](#14-lxdone-integration)
+        - [1.4.1 Drivers](#141-drivers)
+        - [1.4.1.1 Optional. Add support for 802.1Q driver \(VLANs\).](#1411-optional-add-support-for-8021q-driver-vlans)
+        - [1.4.2 Enable LXD](#142-enable-lxd)
+- [2 - Virtualization Node setup](#2---virtualization-node-setup)
+    - [2.1 Install required packages](#21-install-required-packages)
+    - [2.2 VNC server \(optional\)](#22-vnc-server-optional)
+    - [2.3 LXD Bridge \(optional\)](#23-lxd-bridge-optional)
+    - [2.4 oneadmin](#24-oneadmin)
+    - [2.5 Loop devices](#25-loop-devices)
+    - [2.6 LXD](#26-lxd)
+        - [2.6.1 Daemon](#261-daemon)
+        - [2.6.2 LXD Profile](#262-lxd-profile)
+    - [2.7 Log](#27-log)
+- [3 - Virtual Appliance](#3---virtual-appliance)
+- [4 - Usage](#4---usage)
+    - [4.1 Image Upload](#41-image-upload)
+        - [Required data:](#required-data)
+    - [4.2 Virtualization node](#42-virtualization-node)
+        - [Required data:](#required-data-1)
+    - [4.4 Virtual network](#44-virtual-network)
+        - [Required data:](#required-data-2)
+    - [4.5 Template creation](#45-template-creation)
+        - [Required data:](#required-data-3)
+    - [4.6 Deploy](#46-deploy)
 
 <!-- /MarkdownTOC -->
 
 </details>
 
+<a name="1---frontend-setup"></a>
 # 1 - Frontend setup
 
+<a name="11-installation"></a>
 ## 1.1 Installation
 
 Follow [OpenNebula Deployment Guide](https://docs.opennebula.org/5.2/deployment/opennebula_installation/frontend_installation.html) to deploy a full functional OpenNebula frontend.
 
+<a name="12-logs"></a>
 ## 1.2 Logs
 If you are deploying ***oneadmin ALL= NOPASSWD: ALLfrontend*** and ***virtualization node*** in the same computer you can skip this step. ***Virtualization Driver*** execution information is written directly in the corresponding virtual machine log in the ***frontend***, we'll need to export the log folder through **NFS** in order to mount it in the ***virtualization node***.
 
@@ -53,6 +66,7 @@ Install and configure an NFS server on the computer where the frontend is instal
 <a name="13-enable-lxd"></a>
 ### 1.3 Enable LXD
 
+<a name="14-lxdone-integration"></a>
 ## 1.4 LXDoNe integration
 **LXDoNe** is a set of scripts functioning as virtualization and monitorization drivers, so they have to be integrated to the ***frontend*** 
 
@@ -123,10 +137,12 @@ IMPORTED_VMS_ACTIONS = "migrate, live-migrate, terminate, terminate-hard, undepl
 
 ```
 
+<a name="2---virtualization-node-setup"></a>
 # 2 - Virtualization Node setup
 
 Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#), up to [step 6](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#step-6-storage-configuration). If you want to use Ceph to store Virtual Images, follow [Ceph Datastore Guide](https://docs.opennebula.org/5.2/deployment/open_cloud_storage_setup/ceph_ds.html) and configure it just as you would for KVM.
 
+<a name="21-install-required-packages"></a>
 ## 2.1 Install required packages
 
 ```
@@ -141,6 +157,7 @@ Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_i
 # apt show python-pylxd | grep 2.0.5 | grep 2.0.5
 ```
 
+<a name="22-vnc-server-optional"></a>
 ## 2.2 VNC server (optional)
 **LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This package enables the **VNC** option in the VM template definition. It's already compiled and its dependencies(most of them not available in **Ubuntu 16.04** repository) are provided.
 
@@ -149,6 +166,7 @@ Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_i
 # dpkg -i addon-lxdone-master/vnc/*
 ```
 
+<a name="23-lxd-bridge-optional"></a>
 ## 2.3 LXD Bridge (optional)
 **LXD** comes by default with an optional bridge called **lxdbr0**, it offers ease of use for containers networking and provides DHCP suport. We can use this bridge alternative configuration to standard OpenNebula networking:
 
@@ -172,6 +190,7 @@ LXD_IPV6_PROXY="false" " > /etc/default/lxd-bridge
 # service lxd-bridge restart
 ```
 
+<a name="24-oneadmin"></a>
 ## 2.4 oneadmin
 
 Allow oneadmin to execute commands as root and add it to lxd group
@@ -181,6 +200,7 @@ Allow oneadmin to execute commands as root and add it to lxd group
 # adduser oneadmin lxd
 ```
 
+<a name="25-loop-devices"></a>
 ## 2.5 Loop devices
 
 Every file system image used by **LXDoNe** will require one ***loop device***. The default limit for ***loop devices*** is 8, so it needs to be increased.
@@ -191,6 +211,7 @@ Every file system image used by **LXDoNe** will require one ***loop device***. T
 # depmod
 ```
 
+<a name="26-lxd"></a>
 ## 2.6 LXD
 
 <a name="261-daemon"></a>
@@ -230,6 +251,7 @@ OpenNebula Contextualization works with an iso in the VM definition template, by
 # lxc profile set default raw.apparmor 'mount fstype=iso9660,'
 ```
 
+<a name="27-log"></a>
 ## 2.7 Log
 This step can be ignored if you are setting up the ***frontend*** and the ***virtualization node*** in the same computer. Mount the exported logs in the frontend in the node.
 
@@ -239,13 +261,16 @@ This step can be ignored if you are setting up the ***frontend*** and the ***vir
 # mount /var/log/one/
 ```
 
+<a name="3---virtual-appliance"></a>
 # 3 - Virtual Appliance
 
 After creating a virtual appliance you'll have a steady container base image for infrastructure. For the sake of setup simplicity, as this process is usually done once, it is covered in [Virtual Appliance](Image.md). If you have a container you want to use follow the link too. We will soon upload a Virtual Appliance to the OpenNebula Marketplace.
 
+<a name="4---usage"></a>
 # 4 - Usage
 This is a set of basic usage, there are lots of extra features to use. For the list of supported features see [Readme](README.md).
 
+<a name="41-image-upload"></a>
 ## 4.1 Image Upload
 
 Upload the Virtual Appliance to OpenNebula.
@@ -258,6 +283,7 @@ Upload the Virtual Appliance to OpenNebula.
 
 ![](picts/Images.png)
 
+<a name="42-virtualization-node"></a>
 ## 4.2 Virtualization node
 
 <a name="required-data-1"></a>
@@ -272,6 +298,7 @@ Upload the Virtual Appliance to OpenNebula.
 
 ![](picts/Host.png)
 
+<a name="44-virtual-network"></a>
 ## 4.4 Virtual network
 
 <a name="required-data-2"></a>
@@ -287,6 +314,7 @@ Upload the Virtual Appliance to OpenNebula.
 
 ![](picts/nic.png)
 
+<a name="45-template-creation"></a>
 ## 4.5 Template creation
 
 <a name="required-data-3"></a>
@@ -309,6 +337,7 @@ Upload the Virtual Appliance to OpenNebula.
 VCPU stands for the amount of cores the container can use, if the container if you leave it blank, the container will use all the cores up to a fraction defined by CPU.
 >ex. for a host with 8 CPUs, if the VM template states 2 VCPU, then the container has 2/8 CPUs allocated.
 
+<a name="46-deploy"></a>
 ## 4.6 Deploy
 Click **Instances** --> **VMs** --> **ADD**.
 Select the corresponding template and click **Create**. Then wait for the scheduler to execute the drivers. In the Log section there will be additional information like the time spent on executing actions scripts and errors if they occur.

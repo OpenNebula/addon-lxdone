@@ -39,7 +39,7 @@ If you want to contribute feel free to request new features, the TODO list is st
 
 ## Tested OpenNebula versions
 [![OpenNebula](https://img.shields.io/badge/one-5.2.1-blue.svg?style=flat-square)](https://opennebula.org)
-[![OpenNebula](https://img.shields.io/badge/one-5.2-blue.svg?style=flat-square)](https://opennebula.org)
+[![OpenNebula](https://img.shields.io/badge/one-5.2.0-blue.svg?style=flat-square)](https://opennebula.org)
 
 ## Tested Linux Distributions
 [![ubuntu](https://img.shields.io/badge/ubuntu-1604-orange.svg?style=flat-square)](https://ubuntu.com)
