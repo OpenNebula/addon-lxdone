@@ -15,6 +15,7 @@
 [![VNC](https://img.shields.io/badge/VNC-svncterm-yellow.svg?style=flat-square)](https://github.com/dealfonso/svncterm)
 
 <br />
+
 # Description
 
 **LXDoNe** is an addon for OpenNebula to manage **LXD** Containers. It fits in the Virtualization and Monitorization Driver section according to OpenNebula's Architecture. It uses the **pylxd** API for several container tasks. This addon is the continuation of [LXCoNe](https://github.com/OpenNebula/addon-lxcone/), an addon for **LXC**. Check the [blog entry](https://opennebula.org/blog/) in OpenNebula official site.
