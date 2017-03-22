@@ -51,7 +51,7 @@ class LXD(object):
                     #     uuid, template = self.config_to_one(vm)
                     #     values["TEMPLATE"] = base64.b64encode(template).replace(' ', '')
                     #     values["VM_NAME"] = uuid
-                except:
+                except Exception:
                     values = {"STATE": '-'}
 
         return values
@@ -96,12 +96,12 @@ class LXD(object):
                         valor += parte.lstrip(' ')
                     try:
                         self.vmd[path].append(valor)
-                    except:
+                    except Exception:
                         self.vmd[path] = [valor]
                 else:
                     dictpos[blank_spaces] = path
 
-            except:
+            except Exception:
                 dictpos[blank_spaces] = path
 
     def get_values(self, vm):
@@ -144,17 +144,21 @@ class LXD(object):
     #     return UUID, template
 
     def get_state_info(self, vm):
-        status = vm.status.lower()
+        try:
+            status = vm.status.lower()
+        except Exception:
+            status = "unknown"
 
         case = {
             "running": "a",
             "frozen": "p",
-            "stopped": "d"
+            "stopped": "d",
+            "failure": "e"
         }
 
         try:
             return case[status]
-        except:
+        except Exception:
             return "e"
 
     def get_net_statistics(self):
@@ -181,6 +185,9 @@ class LXD(object):
         elif 'gb' in value[0]:
             unit = 'gb'
             exponent = 3
+        elif 'tb' in value[0]:
+            unit = 'tb'
+            exponent = 4
         elif 'bytes' in value[0]:
             unit = ' '
         else:
@@ -219,7 +226,7 @@ class LXD(object):
     def get_cpu_jiffies(self):
         try:
             stat = file("/proc/stat", 'r').readline()
-        except:
+        except Exception:
             return 0
 
         jiffies = 0
@@ -236,7 +243,7 @@ class LXD(object):
             stat = file("/sys/fs/cgroup/cpu,cpuacct/lxc/" + name + "/cpuacct.stat").readlines()
             for line in stat:
                 jiffies += int(line.split(" ")[1])
-        except:
+        except Exception:
             return 0
 
         return jiffies
@@ -252,5 +259,5 @@ try:
     elif vm_id:
         pc.print_one_vm_info(hypervisor, vm_id)
 
-except:
+except Exception:
     pc.print_all_vm_info(hypervisor)
