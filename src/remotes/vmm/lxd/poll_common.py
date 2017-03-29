@@ -18,8 +18,8 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-import lxd_common as lc
-import socket
+# import lxd_common as lc
+# import socket
 
 
 # def vnc_babysiter(data):
