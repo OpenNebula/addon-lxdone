@@ -32,9 +32,8 @@ container = client.containers.get(DOMAIN)
 def get_interface(devices, hwaddr):
     "Get interface name from hwaddr inside the container's devices dict"
     for k, v in devices.iteritems():
-        if k.__contains__('eth') and isinstance(v, dict) and v.__contains__('hwaddr') and v['hwaddr'] == hwaddr:
-            iface = v['name']
-    return iface
+        if k.__contains__('eth') and v['hwaddr'] == hwaddr:
+            return v['name']
 
 
 iface = get_interface(container.devices, NIC_MAC)

@@ -113,6 +113,20 @@ def xml_query_item(value, dicc):
     return value[0]
 
 
+def xml_query_dict(value, id_list, dicc):
+    'Tries to return a list with $value instances from $dicc'
+    try:
+        value_list = xml_query_list(value, dicc)
+        pos = 0
+        value_dict = {}
+        for iface in id_list:
+            value_dict[iface] = value_list[pos]
+            pos += 1
+    except Exception:
+        value_dict = {None}
+    return value_dict
+
+
 # STORAGE SIMPLE
 def storage_sysmap(DISK_ID, DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE):
     'Maps a $DISK_SOURCE device into the host corresponding block device, CEPH, LVM or FILESYSTEM'
