@@ -114,7 +114,7 @@ def xml_query_item(value, dicc):
 
 
 def xml_query_dict(value, id_list, dicc):
-    'Tries to return a list with $value instances from $dicc'
+    'Tries to return a dict with $value instances from $dicc'
     try:
         value_list = xml_query_list(value, dicc)
         pos = 0
