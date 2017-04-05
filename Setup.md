@@ -96,7 +96,8 @@ $ cp -rpa addon-lxdone-master/src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.r
 # chmod 755 /var/lib/one/remotes/vnm/nic.rb
 ```
 
-####Note: A pull request will be made to add this functionality to OpenNebula's official Network Driver.
+#### Note:
+> A pull request will be made to add this functionality to OpenNebula's official Network Driver.
 
 
 <a name="142-enable-lxd"></a>
@@ -147,9 +148,10 @@ Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_i
 # apt install lxd lxd-tools criu bridge-utils python-pylxd nfs-common
 ```
 
-#### Note:
-- **nfs-common** can be ignored if you are setting up the ***frontend*** and the ***virtualization node*** in the same computer.
-- Be sure to have **pylxd 2.0.5**, or the driver **won't work properly**. Check the last output of the command below. You can find it on xenial-updates official repositories.
+#### Notes:
+> **nfs-common** can be ignored if you are setting up the ***frontend*** and the ***virtualization node*** in the same computer.
+
+> Be sure to have **pylxd 2.0.5**, or the driver **won't work properly**. Check the last output of the command below. You can find it on xenial-updates official repositories.
 
 ```
 # apt show python-pylxd | grep 2.0.5 | grep 2.0.5
@@ -332,8 +334,8 @@ Upload the Virtual Appliance to OpenNebula.
 ![](picts/template.png)
 
 #### Note
-VCPU stands for the amount of cores the container can use, if the container if you leave it blank, the container will use all the cores up to a fraction defined by CPU.
->ex. for a host with 8 CPUs, if the VM template states 2 VCPU, then the container has 2/8 CPUs allocated.
+> VCPU stands for the amount of cores the container can use, if the container if you leave it blank, the container will use all the cores up to a fraction defined by CPU.
+> ex. for a host with 8 CPUs, if the VM template states 2 VCPU, then the container has 2/8 CPUs allocated.
 
 <a name="46-deploy"></a>
 ## 4.6 Deploy
