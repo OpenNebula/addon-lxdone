@@ -184,7 +184,15 @@ def storage_rootfs_umount(DISK_TYPE, container_config):
     storage_sysunmap(DISK_TYPE, source)
 
 
+def storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID):
+    context_disk = storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
+    context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
+    container.devices.update(context_disk)
+    container.save()
+
 # LXD CONFIG MAPPING
+
+
 def map_disk(DISK_TARGET, path):
     'Creates a dictionary for LXD containing $path disk configuration, $DISK_TARGET will be $path \
     inside the container'

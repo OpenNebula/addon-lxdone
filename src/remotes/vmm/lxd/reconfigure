@@ -22,17 +22,26 @@ import lxd_common as lc
 client = lc.Client()
 
 DOMAIN = lc.sys.argv[1]
-TARGET_DEVICE = 'CONTEXT'
-DISK_SOURCE = lc.sys.argv[3]
-DS_ID = DISK_SOURCE.split('/')[-3]
-CONTEXT_DISK_ID = DISK_SOURCE.split('.')[-1]
-VM_ID = DISK_SOURCE.split('/')[-2]
+# DISK_SOURCE = lc.sys.argv[3]
+# CONTEXT_DISK_ID = DISK_SOURCE.split('.')[-1]
+# VM_ID = DISK_SOURCE.split('/')[-2]
+# DS_ID = DISK_SOURCE.split('/')[-3]
+# TARGET_DEVICE = 'CONTEXT'
 
 container = client.containers.get(DOMAIN)
 
-context_disk = lc.storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
-context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
-container.devices.update(context_disk)
-container.save()
+# context_disk = lc.storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
+# context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
+# container.devices.update(context_disk)
+# container.save()
+try:
+    DISK_SOURCE = lc.sys.argv[3]
+    CONTEXT_DISK_ID = DISK_SOURCE.split('.')[-1]
+    VM_ID = DISK_SOURCE.split('/')[-2]
+    DS_ID = DISK_SOURCE.split('/')[-3]
+    # container.config['user.context']
+    lc.storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID)
+except:
+    pass
 
 exit()

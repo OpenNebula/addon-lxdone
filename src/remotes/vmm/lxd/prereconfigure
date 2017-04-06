@@ -22,13 +22,15 @@ import lxd_common as lc
 client = lc.Client()
 
 DOMAIN = lc.sys.argv[1]
-TARGET_DEVICE = 'CONTEXT'
-
 container = client.containers.get(DOMAIN)
-
-source = lc.unmap(container.devices, 'CONTEXT')
-source = source['path']
-lc.storage_sysunmap('FILE', source)
-container.save()
+# TARGET_DEVICE = 'CONTEXT'
+try:
+    container.devices['CONTEXT']
+    source = lc.unmap(container.devices, 'CONTEXT')['path']
+    lc.storage_sysunmap('FILE', source)
+    # container.config.update({'user.context': 'mount_pending'})
+    container.save()
+except:
+    pass
 
 exit()

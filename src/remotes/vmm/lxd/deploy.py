@@ -24,7 +24,6 @@ from lxd_common import xml_query_list as xql
 from lxd_common import xml_query_dict as xqd
 from lxd_common import xml_query_item as xqi
 client = lc.Client()
-from time import sleep
 
 # READ_XML
 xml = lc.sys.argv[1]
@@ -67,9 +66,10 @@ if num_hdds > 1:
 
 CONTEXT_DISK_ID = xqi('CONTEXT/DISK_ID', dicc)
 if CONTEXT_DISK_ID:
-    context_disk = lc.storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
-    context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
-    container.devices.update(context_disk)
+    lc.storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID)
+    # context_disk = lc.storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
+    # context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
+    # container.devices.update(context_disk)
 
 # NETWORK_CONFIG
 NIC = xql('NIC/NIC_ID', dicc)
