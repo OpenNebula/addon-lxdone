@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-dpkg --list debootstrap
+dpkg --listfiles debootstrap > /dev/null 2>&1
 
 if [[ $? -ne 0 ]]; then
     echo "debootstrap is required in order to crete container, press ENTER to continue"
@@ -10,12 +10,14 @@ if [[ $? -ne 0 ]]; then
         echo "failed to install debootstrap check your mirror configuration"
         exit -1
     fi
+    echo
 fi
 
 
 for i in "size (default=600MB)" "release (default=xenial)" "repository (default=http://archive.ubuntu.com/ubuntu/)" ; do
     echo "Enter "$i
-    read $i
+    var=`echo $i | awk '{print $1}'`
+    read $var
 done
 
 if [[ -z $release ]]; then
@@ -33,7 +35,7 @@ fi
 truncate -s $size lxdone.img
 img=$(losetup --find --show lxdone.img)
 mkfs.ext4 $img
-mkdir ./lxdone
+mkdir -p ./lxdone
 mount $img ./lxdone
 
 echo "creating $release linux filesystem from $repository this may take a while"
@@ -102,7 +104,7 @@ cat << EOT > ./lxdone/metadata.yaml
 
 EOT
 
-mkdir ./lxdone/templates
+mkdir -p ./lxdone/templates
 cat << EOT > ./lxdone/templates/hosts.tpl
 127.0.0.1   localhost
 127.0.1.1   {{ config_get("user.hostname", "lxdone")}}
@@ -117,9 +119,9 @@ ff02::2 ip6-allrouters
 EOT
 
 echo "{{ config_get("user.hostname", "lxdone")}}" > ./lxdone/templates/hostname.tpl
-Pecho "manual" > ./lxdone/templates/upstart-override.tpl
+echo "manual" > ./lxdone/templates/upstart-override.tpl
 
-cp -rpa $(dirname $0)/bash-enhancements/* ./lxdone/rootfs/
+cp -p $(dirname $0)/bash-enhancements/.[a-zA-Z]* ./lxdone/rootfs/
 
 umount $img
 losetup -d $img
