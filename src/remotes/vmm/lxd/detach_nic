@@ -39,6 +39,6 @@ def get_interface(devices, hwaddr):
 iface = get_interface(container.devices, NIC_MAC)
 
 del container.devices[iface]
-container.save()
+container.save(wait=True)
 
 exit()

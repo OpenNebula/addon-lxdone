@@ -32,7 +32,7 @@ HOST_IP = lc.sys.argv[8]
 
 container = client.containers.get(DOMAIN)
 
-name = 'eth%s' % (NIC_TARGET[-1])
+name = 'eth%s' % (NIC_TARGET.split('-')[-1])
 vm_nic = lc.map_nic(name, NIC_BRIDGE, NIC_MAC, NIC_TARGET)
 container.devices.update(vm_nic)
 container.save(wait=True)

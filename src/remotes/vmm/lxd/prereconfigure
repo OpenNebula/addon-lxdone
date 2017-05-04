@@ -23,12 +23,12 @@ client = lc.Client()
 
 DOMAIN = lc.sys.argv[1]
 container = client.containers.get(DOMAIN)
-try:
-    container.devices['CONTEXT']
+
+if 'CONTEXT' in container.devices:
     source = lc.unmap(container.devices, 'CONTEXT')['path']
     lc.storage_sysunmap('FILE', source)
-    container.save()
-except:
-    pass
+    container.save(wait=True)
+else:
+    lc.log_info('no CONTEXT to unmount', VM_ID)
 
 exit()

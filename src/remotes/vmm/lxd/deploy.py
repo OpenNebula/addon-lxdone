@@ -97,5 +97,5 @@ except Exception as e:
     lc.sys.exit(1)
 
 lc.vnc_start(VM_ID, dicc)
-lc.clock(VM_ID, t0)
+lc.clock(t0, VM_ID)
 print "one-" + VM_ID

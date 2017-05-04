@@ -24,13 +24,15 @@ client = lc.Client()
 DOMAIN = lc.sys.argv[1]
 container = client.containers.get(DOMAIN)
 
-try:
+if len(lc.sys.argv) >= 3:
     DISK_SOURCE = lc.sys.argv[3]
     CONTEXT_DISK_ID = DISK_SOURCE.split('.')[-1]
     VM_ID = DISK_SOURCE.split('/')[-2]
     DS_ID = DISK_SOURCE.split('/')[-3]
-    lc.storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID)
-except:
-    pass
-
+    lc.log_info('---------' + DISK_SOURCE + '-----------', VM_ID)
+    try:
+        lc.storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID)
+        container.save(wait=True)
+    except Exception as e:
+        lc.log_info(e, VM_ID)
 exit()

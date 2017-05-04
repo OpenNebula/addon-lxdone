@@ -24,11 +24,12 @@ import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime as dt
 from time import time
-
 from pylxd.client import Client
 
 
 # MISC
+
+
 def log_info(info, VM_ID):
     'Writes $info at the end of file /var/log/one/$VM_ID.log this is the Virtual Machine log file \
     seen in Sunstone'
@@ -38,7 +39,7 @@ def log_info(info, VM_ID):
     log.close()
 
 
-def clock(VM_ID, t0):
+def clock(t0, VM_ID):
     'Calculates and logs in the logfile the time passed since $t0'
     duration = str(time() - t0)
     log_info('Script executed in almost ' + duration + ' seconds', VM_ID)
@@ -188,7 +189,6 @@ def storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID):
     context_disk = storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
     context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
     container.devices.update(context_disk)
-    container.save()
 
 # LXD CONFIG MAPPING
 

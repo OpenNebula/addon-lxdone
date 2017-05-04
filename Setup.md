@@ -2,7 +2,7 @@
 The purpose of this guide is to create a fully functional working environment. You will be able to manage **LXD** containers in at least one virtualization node through the web interface in the frontend. For the list of supported features see [Readme](README.md).
 
 ## Observations & Recommendations
--   Commands prefixed by "**#**" are meant to be run as root. Commands prefixed by "**$**" must be run as oneadmin
+-Commands prefixed by "**#**" are meant to be run as root. Commands prefixed by "**$**" must be run as oneadmin
 -   Read ***Notes*** sections attached to some steps, before using the shell
 -   Access to [LXD image repository](https://images.linuxcontainers.org/images) is required for some container creation methods when downloading a Linux filesystem tarball.
 
@@ -264,7 +264,10 @@ This step can be ignored if you are setting up the ***frontend*** and the ***vir
 <a name="3---virtual-appliance"></a>
 # 3 - Virtual Appliance
 
-After creating a virtual appliance you'll have a steady container base image for infrastructure. For the sake of setup simplicity, as this process is usually done once, it is covered in [Virtual Appliance](Image.md). If you have a container you want to use follow the link too. We will soon upload a Virtual Appliance to the OpenNebula Marketplace.
+#### Note:
+We've uploaded a base container to [google drive](http://https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U), if you succesfully download it skip the rest of this step, as it could be rather troublesome.
+
+After creating a virtual appliance you'll have a steady container base image for infrastructure. For the sake of setup simplicity, as this process is usually done once, it is covered in [Virtual Appliance](Image.md). If you have a container you want to use follow the link too.
 
 <a name="4---usage"></a>
 # 4 - Usage
