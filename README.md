@@ -74,7 +74,7 @@ If you want to contribute feel free to request new features, the TODO list is st
 - Virtual Appliance creation script
 
 # 1705
-- Nic Hotplug
+- NIC Hotplug
 - Virtual Appliance uploaded to [google drive](https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U)
 - Enhanced buildimg.sh, thanks to @
     + Bugfixes
