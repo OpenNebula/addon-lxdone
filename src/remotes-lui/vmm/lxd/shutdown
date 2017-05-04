@@ -1,0 +1,98 @@
+#!/usr/bin/python
+
+import os
+import lxd_common as lc
+import lxd_unified_image as lui
+import subprocess as sp
+import re
+from pylxd.exceptions import LXDAPIException
+
+t0 = lc.time()
+client = lc.Client()
+VM_ID = lc.sys.argv[3]
+VM_NAME = lc.sys.argv[1] 
+
+container = client.containers.get(VM_NAME)
+
+dicc = lc.xml_start(container.config.get('user.xml'))
+DS_ID = dicc['/VM/HISTORY_RECORDS/HISTORY/DS_ID'][0]
+DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
+
+lc.log_info('container: ' + VM_NAME + ' deleting', VM_ID)
+
+# Container stop
+try:
+    if lc.sys.argv[-1] == 'force':
+        # called from 'cancel'
+        lc.log_info('container: ' + VM_NAME + ' force stop', VM_ID)
+        container.stop(force=True, wait=True)
+    else:
+        container.stop(wait=True)
+except LXDAPIException as lxdapie:
+    if container.status == 'Stopped':
+        lc.log_info('container: ' + VM_NAME + ' already stopped', VM_ID)
+    else:
+        lc.log_info(lxdapie, VM_ID)
+        lui.uniimg_container_wipe(client, container)
+        lc.sys.exit(1)
+
+fingerprint = container.config.get('volatile.base_image')
+
+# Image publish and export
+# FIXME: fix to use pylxd's image.export() method
+try:
+    """
+    Publish the new iamge onto local LXD image store
+    """
+    new_fingerprint = None
+    new_fingerprint = sp.check_output('lxc publish ' + VM_NAME, stderr=sp.STDOUT, shell=True)
+    new_fingerprint = re.split('\s', new_fingerprint.rstrip())[-1]
+    lc.log_info('image: published as ' + new_fingerprint, VM_ID)
+except sp.CalledProcessError as cpe:
+    lc.log_info(cpe, VM_ID)
+
+try:
+    """
+    Export image onto OpenNebula datastore
+    """
+    if not new_fingerprint:
+        # Assumes that 'lxc publish' failed because the image already exists.
+        # Get image's fingerprint from stderr output.
+        new_fingerprint = re.split('\s', cpe.output.rstrip())[-1]
+
+    export_image = None
+    export_image = sp.check_output('lxc image export ' + new_fingerprint + ' ' + DS_LOCATION, shell=True)
+    export_image = re.split('\s', export_image.rstrip())[-1]
+    lc.log_info('image: exported ' + export_image, VM_ID)
+except sp.CalledProcessError as cpe:
+    lc.log_info(cpe, VM_ID)
+
+try:
+    """
+    Rename exported image to 'disk.0'
+    """
+    os.rename(export_image, DS_LOCATION + '/disk.0')
+    lc.log_info(export_image + ' renamed to disk.0', VM_ID)
+except OSError as ose:
+    lc.log_info(ose, VM_ID)
+
+try:
+    """
+    Clean up local LXD image store
+    """
+    image = client.images.get(new_fingerprint)
+    image.delete()
+except LXDAPIException as lxdapie:
+    lc.log_info(lxdapie, VM_ID)
+
+try:
+    """
+    Delete container
+    """
+    lui.uniimg_container_wipe(client, container)
+    lc.log_info('container: ' + VM_NAME + ' deleted', VM_ID)
+except LXDAPIException as lxdapie:
+    lc.log_info(lxdapie, VM_ID)
+    raise
+
+lc.clock(VM_ID, t0)
