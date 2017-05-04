@@ -90,7 +90,7 @@ If you want to contribute feel free to request new features, the TODO list is st
 
 ## Known Bugs
 - [ ]  VNC - The first container in a virtualization node is the only one who gets graphic session.
-- [ ]  VNC - Context fails to re-execute when NIC hotplug, thus ip for new NIC is not added.
+- [ ]  Context fails to re-execute when NIC hotplug, thus ip for new NIC is not added.
   
 # Requirements
 These are the required packages besides the ones for OpenNebula
