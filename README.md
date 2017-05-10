@@ -73,24 +73,31 @@ If you want to contribute feel free to request new features, the TODO list is st
 ## 1703
 - Virtual Appliance creation script
 
+# 1705
+- NIC Hotplug
+- Virtual Appliance uploaded to [google drive](https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U)
+- Enhanced buildimg.sh, thanks @sw37th
+    + Bugfixes
+    + Included auto-contextualization
+
 # Limitations
 ## TODO
-- Virtual Appliance upload to the MarketPlace
 - Migration
 - Snapshots
 - LVM storage backend
-- Hot-attach/detach NICs and HDD
+- HDD Hotplug
 - Bandwidth limitation
 
 ## Known Bugs
 - [ ]  VNC - The first container in a virtualization node is the only one who gets graphic session.
-
+- [ ]  Context fails to re-execute when NIC hotplug, thus ip for new NIC is not added.
+  
 # Requirements
 These are the required packages besides the ones for OpenNebula
 
 ## Frontend:
 Required packages:
-- nfs-kernel-server (optional)
+- nfs-kernel-server
 
 ## Virtualization node:
 OS: Ubuntu 1604
