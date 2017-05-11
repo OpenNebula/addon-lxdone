@@ -33,6 +33,8 @@ if len(lc.sys.argv) >= 3:
     try:
         lc.storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID)
         container.save(wait=True)
+        command = ['sh', '/etc/init.d/vmcontext', 'start']
+        container.execute(command)
     except Exception as e:
         lc.log_info(e, VM_ID)
 exit()
