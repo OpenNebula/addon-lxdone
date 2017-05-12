@@ -89,8 +89,7 @@ If you want to contribute feel free to request new features, the TODO list is st
 - Bandwidth limitation
 
 ## Known Bugs
-- [ ]  VNC - The first container in a virtualization node is the only one who gets graphic session.
-- [ ]  Context fails to re-execute when NIC hotplug, thus ip for new NIC is not added.
+- [ ]  VNC - The first container in a virtualization node is the only one who gets graphic session. Refer to https://github.com/OpenNebula/addon-lxdone/issues/6
   
 # Requirements
 These are the required packages besides the ones for OpenNebula
