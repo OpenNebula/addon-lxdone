@@ -24,11 +24,12 @@ import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime as dt
 from time import time
-
 from pylxd.client import Client
 
 
 # MISC
+
+
 def log_info(info, VM_ID):
     'Writes $info at the end of file /var/log/one/$VM_ID.log this is the Virtual Machine log file \
     seen in Sunstone'
@@ -38,7 +39,7 @@ def log_info(info, VM_ID):
     log.close()
 
 
-def clock(VM_ID, t0):
+def clock(t0, VM_ID):
     'Calculates and logs in the logfile the time passed since $t0'
     duration = str(time() - t0)
     log_info('Script executed in almost ' + duration + ' seconds', VM_ID)
@@ -113,6 +114,20 @@ def xml_query_item(value, dicc):
     return value[0]
 
 
+def xml_query_dict(value, id_list, dicc):
+    'Tries to return a dict with $value instances from $dicc'
+    try:
+        value_list = xml_query_list(value, dicc)
+        pos = 0
+        value_dict = {}
+        for iface in id_list:
+            value_dict[iface] = value_list[pos]
+            pos += 1
+    except Exception:
+        value_dict = {None}
+    return value_dict
+
+
 # STORAGE SIMPLE
 def storage_sysmap(DISK_ID, DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE):
     'Maps a $DISK_SOURCE device into the host corresponding block device, CEPH, LVM or FILESYSTEM'
@@ -170,7 +185,14 @@ def storage_rootfs_umount(DISK_TYPE, container_config):
     storage_sysunmap(DISK_TYPE, source)
 
 
+def storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID):
+    context_disk = storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
+    context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
+    container.devices.update(context_disk)
+
 # LXD CONFIG MAPPING
+
+
 def map_disk(DISK_TARGET, path):
     'Creates a dictionary for LXD containing $path disk configuration, $DISK_TARGET will be $path \
     inside the container'

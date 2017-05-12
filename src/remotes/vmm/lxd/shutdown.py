@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import lxd_common as lc
+
 t0 = lc.time()
 client = lc.Client()
 VM_ID = lc.sys.argv[1]
@@ -22,4 +23,4 @@ else:
 # CLEANING
 num_hdds = len(DISK_TYPE)
 lc.container_wipe(num_hdds, container, DISK_TARGET, CONTEXT_DISK_ID, DISK_TYPE)
-lc.clock(VM_ID, t0)
+lc.clock(t0, VM_ID)

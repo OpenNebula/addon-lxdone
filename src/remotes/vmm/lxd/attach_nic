@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/python
 
 # -------------------------------------------------------------------------- #
 # Copyright 2016-2017                                                        #
@@ -18,7 +18,23 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-source $(dirname $0)/../../scripts_common.sh
+import lxd_common as lc
+client = lc.Client()
 
-log_error $0" is not yet supported"
-exit
+DOMAIN = lc.sys.argv[1]
+NIC_MAC = lc.sys.argv[2]
+NIC_BRIDGE = lc.sys.argv[3]
+NIC_MODEL = lc.sys.argv[4]
+NET_DRV = lc.sys.argv[5]
+NIC_TARGET = lc.sys.argv[6]
+# UNKNOWN = lc.sys.argv[7] (always 0)
+HOST_IP = lc.sys.argv[8]
+
+container = client.containers.get(DOMAIN)
+
+name = 'eth%s' % (NIC_TARGET.split('-')[-1])
+vm_nic = lc.map_nic(name, NIC_BRIDGE, NIC_MAC, NIC_TARGET)
+container.devices.update(vm_nic)
+container.save(wait=True)
+
+exit()

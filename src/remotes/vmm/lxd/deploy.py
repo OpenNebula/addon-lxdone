@@ -21,9 +21,9 @@
 import lxd_common as lc
 t0 = lc.time()
 from lxd_common import xml_query_list as xql
+from lxd_common import xml_query_dict as xqd
 from lxd_common import xml_query_item as xqi
 client = lc.Client()
-from time import sleep
 
 # READ_XML
 xml = lc.sys.argv[1]
@@ -66,19 +66,16 @@ if num_hdds > 1:
 
 CONTEXT_DISK_ID = xqi('CONTEXT/DISK_ID', dicc)
 if CONTEXT_DISK_ID:
-    context_disk = lc.storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
-    context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
-    container.devices.update(context_disk)
+    lc.storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID)
 
 # NETWORK_CONFIG
 NIC = xql('NIC/NIC_ID', dicc)
 if NIC[0]:
-    NIC_BRIDGE = xql('NIC/BRIDGE', dicc)
-    NIC_IP = xql('NIC/IP', dicc)
-    NIC_MAC = xql('NIC/MAC', dicc)
-    NIC_TARGET = xql('NIC/TARGET', dicc)
+    NIC_BRIDGE = xqd('NIC/BRIDGE', NIC, dicc)
+    NIC_MAC = xqd('NIC/MAC', NIC, dicc)
+    NIC_TARGET = xqd('NIC/TARGET', NIC, dicc)
     for iface in NIC:
-        i = int(iface)
+        i = str(iface)
         name = 'eth%s' % (iface)
         vm_nic = lc.map_nic(name, NIC_BRIDGE[i], NIC_MAC[i], NIC_TARGET[i])
         container.devices.update(vm_nic)
@@ -100,5 +97,5 @@ except Exception as e:
     lc.sys.exit(1)
 
 lc.vnc_start(VM_ID, dicc)
-lc.clock(VM_ID, t0)
+lc.clock(t0, VM_ID)
 print "one-" + VM_ID

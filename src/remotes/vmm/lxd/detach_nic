@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/python
 
 # -------------------------------------------------------------------------- #
 # Copyright 2016-2017                                                        #
@@ -18,7 +18,27 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-source $(dirname $0)/../../scripts_common.sh
+import lxd_common as lc
+client = lc.Client()
 
-log_error $0" is not yet supported"
-exit
+DOMAIN = lc.sys.argv[1]
+NIC_MAC = lc.sys.argv[2]
+# UNKNOWN = lc.sys.argv[3]
+HOST_IP = lc.sys.argv[4]
+
+container = client.containers.get(DOMAIN)
+
+
+def get_interface(devices, hwaddr):
+    "Get interface name from hwaddr inside the container's devices dict"
+    for k, v in devices.iteritems():
+        if k.__contains__('eth') and v['hwaddr'] == hwaddr:
+            return v['name']
+
+
+iface = get_interface(container.devices, NIC_MAC)
+
+del container.devices[iface]
+container.save(wait=True)
+
+exit()

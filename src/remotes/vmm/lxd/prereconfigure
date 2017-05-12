@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/python
 
 # -------------------------------------------------------------------------- #
 # Copyright 2016-2017                                                        #
@@ -18,7 +18,17 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-source $(dirname $0)/../../scripts_common.sh
+import lxd_common as lc
+client = lc.Client()
 
-log_error $0" is not yet supported"
-exit
+DOMAIN = lc.sys.argv[1]
+container = client.containers.get(DOMAIN)
+
+if 'CONTEXT' in container.devices:
+    source = lc.unmap(container.devices, 'CONTEXT')['path']
+    lc.storage_sysunmap('FILE', source)
+    container.save(wait=True)
+else:
+    lc.log_info('no CONTEXT to unmount', VM_ID)
+
+exit()
