@@ -8,26 +8,31 @@ The purpose of this guide is to create a fully functional working environment. Y
 
 ## Table of Contents
 <!-- MarkdownTOC -->
-
-- 1 - Frontend setup
-    - 1.1 Installation
-    - 1.2 Logs
-    - 1.4 LXDoNe integration
-- 2 - Virtualization Node setup
-    - 2.1 Install required packages
-    - 2.2 VNC server \(optional\)
-    - 2.3 LXD Bridge \(optional\)
-    - 2.4 oneadmin
-    - 2.5 Loop devices
-    - 2.6 LXD
-    - 2.7 Log
-- 3 - Virtual Appliance
-- 4 - Usage
-    - 4.1 Image Upload
-    - 4.2 Virtualization node
-    - 4.4 Virtual network
-    - 4.5 Template creation
-    - 4.6 Deploy
+- [1 - Frontend setup](#1---frontend-setup)
+    - [1.1 Installation](#11-installation)
+    - [1.2 Logs](#12-logs)
+        - [1.3 Enable LXD](#13-enable-lxd)
+    - [1.4 LXDoNe integration](#14-lxdone-integration)
+        - [1.4.1 Drivers](#141-drivers)
+        - [1.4.1.1 Optional. Add support for 802.1Q driver \(VLANs\).](#1411-optional-add-support-for-8021q-driver-vlans)
+        - [1.4.2 Enable LXD](#142-enable-lxd)
+- [2 - Virtualization Node setup](#2---virtualization-node-setup)
+    - [2.1 Install required packages](#21-install-required-packages)
+    - [2.2 VNC server \(optional\)](#22-vnc-server-optional)
+    - [2.3 LXD Bridge \(optional\)](#23-lxd-bridge-optional)
+    - [2.4 oneadmin](#24-oneadmin)
+    - [2.5 Loop devices](#25-loop-devices)
+    - [2.6 LXD](#26-lxd)
+        - [2.6.1 Daemon](#261-daemon)
+        - [2.6.2 LXD Profile](#262-lxd-profile)
+    - [2.7 Log](#27-log)
+- [3 - Virtual Appliance](#3---virtual-appliance)
+- [4 - Usage](#4---usage)
+    - [4.1 Image Upload](#41-image-upload)
+    - [4.2 Virtualization node](#42-virtualization-node)
+    - [4.4 Virtual network](#44-virtual-network)
+    - [4.5 Template creation](#45-template-creation)
+    - [4.6 Deploy](#46-deploy)
 
 <!-- /MarkdownTOC -->
 
