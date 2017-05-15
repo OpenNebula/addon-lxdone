@@ -23,6 +23,7 @@ client = lc.Client()
 
 DOMAIN = lc.sys.argv[1]
 container = client.containers.get(DOMAIN)
+VM_ID = DOMAIN.split('-')[1]
 
 if 'CONTEXT' in container.devices:
     source = lc.unmap(container.devices, 'CONTEXT')['path']
