@@ -18,6 +18,7 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
+from __future__ import print_function
 import os
 import subprocess as sp
 import sys
@@ -28,6 +29,10 @@ from pylxd.client import Client
 
 
 # MISC
+
+def log_function(severity, message):
+    sep = ': '
+    print(severity + sep + os.path.basename(sys.argv[0]) + sep + message, file=sys.stderr)
 
 
 def log_info(info, VM_ID):
