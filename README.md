@@ -119,7 +119,6 @@ Required packages:
 
 # Setup
 Check the [Setup Guide](Setup.md)  to deploy a working scenario.
-Also there are some Ansible scripts for automatic deployment.
 
 # License
 **Copyright 2016-2017**   Daniel Clavijo Coca, Sergio Vega Gutiérrez, José Manuel de la Fé Herrero
