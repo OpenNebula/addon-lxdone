@@ -87,6 +87,7 @@ If you want to contribute feel free to request new features, the TODO list is st
 - LVM storage backend
 - HDD Hotplug
 - Bandwidth limitation
+- Migration to Python 3
 
 ## Known Bugs
 - [ ]  VNC - The first container in a virtualization node is the only one who gets graphic session. Refer to [issue #6](https://github.com/OpenNebula/addon-lxdone/issues/6)

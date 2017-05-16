@@ -8,31 +8,25 @@ The purpose of this guide is to create a fully functional working environment. Y
 
 ## Table of Contents
 <!-- MarkdownTOC -->
-- [1 - Frontend setup](#1---frontend-setup)
-    - [1.1 Installation](#11-installation)
-    - [1.2 Logs](#12-logs)
-        - [1.3 Enable LXD](#13-enable-lxd)
-    - [1.4 LXDoNe integration](#14-lxdone-integration)
-        - [1.4.1 Drivers](#141-drivers)
-        - [1.4.1.1 Optional. Add support for 802.1Q driver \(VLANs\).](#1411-optional-add-support-for-8021q-driver-vlans)
-        - [1.4.2 Enable LXD](#142-enable-lxd)
-- [2 - Virtualization Node setup](#2---virtualization-node-setup)
-    - [2.1 Install required packages](#21-install-required-packages)
-    - [2.2 VNC server \(optional\)](#22-vnc-server-optional)
-    - [2.3 LXD Bridge \(optional\)](#23-lxd-bridge-optional)
-    - [2.4 oneadmin](#24-oneadmin)
-    - [2.5 Loop devices](#25-loop-devices)
-    - [2.6 LXD](#26-lxd)
-        - [2.6.1 Daemon](#261-daemon)
-        - [2.6.2 LXD Profile](#262-lxd-profile)
-    - [2.7 Log](#27-log)
-- [3 - Virtual Appliance](#3---virtual-appliance)
-- [4 - Usage](#4---usage)
-    - [4.1 Image Upload](#41-image-upload)
-    - [4.2 Virtualization node](#42-virtualization-node)
-    - [4.4 Virtual network](#44-virtual-network)
-    - [4.5 Template creation](#45-template-creation)
-    - [4.6 Deploy](#46-deploy)
+
+- 1 - Frontend setup
+    - 1.1 Installation
+    - 1.3 LXDoNe integration
+- 2 - Virtualization Node setup
+    - 2.1 Install required packages
+    - 2.2 VNC server \(optional\)
+    - 2.3 LXD Bridge \(optional\)
+    - 2.4 oneadmin
+    - 2.5 Loop devices
+    - 2.6 LXD
+    - 2.7 Log
+- 3 - Virtual Appliance
+- 4 - Usage
+    - 4.1 Image Upload
+    - 4.2 Virtualization node
+    - 4.4 Virtual network
+    - 4.5 Template creation
+    - 4.6 Deploy
 
 <!-- /MarkdownTOC -->
 
@@ -43,7 +37,7 @@ The purpose of this guide is to create a fully functional working environment. Y
 
 Follow [OpenNebula Deployment Guide](https://docs.opennebula.org/5.2/deployment/opennebula_installation/frontend_installation.html) to deploy a full functional OpenNebula frontend.
 
-## 1.2 Logs
+<!-- ## 1.2 Logs
 If you are deploying ***oneadmin ALL= NOPASSWD: ALLfrontend*** and ***virtualization node*** in the same computer you can skip this step. ***Virtualization Driver*** execution information is written directly in the corresponding virtual machine log in the ***frontend***, we'll need to export the log folder through **NFS** in order to mount it in the ***virtualization node***.
 
 Install and configure an NFS server on the computer where the frontend is installed and configure it to export /var/log/one.
@@ -53,14 +47,15 @@ Install and configure an NFS server on the computer where the frontend is instal
 # echo -e "/var/log/one/ *(rw,sync,no_subtree_check,no_root_squash,crossmnt,nohide)" >> /etc/exports
 ```
 
-<a name="13-enable-lxd"></a>
-### 1.3 Enable LXD
+<a name="13-enable-lxd"></a> 
+-->
+### 1.2 Enable LXD
 
-## 1.4 LXDoNe integration
+## 1.3 LXDoNe integration
 **LXDoNe** is a set of scripts functioning as virtualization and monitorization drivers, so they have to be integrated to the ***frontend*** 
 
 <a name="141-drivers"></a>
-### 1.4.1 Drivers
+### 1.3.1 Drivers
 
 Copy scripts to oneadmin drivers directory: 
 
@@ -78,7 +73,7 @@ Set the appropriate permissions
 ```
 
 <a name="1411-optional-add-support-for-8021q-driver-vlans"></a>
-### 1.4.1.1 Optional. Add support for 802.1Q driver (VLANs).
+### 1.3.1.1 Optional. Add support for 802.1Q driver (VLANs).
 Replace /var/lib/one/remotes/vnm.rb file.
 
 ```
@@ -92,7 +87,7 @@ $ cp -rpa addon-lxdone-master/src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.r
 
 
 <a name="142-enable-lxd"></a>
-### 1.4.2 Enable LXD
+### 1.3.2 Enable LXD
 
 Modify /etc/one/oned.conf.
 Under **Information Driver Configuration** add this:
