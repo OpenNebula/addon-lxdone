@@ -2,7 +2,7 @@
 The purpose of this guide is to create a fully functional working environment. You will be able to manage **LXD** containers in at least one virtualization node through the web interface in the frontend. For the list of supported features see [Readme](README.md).
 
 ## Observations & Recommendations
--Commands prefixed by "**#**" are meant to be run as root. Commands prefixed by "**$**" must be run as oneadmin
+-   Commands prefixed by "**#**" are meant to be run as root. Commands prefixed by "**$**" must be run as oneadmin
 -   Read ***Notes*** sections attached to some steps, before using the shell
 -   Access to [LXD image repository](https://images.linuxcontainers.org/images) is required for some container creation methods when downloading a Linux filesystem tarball.
 
