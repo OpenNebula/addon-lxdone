@@ -18,6 +18,7 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
+from __future__ import print_function
 import os
 import subprocess as sp
 import sys
@@ -29,20 +30,25 @@ from pylxd.client import Client
 
 # MISC
 
+def log_function(severity, message):
+    sep = ': '
+    print(severity + sep + os.path.basename(sys.argv[0]) + sep + message, file=sys.stderr)
 
-def log_info(info, VM_ID):
-    'Writes $info at the end of file /var/log/one/$VM_ID.log this is the Virtual Machine log file \
-    seen in Sunstone'
-    log = open('/var/log/one/' + VM_ID + '.log', mode='a')
-    moment = dt.today().strftime("%a %b %d %H:%M:%S %Y")
-    log.write(moment + " " + str(info) + '\n')
-    log.close()
+
+# def log_info(info, VM_ID):
+#     'Writes $info at the end of file /var/log/one/$VM_ID.log this is the Virtual Machine log file \
+#     seen in Sunstone'
+#     log = open('/var/log/one/' + VM_ID + '.log', mode='a')
+#     moment = dt.today().strftime("%a %b %d %H:%M:%S %Y")
+#     log.write(moment + " " + str(info) + '\n')
+#     log.close()
 
 
 def clock(t0, VM_ID):
     'Calculates and logs in the logfile the time passed since $t0'
     duration = str(time() - t0)
-    log_info('Script executed in almost ' + duration + ' seconds', VM_ID)
+    # log_info('Script executed in almost ' + duration + ' seconds', VM_ID)
+    log_function("INFO", 'Script executed in almost ' + duration + ' seconds')
 
 
 def vnc_start(VM_ID, dicc):
@@ -58,7 +64,8 @@ def vnc_start(VM_ID, dicc):
             sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' +
                      VM_ID + " " + VNC_PORT, shell=True)
         except Exception as e:
-            log_info(e, VM_ID)
+            # log_info(e, VM_ID)
+            log_function("ERROR", e)
 
 
 def container_wipe(num_hdds, container, DISK_TARGET, CONTEXT_DISK_ID, DISK_TYPE):

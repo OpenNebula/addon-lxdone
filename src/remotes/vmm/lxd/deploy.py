@@ -30,7 +30,8 @@ xml = lc.sys.argv[1]
 dicc = lc.xml_start(xml)
 VM_ID = dicc["/VM/ID"][0]
 
-lc.log_info(70 * "-", VM_ID)
+# lc.log_info(70 * "-", VM_ID)
+lc.log_function('INFO', 70 * "-")
 
 # INITIALIZE_CONTAINER
 try:
@@ -93,7 +94,8 @@ except Exception as e:
     if container.status == 'Running':
         container.stop(wait=True)
     lc.container_wipe(num_hdds, container, DISK_TARGET, CONTEXT_DISK_ID, DISK_TYPE)
-    lc.log_info(e, VM_ID)
+    # lc.log_info(e, VM_ID)
+    lc.log_function('ERROR', e)
     lc.sys.exit(1)
 
 lc.vnc_start(VM_ID, dicc)

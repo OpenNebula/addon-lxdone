@@ -4,7 +4,7 @@
 
 <br />
 
-[![LXDoNe](https://img.shields.io/badge/release-1702-3c97f3.svg?style=flat-square)](https://github.com/OpenNebula/addon-lxdone/releases)
+[![LXDoNe](https://img.shields.io/badge/release-1705-3c97f3.svg?style=flat-square)](https://github.com/OpenNebula/addon-lxdone/releases)
 [![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=I%20want%20freedom.%20I%20want%20efficiency.%20Faster%20private%20clouds%20for%20everyone.%20%23LXDoNe%20%2B%20%40opennebula%20%3D%20performance%20⚡️%20https%3A%2F%2Fgithub.com/OpenNebula/addon-lxdone%2F&source=webclient)
 
 [![LXD](https://img.shields.io/badge/lxd-LTS-orange.svg?style=flat-square)](https://linuxcontainers.org/lxd/)
@@ -14,6 +14,7 @@
 [![pylxd](https://img.shields.io/badge/pylxd-2.0.5-brightgreen.svg?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
 [![VNC](https://img.shields.io/badge/VNC-svncterm-yellow.svg?style=flat-square)](https://github.com/dealfonso/svncterm)
 
+<br />
 <br />
 
 # Description
@@ -87,6 +88,7 @@ If you want to contribute feel free to request new features, the TODO list is st
 - LVM storage backend
 - HDD Hotplug
 - Bandwidth limitation
+- Code migration to Python 3
 
 ## Known Bugs
 - [ ]  VNC - The first container in a virtualization node is the only one who gets graphic session. Refer to [issue #6](https://github.com/OpenNebula/addon-lxdone/issues/6)
@@ -99,7 +101,9 @@ Required packages:
 - nfs-kernel-server
 
 ## Virtualization node:
+
 OS: Ubuntu 1604
+
 Required packages:
 - lxd
 - lxd-tools
@@ -116,7 +120,6 @@ Required packages:
 
 # Setup
 Check the [Setup Guide](Setup.md)  to deploy a working scenario.
-Also there are some Ansible scripts for automatic deployment.
 
 # License
 **Copyright 2016-2017**   Daniel Clavijo Coca, Sergio Vega Gutiérrez, José Manuel de la Fé Herrero
