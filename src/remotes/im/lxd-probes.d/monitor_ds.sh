@@ -9,7 +9,7 @@ LVM_VG_PREFIX="vg-one-"
 PATH=$PATH:/sbin:/bin:/usr/sbin:/usr/bin which vgdisplay &> /dev/null
 
 if [ $? == 0 ]; then
-    LVM_SIZE_CMD="sudo vgdisplay --separator : --units m -o vg_size,vg_free --nosuffix --noheadings -C"
+    LVM_SIZE_CMD="/sbin/vgdisplay --separator : --units m -o vg_size,vg_free --nosuffix --noheadings -C"
 fi
 
 mkdir -p "$DATASTORE_LOCATION"

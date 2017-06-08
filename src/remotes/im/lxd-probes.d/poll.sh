@@ -18,4 +18,4 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-sudo ../../vmm/lxd/poll -t
+../../vmm/lxd/poll -t

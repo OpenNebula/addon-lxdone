@@ -152,14 +152,12 @@ class LXD(object):
         case = {
             "running": "a",
             "frozen": "p",
-            "stopped": "d",
+            "stopped": "a",
+            "unknown": "e",
             "failure": "e"
         }
 
-        try:
-            return case[status]
-        except Exception:
-            return "e"
+        return case[status]
 
     def get_net_statistics(self):
         netrx = 0
