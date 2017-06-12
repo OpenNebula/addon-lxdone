@@ -5,35 +5,13 @@
 ## 1.2 Logs
 (Follow original Setup.md)
 
+### 1.3 Enable LXD
+
 ## 1.4 LXDoNe integration
 (Follow original Setup.md)
 
-### 1.3 Enable LXD
-(Follow original Setup.md)
-
 ### 1.4.1 Drivers
-
-Copy scripts to oneadmin drivers directory:
-
-```
-$ sudo cp -rpa src/remotes/ /var/lib/one/
-```
-
-Overwrite some scripts by src/remotes-lui
-
-```
-$ cd src/remotes-lui
-$ sudo cp -p vmm/lxd/* /var/lib/one/remotes/vmm/lxd
-$ sudo cp -p im/lxd-probes.d/* /var/lib/one/remotes/im/lxd-probes.d
-```
-Set the appropriate permissions
-
-```
-$ cd /var/lib/one/remotes/
-$ sudo chown -R oneadmin:oneadmin vmm/lxd im/lxd*
-$ sudo chmod 755 -R vmm/lxd im/lxd*
-$ sudo chmod 644 im/lxd.d/collectd-client.rb
-```
+(Follow original Setup.md)
 
 ### 1.4.1.1 Optional. Add support for 802.1Q driver (VLANs).
 (Follow original Setup.md)
