@@ -87,18 +87,18 @@ def apply_profile(profile, container):
         try:
             container.config.update(i)
             container.save(wait=True)
-            lc.log_info('container: ' + i.keys()[0] + ': ' + i[i.keys()[0]], VM_ID)
+            lc.log_function('INFO', 'container: ' + i.keys()[0] + ': ' + i[i.keys()[0]])
         except LXDAPIException as lxdapie:
-            lc.log_info('container: ' + i.keys()[0] + ': ' + str(lxdapie), VM_ID)
+            lc.log_function('WARN', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             del container.config[i.keys()[0]]
 
     for i in profile['devices']:
         try:
             container.devices.update(i)
             container.save(wait=True)
-            lc.log_info('container: ' + i.keys()[0] + ': added', VM_ID)
+            lc.log_function('INFO', 'container: ' + i.keys()[0] + ': added')
         except LXDAPIException as lxdapie:
-            lc.log_info('container: ' + i.keys()[0] + ': ' + str(lxdapie), VM_ID)
+            lc.log_function('WARN', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             del container.config[i.keys()[0]]
 
         # disk quota
@@ -106,9 +106,9 @@ def apply_profile(profile, container):
         try:
             container.devices['root']['size'] = profile['LXD_QUOTA_SIZE'] + 'MB'
             container.save(wait=True)
-            lc.log_info('container: root disk size ' + profile['LXD_QUOTA_SIZE'] + 'MB', VM_ID)
+            lc.log_function('INFO', 'container: root disk size ' + profile['LXD_QUOTA_SIZE'] + 'MB')
         except LXDAPIException as lxdapie:
-            lc.log_info('container: disk size ' + profile['LXD_QUOTA_SIZE'] + ': ' + str(lxdapie), VM_ID)
+            lc.log_function('WARN','container: disk size ' + profile['LXD_QUOTA_SIZE'] + ': ' + str(lxdapie))
             del container.devices['root']['size']
 
 
@@ -125,7 +125,7 @@ CONTEXT_DISK_ID = profile['CONTEXT_DISK_ID']
 VM_NAME = 'one-' + VM_ID
 DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
 
-lc.log_info(70 * "-", VM_ID)
+lc.log_function('INFO', 70 * "-")
 
 # import disk.0 to local LXD image store
 with open(DS_LOCATION + 'disk.0', 'rb') as f:
@@ -136,24 +136,24 @@ with open(DS_LOCATION + 'disk.0', 'rb') as f:
 
     fingerprint = sha256.hexdigest()
     try:
-        lc.log_info('image: ' + fingerprint + ' importing', VM_ID)
+        lc.log_function('INFO', 'image: ' + fingerprint + ' importing')
         f.seek(0)
         image_data = f.read()
         image = client.images.create(image_data, wait=True)
-        lc.log_info('image: ' + fingerprint + ' imported', VM_ID)
+        lc.log_function('INFO', 'image: ' + fingerprint + ' imported')
     except LXDAPIException as lxdapie:
         # probably this image already exists on local LXD image store
-        lc.log_info('image: ' + fingerprint + ' ' + str(lxdapie), VM_ID)
+        lc.log_function('INFO', 'image: ' + fingerprint + ' ' + str(lxdapie))
         image = client.images.get(fingerprint)
 
 # INITIALIZE_CONTAINER
 init = {'name': VM_NAME, 'source': {'type': 'image', 'fingerprint': fingerprint}}
 try:
-    lc.log_info('container: ' + VM_NAME + ' creating', VM_ID)
+    lc.log_function('INFO', 'container: ' + VM_NAME + ' creating')
     container = client.containers.create(init, wait=True)
 except LXDAPIException as lxdapie:
     # probably this container already exists
-    lc.log_info('container: ' + VM_NAME + ' ' + str(lxdapie), VM_ID)
+    lc.log_function('INFO', 'container: ' + VM_NAME + ' ' + str(lxdapie))
     container = client.containers.get(VM_NAME)
 
 # push context files into the container
@@ -169,14 +169,14 @@ apply_profile(profile, container)
 try:
     container.start(wait=True)
     container.config['user.xml']  # validate config
-    lc.log_info('container: ' + VM_NAME + ' running', VM_ID)
+    lc.log_function('INFO', 'container: ' + VM_NAME + ' running')
 except LXDAPIException as lxdapie:
     if container.status == 'Running':
         container.stop(wait=True)
     lui.uniimg_container_wipe(client, container)
-    lc.log_info('container: ' + str(lxdapie), VM_ID)
+    lc.log_function('ERROR', 'container: ' + str(lxdapie))
     lc.sys.exit(1)
 
 lc.vnc_start(VM_ID, profile['dicc'])
-lc.clock(VM_ID, t0)
+lc.clock(t0, VM_ID)
 print VM_NAME

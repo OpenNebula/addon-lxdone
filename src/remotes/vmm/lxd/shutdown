@@ -18,21 +18,21 @@ dicc = lc.xml_start(container.config.get('user.xml'))
 DS_ID = dicc['/VM/HISTORY_RECORDS/HISTORY/DS_ID'][0]
 DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
 
-lc.log_info('container: ' + VM_NAME + ' deleting', VM_ID)
+lc.log_function('INFO', 'container: ' + VM_NAME + ' deleting')
 
 # Container stop
 try:
     if lc.sys.argv[-1] == 'force':
         # called from 'cancel'
-        lc.log_info('container: ' + VM_NAME + ' force stop', VM_ID)
+        lc.log_function('INFO', 'container: ' + VM_NAME + ' force stop')
         container.stop(force=True, wait=True)
     else:
         container.stop(wait=True)
 except LXDAPIException as lxdapie:
     if container.status == 'Stopped':
-        lc.log_info('container: ' + VM_NAME + ' already stopped', VM_ID)
+        lc.log_function('INFO', 'container: ' + VM_NAME + ' already stopped')
     else:
-        lc.log_info(lxdapie, VM_ID)
+        lc.log_function('ERROR', lxdapie)
         lui.uniimg_container_wipe(client, container)
         lc.sys.exit(1)
 
@@ -47,9 +47,9 @@ try:
     new_fingerprint = None
     new_fingerprint = sp.check_output('lxc publish ' + VM_NAME, stderr=sp.STDOUT, shell=True)
     new_fingerprint = re.split('\s', new_fingerprint.rstrip())[-1]
-    lc.log_info('image: published as ' + new_fingerprint, VM_ID)
+    lc.log_function('INFO', 'image: published as ' + new_fingerprint)
 except sp.CalledProcessError as cpe:
-    lc.log_info(cpe, VM_ID)
+    lc.log_function('WARN', cpe)
 
 try:
     """
@@ -63,18 +63,18 @@ try:
     export_image = None
     export_image = sp.check_output('lxc image export ' + new_fingerprint + ' ' + DS_LOCATION, shell=True)
     export_image = re.split('\s', export_image.rstrip())[-1]
-    lc.log_info('image: exported ' + export_image, VM_ID)
+    lc.log_function('INFO', 'image: exported ' + export_image)
 except sp.CalledProcessError as cpe:
-    lc.log_info(cpe, VM_ID)
+    lc.log_function('WARN', cpe)
 
 try:
     """
     Rename exported image to 'disk.0'
     """
     os.rename(export_image, DS_LOCATION + '/disk.0')
-    lc.log_info(export_image + ' renamed to disk.0', VM_ID)
+    lc.log_function('INFO', export_image + ' renamed to disk.0')
 except OSError as ose:
-    lc.log_info(ose, VM_ID)
+    lc.log_function('WARN', ose)
 
 try:
     """
@@ -83,16 +83,16 @@ try:
     image = client.images.get(new_fingerprint)
     image.delete()
 except LXDAPIException as lxdapie:
-    lc.log_info(lxdapie, VM_ID)
+    lc.log_function('WARN', lxdapie)
 
 try:
     """
     Delete container
     """
     lui.uniimg_container_wipe(client, container)
-    lc.log_info('container: ' + VM_NAME + ' deleted', VM_ID)
+    lc.log_function('INFO', 'container: ' + VM_NAME + ' deleted')
 except LXDAPIException as lxdapie:
-    lc.log_info(lxdapie, VM_ID)
+    lc.log_function('ERROR', lxdapie)
     raise
 
-lc.clock(VM_ID, t0)
+lc.clock(t0, VM_ID)
