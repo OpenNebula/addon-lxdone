@@ -7,6 +7,56 @@ import subprocess as sp
 import re
 from pylxd.exceptions import LXDAPIException
 
+def image_export(VM_NAME, DS_LOCATION):
+    """
+    Image publish and export
+    FIXME: fix to use pylxd's image.export() method
+    """
+    try:
+        """
+        Publish the new iamge onto local LXD image store
+        """
+        new_fingerprint = None
+        new_fingerprint = sp.check_output('lxc publish ' + VM_NAME, stderr=sp.STDOUT, shell=True)
+        new_fingerprint = re.split('\s', new_fingerprint.rstrip())[-1]
+        lc.log_function('INFO', 'image: published as ' + new_fingerprint)
+    except sp.CalledProcessError as cpe:
+        lc.log_function('WARN', cpe)
+
+    try:
+        """
+        Export image onto OpenNebula datastore
+        """
+        if not new_fingerprint:
+            # Assumes that 'lxc publish' failed because the image already exists.
+            # Get image's fingerprint from stderr output.
+            new_fingerprint = re.split('\s', cpe.output.rstrip())[-1]
+
+        export_image = None
+        export_image = sp.check_output('lxc image export ' + new_fingerprint + ' ' + DS_LOCATION, shell=True)
+        export_image = re.split('\s', export_image.rstrip())[-1]
+        lc.log_function('INFO', 'image: exported ' + export_image)
+    except sp.CalledProcessError as cpe:
+        lc.log_function('WARN', cpe)
+
+    try:
+        """
+        Rename exported image to 'disk.0'
+        """
+        os.rename(export_image, DS_LOCATION + '/disk.0')
+        lc.log_function('INFO', export_image + ' renamed to disk.0')
+    except OSError as ose:
+        lc.log_function('WARN', ose)
+
+    try:
+        """
+        Clean up local LXD image store
+        """
+        image = client.images.get(new_fingerprint)
+        image.delete()
+    except LXDAPIException as lxdapie:
+        lc.log_function('WARN', lxdapie)
+
 t0 = lc.time()
 client = lc.Client()
 VM_ID = lc.sys.argv[3]
@@ -36,54 +86,8 @@ except LXDAPIException as lxdapie:
         lui.uniimg_container_wipe(client, container)
         lc.sys.exit(1)
 
-fingerprint = container.config.get('volatile.base_image')
-
-# Image publish and export
-# FIXME: fix to use pylxd's image.export() method
-try:
-    """
-    Publish the new iamge onto local LXD image store
-    """
-    new_fingerprint = None
-    new_fingerprint = sp.check_output('lxc publish ' + VM_NAME, stderr=sp.STDOUT, shell=True)
-    new_fingerprint = re.split('\s', new_fingerprint.rstrip())[-1]
-    lc.log_function('INFO', 'image: published as ' + new_fingerprint)
-except sp.CalledProcessError as cpe:
-    lc.log_function('WARN', cpe)
-
-try:
-    """
-    Export image onto OpenNebula datastore
-    """
-    if not new_fingerprint:
-        # Assumes that 'lxc publish' failed because the image already exists.
-        # Get image's fingerprint from stderr output.
-        new_fingerprint = re.split('\s', cpe.output.rstrip())[-1]
-
-    export_image = None
-    export_image = sp.check_output('lxc image export ' + new_fingerprint + ' ' + DS_LOCATION, shell=True)
-    export_image = re.split('\s', export_image.rstrip())[-1]
-    lc.log_function('INFO', 'image: exported ' + export_image)
-except sp.CalledProcessError as cpe:
-    lc.log_function('WARN', cpe)
-
-try:
-    """
-    Rename exported image to 'disk.0'
-    """
-    os.rename(export_image, DS_LOCATION + '/disk.0')
-    lc.log_function('INFO', export_image + ' renamed to disk.0')
-except OSError as ose:
-    lc.log_function('WARN', ose)
-
-try:
-    """
-    Clean up local LXD image store
-    """
-    image = client.images.get(new_fingerprint)
-    image.delete()
-except LXDAPIException as lxdapie:
-    lc.log_function('WARN', lxdapie)
+if container.config.get('user.one_image_persistent') == 'YES':
+    image_export(VM_NAME, DS_LOCATION)
 
 try:
     """

@@ -57,6 +57,9 @@ def create_profile(xml):
     if dicc.get('/VM/TEMPLATE/DISK/LXD_QUOTA_SIZE'):
         profile['LXD_QUOTA_SIZE'] = dicc.get('/VM/TEMPLATE/DISK/LXD_QUOTA_SIZE')[0]
 
+    if dicc.get('/VM/TEMPLATE/DISK/PERSISTENT'):
+        profile['config'].append({'user.one_image_persistent': dicc.get('/VM/TEMPLATE/DISK/PERSISTENT')[0]})
+
     # NETWORK_CONFIG
     NIC = xql('NIC/NIC_ID', dicc)
     if NIC[0]:
