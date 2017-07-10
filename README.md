@@ -91,7 +91,7 @@ If you want to contribute feel free to request new features, the TODO list is st
 - Code migration to Python 3
 
 ## Known Bugs
-- [ ]  VNC - The first container in a virtualization node is the only one who gets graphic session. Refer to [issue #6](https://github.com/OpenNebula/addon-lxdone/issues/6)
+- [x]  VNC - The first container in a virtualization node is the only one who gets graphic session. Refer to [issue #6](https://github.com/OpenNebula/addon-lxdone/issues/6)
   
 # Requirements
 These are the required packages besides the ones for OpenNebula
