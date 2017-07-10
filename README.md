@@ -35,6 +35,9 @@ If you want to contribute feel free to request new features, the TODO list is st
 - **José Manuel de la Fé Herrero** [jmdelafe92@gmail.com](mailto:jmdelafe92@gmail.com?subject=LXDoNe)
 - **Daniel Clavijo Coca** [dann1telecom@gmail.com](mailto:dann1telecom@gmail.com?subject=LXDoNe)
 
+<h2>Contributors</h2>
+- **Akihiko Ota** (@sw37th)
+
 # Compatibility
 **LXDoNe** is not an update of **LXCoNe** so your old containers won't be manageable out of the box, but you can  adapt them to the new image format, read [Virtual Appliance](Image.md).
 
