@@ -68,17 +68,13 @@ def vnc_start(VM_ID, dicc):
             log_function("ERROR", e)
 
 
-def container_wipe(num_hdds, container, DISK_TARGET, CONTEXT_DISK_ID, DISK_TYPE):
+def container_wipe(num_hdds, container, DISK_TARGET, DISK_TYPE):
     'Deletes $container after unmounting and unmapping its related storage'
     if num_hdds > 1:
         for x in xrange(1, num_hdds):
             source = unmap(container.devices, DISK_TARGET[x])
             source = storage_lazer(source)
             storage_sysunmap(DISK_TYPE[x], source)
-    if CONTEXT_DISK_ID:
-        source = unmap(container.devices, 'CONTEXT')
-        source = source['path']
-        storage_sysunmap('FILE', source)
     storage_rootfs_umount(DISK_TYPE[0], container.config)
     container.delete()
 
@@ -192,10 +188,17 @@ def storage_rootfs_umount(DISK_TYPE, container_config):
     storage_sysunmap(DISK_TYPE, source)
 
 
-def storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID):
-    context_disk = storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
-    context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
-    container.devices.update(context_disk)
+def storage_context(container, contextiso):
+    for i in contextiso.record().children:
+        if i.is_directory is True:
+            # FIXME: implement directory copy
+            continue
+        container.files.put('/mnt/' + i.name, i.content)
+
+# def storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID):
+    # context_disk = storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
+    # context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
+    # container.devices.update(context_disk)
 
 # LXD CONFIG MAPPING
 

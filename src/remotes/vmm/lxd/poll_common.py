@@ -18,7 +18,7 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-# import lxd_common as lc
+import lxd_common as lc
 # import socket
 
 

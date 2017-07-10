@@ -2,7 +2,6 @@
 The purpose of this guide is to create a fully functional working environment. You will be able to manage **LXD** containers in at least one virtualization node through the web interface in the frontend. For the list of supported features see [Readme](https://github.com/OpenNebula/addon-lxdone/blob/master/README.md#features).
 
 ## Observations & Recommendations
--   Commands prefixed by "**#**" are meant to be run as root. Commands prefixed by "**$**" must be run as oneadmin
 -   Read ***Notes*** sections attached to some steps, before using the shell
 -   Access to [LXD image repository](https://images.linuxcontainers.org/images) is required for some container creation methods when downloading a Linux filesystem tarball.
 
@@ -62,16 +61,16 @@ Install and configure an NFS server on the computer where the frontend is instal
 Copy scripts to oneadmin drivers directory: 
 
 ```
-$ cp -rpa addon-lxdone-master/src/remotes/ /var/lib/one/
+cp -rpa addon-lxdone-master/src/remotes/ /var/lib/one/
 ```
 
 Set the appropriate permissions
 
 ```
-# cd /var/lib/one/remotes/
-# chown -R oneadmin:oneadmin vmm/lxd im/lxd*
-# chmod 755 -R vmm/lxd im/lxd*
-# chmod 644 im/lxd.d/collectd-client.rb
+sudo cd /var/lib/one/remotes/
+sudo chown -R oneadmin:oneadmin vmm/lxd im/lxd*
+sudo chmod 755 -R vmm/lxd im/lxd*
+sudo chmod 644 im/lxd.d/collectd-client.rb
 ```
 
 <a name="1411-optional-add-support-for-8021q-driver-vlans"></a>
@@ -79,9 +78,9 @@ Set the appropriate permissions
 Replace /var/lib/one/remotes/vnm.rb file.
 
 ```
-$ cp -rpa addon-lxdone-master/src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
-# chown oneadmin:oneadmin /var/lib/one/remotes/vnm/nic.rb
-# chmod 755 /var/lib/one/remotes/vnm/nic.rb
+cp -rpa addon-lxdone-master/src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
+sudo chown oneadmin:oneadmin /var/lib/one/remotes/vnm/nic.rb
+sudo chmod 755 /var/lib/one/remotes/vnm/nic.rb
 ```
 
 #### Note:
@@ -131,31 +130,36 @@ Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_i
 ## 2.1 Install required packages
 
 ```
-# apt install lxd lxd-tools criu bridge-utils python-pylxd nfs-common python-ws4py
+sudo apt install lxd lxd-tools criu bridge-utils python-pylxd python-ws4py python-pip
 ```
 
 #### Notes:
+<!-- 
 > **nfs-common** can be ignored if you are setting up the ***frontend*** and the ***virtualization node*** in the same computer.
-
+ -->
 > Be sure to have **pylxd 2.0.5**, or the driver **won't work properly**. Check the last output of the command below. You can find it on xenial-updates official repositories.
 
 ```
-# apt show python-pylxd | grep 2.0.5 | grep 2.0.5
+sudo apt show python-pylxd | grep 2.0.5 | grep 2.0.5
+```
+
+Install isoparser by pip
+```
+sudo pip install isoparser
 ```
 
 ## 2.2 VNC server (optional)
-**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This package enables the **VNC** option in the VM template definition. It's already compiled and its dependencies(most of them not available in **Ubuntu 16.04** repository) are provided.
+**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This package enables the **VNC** option in the VM template definition. It's already compiled for Ubuntu 16.04. Install the required dependencies from repositories.
 
 ```
-# apt install libjpeg8 libjpeg62
-# dpkg -i addon-lxdone-master/vnc/*
+sudo dpkg -i addon-lxdone-master/svncterm_1.2-1ubuntu_amd64.deb
 ```
 
 ## 2.3 LXD Bridge (optional)
 **LXD** comes by default with an optional bridge called **lxdbr0**, it offers ease of use for containers networking and provides DHCP suport. We can use this bridge alternative configuration to standard OpenNebula networking:
 
 ```
-# echo -e " USE_LXD_BRIDGE="true" \n
+sudo echo -e " USE_LXD_BRIDGE="true" \n
 LXD_BRIDGE="lxdbr0" \n
 UPDATE_PROFILE="true" \n
 LXD_CONFILE="" \n
@@ -179,8 +183,8 @@ LXD_IPV6_PROXY="false" " > /etc/default/lxd-bridge
 Allow oneadmin to execute commands as root and add it to lxd group
 
 ```
-# echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers
-# adduser oneadmin lxd
+sudo echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers
+sudo adduser oneadmin lxd
 ```
 
 ## 2.5 Loop devices
@@ -188,9 +192,9 @@ Allow oneadmin to execute commands as root and add it to lxd group
 Every file system image used by **LXDoNe** will require one ***loop device***. The default limit for ***loop devices*** is 8, so it needs to be increased.
 
 ```
-# echo "options loop max_loop=128" >> /etc/modprobe.d/local-loop.conf
-# echo "loop" >> /etc/modules
-# depmod
+sudo echo "options loop max_loop=128" >> /etc/modprobe.d/local-loop.conf
+sudo echo "loop" >> /etc/modules
+sudo depmod
 ```
 
 ## 2.6 LXD
@@ -200,7 +204,7 @@ Every file system image used by **LXDoNe** will require one ***loop device***. T
 This is the daemon configuration we'll use
 
 ```
-# lxd init --auto \
+sudo lxd init --auto \
 --storage-backend dir \
 --network-address 0.0.0.0 \
 --network-port 8443 \
@@ -215,32 +219,32 @@ Containers inherit properties from a profile.
 The default profile contains a network device, we'll remove this one as it's not managed by OpenNebula.
 
 ```
-# lxc profile device remove default eth0
+sudo lxc profile device remove default eth0
 ```
 
 #### 2.6.2.2 Security
 We will use privileged containers
 
 ```
-# lxc profile set default security.privileged true
+sudo lxc profile set default security.privileged true
 ```
 
-#### 2.6.2.3 Context (Optional)
+<!-- #### 2.6.2.3 Context (Optional)
 OpenNebula Contextualization works with an iso in the VM definition template, by default containers aren't allowed to mount iso9660 files
 
 ```
-# lxc profile set default raw.apparmor 'mount fstype=iso9660,'
+sudo lxc profile set default raw.apparmor 'mount fstype=iso9660,'
 ```
 
 ## 2.7 Log
 This step can be ignored if you are setting up the ***frontend*** and the ***virtualization node*** in the same computer. Mount the exported logs in the frontend in the node.
 
 ```
-# mkdir -p /var/log/one
-# echo -e "frontend_ip:/var/log/one/ /var/log/one/ nfs soft,intr,rsize=32768,wsize=32768,auto" >> /etc/fstab
+sudo mkdir -p /var/log/one
+sudo echo -e "frontend_ip:/var/log/one/ /var/log/one/ nfs soft,intr,rsize=32768,wsize=32768,auto" >> /etc/fstab
 # mount /var/log/one/
 ```
-
+ -->
 # 3 - Virtual Appliance
 
 #### Note:
