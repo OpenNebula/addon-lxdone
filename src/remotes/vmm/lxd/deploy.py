@@ -47,6 +47,18 @@ def create_profile(xml):
     VM_ID = profile['VM_ID'] = dicc["/VM/ID"][0]
     profile['CONTEXT_DISK_ID'] = xqi('CONTEXT/DISK_ID', dicc)
 
+    # LXD security.privileged
+    if dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_PRIVILEGED'):
+        profile['config'].append(
+            {'security.privileged':
+             dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_PRIVILEGED')[0]})
+
+    # LXD security.nesting
+    if dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_NESTING'):
+        profile['config'].append(
+            {'security.nesting':
+             dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_NESTING')[0]})
+
     # NETWORK_CONFIG
     NIC = xql('NIC/NIC_ID', dicc)
     if NIC[0]:

@@ -222,13 +222,13 @@ The default profile contains a network device, we'll remove this one as it's not
 sudo lxc profile device remove default eth0
 ```
 
-#### 2.6.2.2 Security
-We will use privileged containers
-
+#### 2.6.2.2 Security & Nesting
+We will use unprivileged containers which can't launch containers inside them, as LXD does by default. If you want to deploy a privileged container or launch containers inside them, you just need to add a configuration key in the VM template. 
+<!-- 
 ```
 sudo lxc profile set default security.privileged true
 ```
-
+ -->
 <!-- #### 2.6.2.3 Context (Optional)
 OpenNebula Contextualization works with an iso in the VM definition template, by default containers aren't allowed to mount iso9660 files
 
@@ -261,9 +261,9 @@ Upload the Virtual Appliance to OpenNebula.
 
 <a name="required-data"></a>
 ### Required data:
-* Name.
-* Type. Select Operating System image.
-* Image Location.
+* Name
+* Type: Select **Operating System image**
+* Image location
 
 ![](picts/Images.png)
 
@@ -271,13 +271,13 @@ Upload the Virtual Appliance to OpenNebula.
 
 <a name="required-data-1"></a>
 ### Required data:
-* Type. Select Custom.
+* Type: Select **Custom**
 * Name
-* Under Drivers
-* Virtualization. Select Custom.
-* Information. Select Custom.
-* Custom VMM_MAD. Enter lxd.
-* Custom IM_MAD. Enter lxd.
+* Under Drivers:
+    * Virtualization: Select **Custom**
+    * Information: Select **Custom**
+    * Custom VMM_MAD: Enter **lxd**
+    * Custom IM_MAD: Enter **lxd**
 
 ![](picts/Host.png)
 
@@ -286,13 +286,13 @@ Upload the Virtual Appliance to OpenNebula.
 <a name="required-data-2"></a>
 ### Required data:
 * General:
-* Name.
+    * Name
 * Conf:
-* Bridge. **br0** or **lxdbr0** in this case.
+    * Bridge. **br0** or **lxdbr0** in this case.
 * Addresses:
-* Select **IPv4** if using **br0**, **Ethernet** if using **lxdbr0** or an external **DHCP** service
-* First **IP/MAC address**.
-* Size.
+    * Select **IPv4** if using **br0**, **Ethernet** if using **lxdbr0** or an external **DHCP** service
+    * First **IP/MAC address**
+    * Size
 
 ![](picts/nic.png)
 
@@ -301,22 +301,29 @@ Upload the Virtual Appliance to OpenNebula.
 <a name="required-data-3"></a>
 ### Required data:
 * General:
-* Name
-* Memory (ex. 32MB)
-* CPU (ex. 0.1)
-* VCPU (optional ex. 1)
+    * Name
+    * Memory (ex. 32MB)
+    * CPU (ex. 0.1)
+    * VCPU (optional ex. 1)
 * Storage:
-* Select on Disk 0 the Virtual Appliance (You mustn't set as Disk 0 a non OS image)
-* Network (optional):
-* Select one or many network interfaces. They will appear inside the container configured.
-* Input/Output (optional work in progress)
-* Select **VNC** under graphics.
-
-![](picts/template.png)
+    * Select on Disk 0 the Virtual Appliance (You must set as Disk 0 an OS image)
 
 #### Note
 > VCPU stands for the amount of cores the container can use, if the container if you leave it blank, the container will use all the cores up to a fraction defined by CPU.
 > ex. for a host with 8 CPUs, if the VM template states 2 VCPU, then the container has 2/8 CPUs allocated.
+
+### Optional data:
+* Network:
+    * Select one or many network interfaces. They will appear inside the container configured.
+* Input/Output:
+    * Select **VNC** under graphics.
+    * Server port
+* Other:
+    * LXD_SECURITY_NESTING = '**true**' for creating containers inside de VM.
+    * LXD_SECURITY_PRIVILEGED = '**true**' for make the container privileged.
+
+
+![](picts/template.png)
 
 ## 4.6 Deploy
 Click **Instances** --> **VMs** --> **ADD**.
