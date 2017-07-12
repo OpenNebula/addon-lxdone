@@ -34,7 +34,7 @@ The purpose of this guide is to create a fully functional working environment. Y
 <a name="11-installation"></a>
 ## 1.1 Installation
 
-Follow [OpenNebula Deployment Guide](https://docs.opennebula.org/5.2/deployment/opennebula_installation/frontend_installation.html) to deploy a full functional OpenNebula frontend.
+Follow [OpenNebula Deployment Guide](https://docs.opennebula.org/5.2/deployment/opennebula_installation/frontend_installation.html) to deploy a fully functional OpenNebula frontend.
 
 <a name="12-lxdone-integration"></a>
 ## 1.2 LXDoNe integration
@@ -219,7 +219,7 @@ sudo lxc profile device remove default eth0
 
 #### Security & Nesting:
 
-We moved from privileged containers to unprivileged containers by default and supported nesting since LXDoNe 1707. More of this [here](http://192.168.2.244:8777/lxc/security/#privileged-containers) and [here](https://insights.ubuntu.com/2016/04/15/lxd-2-0-lxd-in-lxd-812/). It is no longer required the use of a default profile with ***security.privileged: true***.
+We moved from privileged containers to unprivileged containers by default and supported nesting since LXDoNe 1707. More of this [here](http://linuxcontainers.org/lxc/security/#privileged-containers) and [here](https://insights.ubuntu.com/2016/04/15/lxd-2-0-lxd-in-lxd-812/). It is no longer required the use of a default profile with ***security.privileged: true***.
 
 <a name="3---virtual-appliance"></a>
 # 3 - Virtual Appliance
