@@ -70,7 +70,7 @@ class CollectdClient
         code   = $?.exitstatus == 0
 
         zdata  = Zlib::Deflate.deflate(data, Zlib::BEST_COMPRESSION)
-        data64 = Base64::encode64(zdata).strip.delete("\n")
+        data64 = Base64.encode64(zdata).strip.delete("\n")
 
         [data64, code]
     end
