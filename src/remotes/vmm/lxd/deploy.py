@@ -142,7 +142,7 @@ profile = create_profile(xml)
 VM_ID = profile['VM_ID']
 VM_NAME = 'one-' + VM_ID
 
-lc.log_function('INFO', 70 * "-")
+lc.log_function('INFO', 40 * "#")
 
 # INITIALIZE_CONTAINER
 init = {'name': VM_NAME, 'source': {'type': 'none'}}

@@ -18,25 +18,6 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-import lxd_common as lc
-# import socket
-
-
-# def vnc_babysiter(data):
-#    if data['STATE'] == 'a':
-#        VM_ID = data['NAME']
-#        client = lc.Client()
-#        container = client.containers.get(VM_ID)
-#        dicc = lc.xml_start(container.config['user.xml'])
-#        VNC_PORT = int(lc.xml_query_item('GRAPHICS/PORT', dicc))
-#
-#        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#        result = sock.connect_ex(('127.0.0.1', VNC_PORT))
-#        if result != 0:
-#            lc.vnc_start(VM_ID, dicc)
-#        else:
-#            pass
-
 
 def print_data(data):
     monitor = 'STATE=%s' % (data['STATE'])
@@ -55,7 +36,7 @@ def print_all_vm_template(hypervisor):
 
         print 'VM_POLL=YES'
 
-        for vm, info in vms.iteritems():
+        for info in vms.values():
             id_number = -1
 
             if 'one-' in info['NAME']:
@@ -80,8 +61,6 @@ def print_all_vm_template(hypervisor):
     except:
         return None
 
-    # print string
-
 
 def print_one_vm_info(hypervisor, vm_id):
     instance = hypervisor()
@@ -93,10 +72,10 @@ def print_one_vm_info(hypervisor, vm_id):
         return None
 
 
-def print_all_vm_info(hypervisor):
-    instance = hypervisor()
-    try:
-        vms = instance.get_all_vm_info()
-    except:
-        return None
-    pass
+# def print_all_vm_info(hypervisor):
+#     instance = hypervisor()
+#     try:
+#         vms = instance.get_all_vm_info()
+#     except:
+#         return None
+#     pass

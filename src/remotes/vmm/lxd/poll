@@ -264,4 +264,5 @@ try:
         pc.print_one_vm_info(hypervisor, vm_id)
 
 except Exception:
-    pc.print_all_vm_info(hypervisor)
+    # pc.print_all_vm_info(hypervisor)
+    pass

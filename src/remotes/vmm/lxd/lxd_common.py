@@ -23,7 +23,6 @@ import os
 import subprocess as sp
 import sys
 import xml.etree.ElementTree as ET
-from datetime import datetime as dt
 from time import time
 from pylxd.client import Client
 import isoparser
@@ -34,15 +33,6 @@ import isoparser
 def log_function(severity, message):
     sep = ': '
     print(severity + sep + os.path.basename(sys.argv[0]) + sep + message, file=sys.stderr)
-
-
-# def log_info(info, VM_ID):
-#     'Writes $info at the end of file /var/log/one/$VM_ID.log this is the Virtual Machine log file \
-#     seen in Sunstone'
-#     log = open('/var/log/one/' + VM_ID + '.log', mode='a')
-#     moment = dt.today().strftime("%a %b %d %H:%M:%S %Y")
-#     log.write(moment + " " + str(info) + '\n')
-#     log.close()
 
 
 def clock(t0, VM_ID):
