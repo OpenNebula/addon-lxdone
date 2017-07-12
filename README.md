@@ -24,14 +24,17 @@
 [LXD](https://linuxcontainers.org/lxd/) is a daemon which provides a REST API to drive **LXC** containers. Containers are lightweight OS-level Virtualization instances, they behave like Virtual Machines but don't suffer from hardware emulation processing penalties by sharing the kernel with the host. They run bare-metal-like, simple containers can boot up in 2 seconds consuming less than 32MB of RAM and a minimal fraction of a CPU Core. Check out this [performance comparison against KVM](https://insights.ubuntu.com/2015/05/18/lxd-crushes-kvm-in-density-and-speed/) if you don't know much about LXD.
 
 # Development & Contribution
-If you want to contribute feel free to request new features, the TODO list is stated according to our priority order. Check the [Flowchart](picts/flow_chart) to get a bettter understanding of the driver internals, pictures starting with **one-** ex. [one-deploy.png](picts/flow_chart/one-deploy.png) ressemble the scripts overview. The action scripts are written in python, there is a script  [lxd_common.py](src/remotes/vmm/lxd/lxd_common.py) containing lots of functions used by the action scripts ex. [lxd_common.py](src/remotes/vmm/lxd/deploy.py) which is executed when starting a VM, tus reducing the code, if you want to add code and it could be used by several action scripts then add it here.
+When contributing make pull requests to the feature branch for the next release, don't commit to master branch 
+If you want to contribute feel free to request new features, check first TODO. Check the [Flowchart](picts/flow_chart) to get a bettter understanding of the driver internals, pictures starting with **one-** ex. [one-deploy.png](picts/flow_chart/one-deploy.png) ressemble the scripts overview. The action scripts are written in python, there is a script  [lxd_common.py](src/remotes/vmm/lxd/lxd_common.py) containing lots of functions used by the action scripts ex. [lxd_common.py](src/remotes/vmm/lxd/deploy.py) which is executed when starting a VM, tus reducing the code, if you want to add code and it could be used by several action scripts then add it here.
 
-<h2>Developers</h2>
+## Developers
+
+### Leaders
 - **Sergio Vega Gutiérrez** [![champion](https://img.shields.io/badge/one-champion-blue.svg?style=flat-square)](https://opennebula.org/community/community-champions/) [sergiojvg92 at gmail.com](mailto:sergiojvg92@gmail.com?subject=LXDoNe)
 - **José Manuel de la Fé Herrero** [jmdelafe92 at gmail.com](mailto:jmdelafe92@gmail.com?subject=LXDoNe)
 - **Daniel Clavijo Coca** [dann1telecom at gmail.com](mailto:dann1telecom@gmail.com?subject=LXDoNe)
 
-<h3>Contributors</h3>
+### Contributors
 - **Akihiko Ota**     [@sw37th]
 
 # Compatibility
@@ -76,14 +79,14 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 ## 1703
 - Virtual Appliance creation script
 
-<h2>1705</h2> 
+## 1705 
 - NIC Hotplug
 - Virtual Appliance uploaded to [google drive](https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U)
 - Enhanced buildimg.sh, thanks @sw37th
     + Bugfixes
     + Included auto-contextualization
 
-<h2>1707</h2>
+## 1707
 - [VNC fixed](https://github.com/OpenNebula/addon-lxdone/issues/6)
 - Context reworked
 - Logs reworked
