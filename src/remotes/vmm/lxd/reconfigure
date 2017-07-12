@@ -26,15 +26,10 @@ container = client.containers.get(DOMAIN)
 
 if len(lc.sys.argv) >= 3:
     DISK_SOURCE = lc.sys.argv[3]
-    CONTEXT_DISK_ID = DISK_SOURCE.split('.')[-1]
-    VM_ID = DISK_SOURCE.split('/')[-2]
-    DS_ID = DISK_SOURCE.split('/')[-3]
-    try:
-        lc.storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID)
-        container.save(wait=True)
-        command = ['sh', '/etc/init.d/vmcontext', 'start']
-        container.execute(command)
-    except Exception as e:
-        # lc.log_info(e, VM_ID)
-        lc.log_function("ERROR", e)
+    CONTEXT_REALPATH = DISK_SOURCE.replace("//", "/")
+    contextiso = lc.isoparser.parse(DISK_SOURCE)
+    lc.storage_context(container, contextiso)
+    command = ['sh', '/etc/init.d/vmcontext', 'start']
+    container.execute(command)
+
 exit()

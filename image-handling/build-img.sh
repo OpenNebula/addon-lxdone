@@ -16,7 +16,7 @@ fi
 
 for i in "size (default=600MB)" "release (default=xenial)" "repository (default=http://archive.ubuntu.com/ubuntu/)" "contexturl (default=https://github.com/OpenNebula/addon-context-linux/releases/download/v5.0.3/one-context_5.0.3.deb)"; do
     echo "Enter "$i
-    var=`echo $i | awk '{print $1}'`
+    var=$(echo $i | awk '{print $1}')
     read $var
 done
 
@@ -130,7 +130,7 @@ chown root:root ./lxdone/rootfs/root/.[a-zA-Z]*
 
 wget -P ./lxdone/rootfs/root $contexturl
 if [[ $? -eq 0 ]]; then
-    contextdeb=./lxdone/rootfs/root/`basename $contexturl`
+    contextdeb=./lxdone/rootfs/root/$(basename $contexturl)
     if [[ -f $contextdeb ]]; then
         dpkg -i --root=./lxdone/rootfs/ --instdir=./lxdone/rootfs/ --admindir=./lxdone/rootfs/var/lib/dpkg ./$contextdeb
         sed -i 's%\(^[ \t]*ip link show | \).*$%\1awk '\''/^[0-9]+: [A-Za-z0-9@]+:/ { device=$2; gsub(/:/, "",device); split(device,dev,"\\@")} /link\\/ether/ { print dev[1]  " " $2 }'\''%' ./lxdone/rootfs/etc/one-context.d/10-network

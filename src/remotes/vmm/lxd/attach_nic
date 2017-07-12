@@ -27,7 +27,7 @@ NIC_BRIDGE = lc.sys.argv[3]
 NIC_MODEL = lc.sys.argv[4]
 NET_DRV = lc.sys.argv[5]
 NIC_TARGET = lc.sys.argv[6]
-# UNKNOWN = lc.sys.argv[7] (always 0)
+# UNKNOWN = lc.sys.argv[7]
 HOST_IP = lc.sys.argv[8]
 
 container = client.containers.get(DOMAIN)

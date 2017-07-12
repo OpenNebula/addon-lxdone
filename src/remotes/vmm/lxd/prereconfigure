@@ -18,19 +18,4 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-import lxd_common as lc
-client = lc.Client()
-
-DOMAIN = lc.sys.argv[1]
-container = client.containers.get(DOMAIN)
-VM_ID = DOMAIN.split('-')[1]
-
-if 'CONTEXT' in container.devices:
-    source = lc.unmap(container.devices, 'CONTEXT')['path']
-    lc.storage_sysunmap('FILE', source)
-    container.save(wait=True)
-else:
-    # lc.log_info('no CONTEXT to unmount', VM_ID)
-    lc.log_function("ERROR", 'no CONTEXT to unmount')
-
 exit()

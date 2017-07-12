@@ -117,7 +117,7 @@ module VNMNetwork
         def get_tap(vm)
 
             def find_path(hash,text)
-                path = String.new if not path.is_a?(String)
+                path = String.new unless path.is_a?(String)
                 hash.each {|k, v|
                   if v == text
                     return k

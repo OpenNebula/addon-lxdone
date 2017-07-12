@@ -54,7 +54,7 @@ for ds in $dirs; do
     if [ $LVM_STATUS = 0 ]; then
         LVM_TOTAL=$(echo $LVM_SIZE | cut -d: -f1 | sed 's/\..*//')
         LVM_FREE=$(echo $LVM_SIZE | cut -d: -f2 | sed 's/\..*//')
-        LVM_USED=$(( $LVM_TOTAL - $LVM_FREE ))
+        LVM_USED=$(( LVM_TOTAL - LVM_FREE ))
 
         LVM_TOTAL=${LVM_TOTAL:-"0"}
         LVM_FREE=${LVM_FREE:-"0"}

@@ -16,4 +16,4 @@
 # limitations under the License.                                             #
 #--------------------------------------------------------------------------- #
 
-echo ARCH=`uname -m`
+echo ARCH=$(uname -m)

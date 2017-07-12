@@ -24,7 +24,7 @@ from lxd_common import xml_query_list as xql
 from lxd_common import xml_query_dict as xqd
 from lxd_common import xml_query_item as xqi
 from pylxd.exceptions import LXDAPIException
-import isoparser
+
 
 client = lc.Client()
 
@@ -110,14 +110,14 @@ def apply_profile(profile, container):
         DS_ID = profile['DS_ID']
         DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
         # push context files into the container
-        contextiso = isoparser.parse(DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
+        contextiso = lc.isoparser.parse(DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
         lc.storage_context(container, contextiso)
 
     for i in profile['config']:
         try:
             container.config.update(i)
             container.save(wait=True)
-            lc.log_function('INFO', 'container: ' + i.keys()[0] + ': ' + i[i.keys()[0]])
+            # lc.log_function('INFO', 'container: ' + i.keys()[0] + ': ' + i[i.keys()[0]])
         except LXDAPIException as lxdapie:
             lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             lc.sys.exit(1)
@@ -127,7 +127,7 @@ def apply_profile(profile, container):
         try:
             container.devices.update(i)
             container.save(wait=True)
-            lc.log_function('INFO', 'container: ' + i.keys()[0] + ': added')
+            # lc.log_function('INFO', 'container: ' + i.keys()[0] + ': added')
         except LXDAPIException as lxdapie:
             lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             lc.sys.exit(1)
@@ -158,7 +158,7 @@ apply_profile(profile, container)
 try:
     container.start(wait=True)
     container.config['user.xml']  # validate config
-    lc.log_function('INFO', 'container: ' + VM_NAME + ' running')
+    # lc.log_function('INFO', 'container: ' + VM_NAME + ' running')
 except LXDAPIException as lxdapie:
     if container.status == 'Running':
         container.stop(wait=True)
