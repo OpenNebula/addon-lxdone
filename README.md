@@ -108,4 +108,3 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 - HDD Hotplug
 - Use Ceph with LXD future native support
 - Code migration to Python 3
-
