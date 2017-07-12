@@ -16,6 +16,8 @@ The purpose of this guide is to create a fully functional working environment. Y
     - [2.5 Loop devices](#25-loop-devices)
     - [2.6 LXD](#26-lxd)
 - [3 - Virtual Appliance](#3---virtual-appliance)
+    - [3.1 Copying from an image server](#31-copying-from-an-image-server)
+    - [3.2 Export](#32-export)
 - [4 - Usage](#4---usage)
     - [4.1 Image Upload](#41-image-upload)
     - [4.2 Virtualization node](#42-virtualization-node)
@@ -221,10 +223,101 @@ We moved from privileged containers to unprivileged containers by default and su
 
 <a name="3---virtual-appliance"></a>
 # 3 - Virtual Appliance
+A virtual appliance is available at the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). Also, we've uploaded a base container to [google drive](http://https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U). The image creation tweaks are covered in depth [here](Image.md), but we wont update it anymore, for simplicity we show just a method in this guide. You can SKIP to [step 4](Setup.md#4---usage) if google drive or marketplace works for you, we STRONGLY recommend it. Also there is a script [build-img.sh](image-handling/build-img.sh) that automates the process.
 
-We've uploaded a base container to [google drive](http://https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U), if you succesfully download it skip the rest of this step, as it could be rather troublesome. Recently we added a virtual appliance to the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f).
+<a name="31-copying-from-an-image-server"></a>
+## 3.1 Copying from an image server
+Copy an image into local image store.
 
-After creating a virtual appliance you'll have a steady container base image for infrastructure. For the sake of setup simplicity, as this process is usually done once, it is covered in [Virtual Appliance](Image.md). If you have a container you want to use follow the link too.
+```
+lxc image copy ubuntu: local: --alias ubuntu1604
+```
+
+<a name="32-export"></a>
+## 3.2 Export
+Export the image from LXD local image store to current directory. Maybe will create two tarballs.
+
+```
+lxc image export ubuntu1604
+ls -l
+-rw------- 1 oneadmin oneadmin 126715472 May 30 15:29 8fa08537ae51c880966626561987153e72d073cbe19dfe5abc062713d929254d.tar.xz
+-rw------- 1 oneadmin oneadmin       840 May 30 15:29 meta-8fa08537ae51c880966626561987153e72d073cbe19dfe5abc062713d929254d.tar.xz
+```
+
+### 3.3 Extract tarballs
+```
+sudo mkdir -p image/rootfs
+cd image
+sudo tar xvpf ../8fa08537ae51c880966626561987153e72d073cbe19dfe5abc062713d929254d.tar.xz -C rootfs
+sudo tar xvpf ../meta-8fa08537ae51c880966626561987153e72d073cbe19dfe5abc062713d929254d.tar.xz
+ls -l image
+-rw-r--r--  1 root   root   1566 May 16 15:26 metadata.yaml
+drwxr-xr-x 22 root   root   4096 May 31 14:29 rootfs
+drwxr-xr-x  2 root   root   4096 May 16 15:26 templates
+```
+
+### 3.4 Install one-context package (optional)
+Download one-context_*.deb package if you use OpenNebula CONTEXT scripts instead of cloud-init
+
+```
+wget https://github.com/OpenNebula/addon-context-linux/releases/download/v5.0.3/one-context_5.0.3.deb
+sudo mv one-context_5.0.3.deb rootfs/
+```
+
+Chroot to rootfs/
+
+```
+sudo chroot rootfs/ /bin/bash
+```
+
+Install one-context and disable cloud-init
+
+```
+sudo dpkg -i ./one-context_5.0.3.deb
+sudo systemctl disable cloud-init.service cloud-init-local.service cloud-final.service cloud-config.service
+exit
+```
+
+Overwrite modified context
+
+```
+sudo cp -p /path/to/addon-lxdone/src/one-wait/10-network rootfs/etc/one-context.d
+sudo cp -p /path/to/addon-lxdone/src/one-wait/one-contextd rootfs/usr/sbin
+```
+Set the appropriate permissions
+
+```
+sudo chown root:root rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
+sudo chmod 755 rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
+```
+
+### 3.5 Block Device creation
+At the end of every one of the previous methods you'll have to save your work in a raw image that will be uploaded to a Datastore. So regardless the method you choose you'll have to do this before beginning the method, except for **LXCoNe**:
+
+```bash
+truncate -s <size_in_GB>G /var/tmp/lxdone.img
+loop=$(sudo losetup --find --show /var/tmp/lxdone.img)
+mkfs.ext4 $loop
+mount $loop /mnt/
+```
+
+Check you are in the image root folder cheking the output of ***ls -lh*** :
+
+```bash
+total 16K
+-r--------  1 root root 1.5K Jan 31 00:38 backup.yaml
+-rw-r--r--  1 root root 1.4K Jan 26 16:36 metadata.yaml
+drwxr-xr-x 21 root root 4.0K May 15 15:49 rootfs
+drwxr-xr-x  2 root root 4.0K Nov  2  2016 templates
+```
+
+And copy cotents to block device
+
+```
+sudo cp -rpa * /mnt/
+sudo umount $loop
+sudo losetup -d $loop
+```
 
 <a name="4---usage"></a>
 # 4 - Usage

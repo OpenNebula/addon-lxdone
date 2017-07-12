@@ -21,8 +21,6 @@
 
 **LXDoNe** is an addon for OpenNebula to manage **LXD** Containers. It fits in the Virtualization and Monitorization Driver section according to OpenNebula's Architecture. It uses the **pylxd** API for several container tasks. This addon is the continuation of [LXCoNe](https://github.com/OpenNebula/addon-lxcone/), an addon for **LXC**. Check the [blog entry](https://opennebula.org/lxdone-lightweight-virtualization-for-opennebula/) in OpenNebula official site.
 
-# Introduction
-
 [LXD](https://linuxcontainers.org/lxd/) is a daemon which provides a REST API to drive **LXC** containers. Containers are lightweight OS-level Virtualization instances, they behave like Virtual Machines but don't suffer from hardware emulation processing penalties by sharing the kernel with the host. They run bare-metal-like, simple containers can boot up in 2 seconds consuming less than 32MB of RAM and a minimal fraction of a CPU Core. Check out this [performance comparison against KVM](https://insights.ubuntu.com/2015/05/18/lxd-crushes-kvm-in-density-and-speed/) if you don't know much about LXD.
 
 # Development & Contribution
@@ -86,7 +84,7 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
     + Included auto-contextualization
 
 <h2>1707</h2>
-- VNC fixed
+- [VNC fixed](https://github.com/OpenNebula/addon-lxdone/issues/6)
 - Context reworked
 - Logs reworked
 - Allow use of LXD feaures in VM Template:
