@@ -1,67 +1,57 @@
 # Installation & Configuration Guide
 The purpose of this guide is to create a fully functional working environment. You will be able to manage **LXD** containers in at least one virtualization node through the web interface in the frontend. For the list of supported features see [Readme](https://github.com/OpenNebula/addon-lxdone/blob/master/README.md#features).
 
-## Observations & Recommendations
--   Read ***Notes*** sections attached to some steps, before using the shell
--   Access to [LXD image repository](https://images.linuxcontainers.org/images) is required for some container creation methods when downloading a Linux filesystem tarball.
-
 ## Table of Contents
 
 <!-- MarkdownTOC -->
 
-- 1 - Frontend setup
-    - 1.1 Installation
-    - 1.2 LXDoNe integration
-- 2 - Virtualization Node setup
-    - 2.1 Install required packages
-    - 2.2 VNC server \(optional\)
-    - 2.3 LXD Bridge \(optional\)
-    - 2.4 oneadmin
-    - 2.5 Loop devices
-    - 2.6 LXD
-    - 2.7 Log
-- 3 - Virtual Appliance
-- 4 - Usage
-    - 4.1 Image Upload
-    - 4.2 Virtualization node
-    - 4.4 Virtual network
-    - 4.5 Template creation
-    - 4.6 Deploy
+- [1 - Frontend setup](#1---frontend-setup)
+    - [1.1 Installation](#11-installation)
+    - [1.2 LXDoNe integration](#12-lxdone-integration)
+- [2 - Virtualization Node setup](#2---virtualization-node-setup)
+    - [2.1 Install required packages](#21-install-required-packages)
+    - [2.2 VNC server](#22-vnc-server)
+    - [2.3 LXD Bridge \(optional\)](#23-lxd-bridge-optional)
+    - [2.4 oneadmin](#24-oneadmin)
+    - [2.5 Loop devices](#25-loop-devices)
+    - [2.6 LXD](#26-lxd)
+- [3 - Virtual Appliance](#3---virtual-appliance)
+- [4 - Usage](#4---usage)
+    - [4.1 Image Upload](#41-image-upload)
+    - [4.2 Virtualization node](#42-virtualization-node)
+    - [4.4 Virtual network](#44-virtual-network)
+    - [4.5 Template creation](#45-template-creation)
+    - [4.6 Deploy](#46-deploy)
 
 <!-- /MarkdownTOC -->
 
 
+<a name="1---frontend-setup"></a>
 # 1 - Frontend setup
 
+<a name="11-installation"></a>
 ## 1.1 Installation
 
 Follow [OpenNebula Deployment Guide](https://docs.opennebula.org/5.2/deployment/opennebula_installation/frontend_installation.html) to deploy a full functional OpenNebula frontend.
 
-<!-- ## 1.2 Logs
-If you are deploying ***oneadmin ALL= NOPASSWD: ALLfrontend*** and ***virtualization node*** in the same computer you can skip this step. ***Virtualization Driver*** execution information is written directly in the corresponding virtual machine log in the ***frontend***, we'll need to export the log folder through **NFS** in order to mount it in the ***virtualization node***.
-
-Install and configure an NFS server on the computer where the frontend is installed and configure it to export /var/log/one.
-
-```
-# apt install nfs-kernel-server
-# echo -e "/var/log/one/ *(rw,sync,no_subtree_check,no_root_squash,crossmnt,nohide)" >> /etc/exports
-```
-
-<a name="13-enable-lxd"></a> 
-
-### 1.2 Enable LXD
--->
-
+<a name="12-lxdone-integration"></a>
 ## 1.2 LXDoNe integration
-**LXDoNe** is a set of scripts functioning as virtualization and monitorization drivers, so they have to be integrated to the ***frontend*** 
+**LXDoNe** is a set of scripts functioning as virtualization and monitorization drivers, so they have to be integrated to the ***frontend***. 
+
 
 <a name="141-drivers"></a>
 ### 1.2.1 Drivers
+Download the addon:
+
+```bash
+git clone https://github.com/OpenNebula/addon-lxdone.git
+cd addon-lxdone
+```
 
 Copy scripts to oneadmin drivers directory: 
 
 ```
-cp -rpa addon-lxdone-master/src/remotes/ /var/lib/one/
+cp -rpa src/remotes/ /var/lib/one/
 ```
 
 Set the appropriate permissions
@@ -73,19 +63,17 @@ sudo chmod 755 -R vmm/lxd im/lxd*
 sudo chmod 644 im/lxd.d/collectd-client.rb
 ```
 
-<a name="1411-optional-add-support-for-8021q-driver-vlans"></a>
-### 1.2.1.1 Optional. Add support for 802.1Q driver (VLANs).
+### Optional. Add support for 802.1Q driver (VLANs).
 Replace /var/lib/one/remotes/vnm.rb file.
 
 ```
-cp -rpa addon-lxdone-master/src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
+cp -rpa src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
 sudo chown oneadmin:oneadmin /var/lib/one/remotes/vnm/nic.rb
 sudo chmod 755 /var/lib/one/remotes/vnm/nic.rb
 ```
 
-#### Note:
-> A pull request will be made to add this functionality to OpenNebula's official Network Driver.
-
+#### Note
+> A pull request was made to add this functionality to OpenNebula's official Network Driver.
 
 <a name="142-enable-lxd"></a>
 ### 1.2.2 Enable LXD
@@ -123,38 +111,40 @@ IMPORTED_VMS_ACTIONS = "migrate, live-migrate, terminate, terminate-hard, undepl
 
 ```
 
+<a name="2---virtualization-node-setup"></a>
 # 2 - Virtualization Node setup
 
 Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#), up to [step 6](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#step-6-storage-configuration). If you want to use Ceph to store Virtual Images, follow [Ceph Datastore Guide](https://docs.opennebula.org/5.2/deployment/open_cloud_storage_setup/ceph_ds.html) and configure it just as you would for KVM.
 
+<a name="21-install-required-packages"></a>
 ## 2.1 Install required packages
 
 ```
 sudo apt install lxd lxd-tools criu bridge-utils python-pylxd python-ws4py python-pip
 ```
 
-#### Notes:
-<!-- 
-> **nfs-common** can be ignored if you are setting up the ***frontend*** and the ***virtualization node*** in the same computer.
- -->
-> Be sure to have **pylxd 2.0.5**, or the driver **won't work properly**. Check the last output of the command below. You can find it on xenial-updates official repositories.
+#### Note
+> Be sure to have **pylxd 2.0.5**, or the driver **won't work properly**. Check the last output of the command below. You can find it on xenial-updates repositories.
 
 ```
 sudo apt show python-pylxd | grep 2.0.5 | grep 2.0.5
 ```
 
 Install isoparser by pip
+
 ```
 sudo pip install isoparser
 ```
 
-## 2.2 VNC server (optional)
+<a name="22-vnc-server"></a>
+## 2.2 VNC server
 **LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This package enables the **VNC** option in the VM template definition. It's already compiled for Ubuntu 16.04. Install the required dependencies from repositories.
 
 ```
-sudo dpkg -i addon-lxdone-master/svncterm_1.2-1ubuntu_amd64.deb
+sudo dpkg -i svncterm_1.2-1ubuntu_amd64.deb
 ```
 
+<a name="23-lxd-bridge-optional"></a>
 ## 2.3 LXD Bridge (optional)
 **LXD** comes by default with an optional bridge called **lxdbr0**, it offers ease of use for containers networking and provides DHCP suport. We can use this bridge alternative configuration to standard OpenNebula networking:
 
@@ -178,6 +168,7 @@ LXD_IPV6_PROXY="false" " > /etc/default/lxd-bridge
 # service lxd-bridge restart
 ```
 
+<a name="24-oneadmin"></a>
 ## 2.4 oneadmin
 
 Allow oneadmin to execute commands as root and add it to lxd group
@@ -187,6 +178,7 @@ sudo echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers
 sudo adduser oneadmin lxd
 ```
 
+<a name="25-loop-devices"></a>
 ## 2.5 Loop devices
 
 Every file system image used by **LXDoNe** will require one ***loop device***. The default limit for ***loop devices*** is 8, so it needs to be increased.
@@ -197,6 +189,7 @@ sudo echo "loop" >> /etc/modules
 sudo depmod
 ```
 
+<a name="26-lxd"></a>
 ## 2.6 LXD
 
 <a name="261-daemon"></a>
@@ -215,46 +208,29 @@ sudo lxd init --auto \
 ### 2.6.2 LXD Profile
 Containers inherit properties from a profile.
 
-#### 2.6.2.1 Network
+#### Network
 The default profile contains a network device, we'll remove this one as it's not managed by OpenNebula.
 
 ```
 sudo lxc profile device remove default eth0
 ```
 
-#### 2.6.2.2 Security & Nesting
-We will use unprivileged containers which can't launch containers inside them, as LXD does by default. If you want to deploy a privileged container or launch containers inside them, you just need to add a configuration key in the VM template. 
-<!-- 
-```
-sudo lxc profile set default security.privileged true
-```
- -->
-<!-- #### 2.6.2.3 Context (Optional)
-OpenNebula Contextualization works with an iso in the VM definition template, by default containers aren't allowed to mount iso9660 files
+#### Security & Nesting:
 
-```
-sudo lxc profile set default raw.apparmor 'mount fstype=iso9660,'
-```
+We moved from privileged containers to unprivileged containers by default and supported nesting since LXDoNe 1707. More of this [here](http://192.168.2.244:8777/lxc/security/#privileged-containers) and [here](https://insights.ubuntu.com/2016/04/15/lxd-2-0-lxd-in-lxd-812/). It is no longer required the use of a default profile with ***security.privileged: true***.
 
-## 2.7 Log
-This step can be ignored if you are setting up the ***frontend*** and the ***virtualization node*** in the same computer. Mount the exported logs in the frontend in the node.
-
-```
-sudo mkdir -p /var/log/one
-sudo echo -e "frontend_ip:/var/log/one/ /var/log/one/ nfs soft,intr,rsize=32768,wsize=32768,auto" >> /etc/fstab
-# mount /var/log/one/
-```
- -->
+<a name="3---virtual-appliance"></a>
 # 3 - Virtual Appliance
 
-#### Note:
 We've uploaded a base container to [google drive](http://https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U), if you succesfully download it skip the rest of this step, as it could be rather troublesome. Recently we added a virtual appliance to the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f).
 
 After creating a virtual appliance you'll have a steady container base image for infrastructure. For the sake of setup simplicity, as this process is usually done once, it is covered in [Virtual Appliance](Image.md). If you have a container you want to use follow the link too.
 
+<a name="4---usage"></a>
 # 4 - Usage
 This is a set of basic usage, there are lots of extra features to use. For the list of supported features see [Readme](README.md).
 
+<a name="41-image-upload"></a>
 ## 4.1 Image Upload
 
 Upload the Virtual Appliance to OpenNebula.
@@ -267,6 +243,7 @@ Upload the Virtual Appliance to OpenNebula.
 
 ![](picts/Images.png)
 
+<a name="42-virtualization-node"></a>
 ## 4.2 Virtualization node
 
 <a name="required-data-1"></a>
@@ -281,6 +258,7 @@ Upload the Virtual Appliance to OpenNebula.
 
 ![](picts/Host.png)
 
+<a name="44-virtual-network"></a>
 ## 4.4 Virtual network
 
 <a name="required-data-2"></a>
@@ -296,6 +274,7 @@ Upload the Virtual Appliance to OpenNebula.
 
 ![](picts/nic.png)
 
+<a name="45-template-creation"></a>
 ## 4.5 Template creation
 
 <a name="required-data-3"></a>
@@ -319,16 +298,19 @@ Upload the Virtual Appliance to OpenNebula.
     * Select **VNC** under graphics.
     * Server port
 * Other:
-    * LXD_SECURITY_NESTING = '**true**' for creating containers inside de VM.
+    * LXD_SECURITY_NESTING = '**true**' for creating containers inside the container.
     * LXD_SECURITY_PRIVILEGED = '**true**' for make the container privileged.
 
 
 ![](picts/template.png)
 
+![Alt text](/home/dann1/Projects/addon-lxdone/picts/lxd-security.png "Optional title") 
+
+<a name="46-deploy"></a>
 ## 4.6 Deploy
 Click **Instances** --> **VMs** --> **ADD**.
 Select the corresponding template and click **Create**. Then wait for the scheduler to execute the drivers. In the Log section there will be additional information like the time spent on executing actions scripts and errors if they occur.
 ![](picts/log.png)
 
-Also if you want to use VNC, the graphic session will start in the root prompt inside the container. noVNC should look like this:
+Also if you use VNC, the graphic session will start in the login prompt inside the container. noVNC should look like this:
 ![](picts/vnc2.png)
