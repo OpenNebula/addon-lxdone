@@ -5,6 +5,10 @@ engines:
    python_version: 2
    exclude_paths:
      - config/engines.yml
+ rubocop:
+   enabled: true
+   exclude_paths:
+     - config/engines.yml
  duplication:
    enabled: true
    exclude_paths:
