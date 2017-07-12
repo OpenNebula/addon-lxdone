@@ -4,6 +4,7 @@
 
 <br />
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d691613459d443a6861438a8319daa1d)](https://www.codacy.com/app/LXDoNe/addon-lxdone?utm_source=github.com&utm_medium=referral&utm_content=OpenNebula/addon-lxdone&utm_campaign=badger)
 [![LXDoNe](https://img.shields.io/badge/release-1705-3c97f3.svg?style=flat-square)](https://github.com/OpenNebula/addon-lxdone/releases)
 [![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=I%20want%20freedom.%20I%20want%20efficiency.%20Faster%20private%20clouds%20for%20everyone.%20%23LXDoNe%20%2B%20%40opennebula%20%3D%20performance%20⚡️%20https%3A%2F%2Fgithub.com/OpenNebula/addon-lxdone%2F&source=webclient)
 
