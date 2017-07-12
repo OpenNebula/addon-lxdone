@@ -14,6 +14,8 @@
 [![pylxd](https://img.shields.io/badge/pylxd-2.0.5-brightgreen.svg?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
 [![VNC](https://img.shields.io/badge/svncterm-1.2-yellow.svg?style=flat-square)](https://github.com/dealfonso/svncterm)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d691613459d443a6861438a8319daa1d)](https://www.codacy.com/app/LXDoNe/addon-lxdone?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenNebula/addon-lxdone&amp;utm_campaign=Badge_Grade)
+
 <br />
 <br />
 
@@ -22,6 +24,8 @@
 **LXDoNe** is an addon for OpenNebula to manage **LXD** Containers. It fits in the Virtualization and Monitorization Driver section according to OpenNebula's Architecture. It uses the **pylxd** API for several container tasks. This addon is the continuation of [LXCoNe](https://github.com/OpenNebula/addon-lxcone/), an addon for **LXC**. Check the [blog entry](https://opennebula.org/lxdone-lightweight-virtualization-for-opennebula/) in OpenNebula official site.
 
 [LXD](https://linuxcontainers.org/lxd/) is a daemon which provides a REST API to drive **LXC** containers. Containers are lightweight OS-level Virtualization instances, they behave like Virtual Machines but don't suffer from hardware emulation processing penalties by sharing the kernel with the host. They run bare-metal-like, simple containers can boot up in 2 seconds consuming less than 32MB of RAM and a minimal fraction of a CPU Core. Check out this [performance comparison against KVM](https://insights.ubuntu.com/2015/05/18/lxd-crushes-kvm-in-density-and-speed/) if you don't know much about LXD.
+
+The master branch is subject to changes. We recomend to use one of the stables [releases](https://github.com/OpenNebula/addon-lxcone/releases) you can check at the top of this page.
 
 # Developers
 
