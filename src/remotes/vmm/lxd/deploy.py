@@ -113,6 +113,7 @@ def apply_profile(profile, container):
         contextiso = lc.isoparser.parse(DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
         lc.storage_context(container, contextiso)
 
+    # FIXME: duplicated block of code
     for i in profile['config']:
         try:
             container.config.update(i)
