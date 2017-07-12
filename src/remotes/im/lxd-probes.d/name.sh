@@ -16,6 +16,6 @@
 # limitations under the License.                                             #
 #--------------------------------------------------------------------------- #
 
-echo HOSTNAME=`uname -n`
+echo HOSTNAME=$(uname -n)
 
 

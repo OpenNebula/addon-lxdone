@@ -1,3 +1,5 @@
+#!/bin/bash
+
 extract() {
     local c e i
 
