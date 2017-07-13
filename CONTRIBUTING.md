@@ -1,6 +1,6 @@
 # Pull requests
 
-When contributing make pull requests to the feature branch for the next release, don't commit to master branch 
+When contributing make pull requests to the *feature branch* named after next release, don't commit to master branch. 
 If you want to contribute feel free to request new features, check first TODO.
 
 # Help
