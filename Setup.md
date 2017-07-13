@@ -112,6 +112,12 @@ IMPORTED_VMS_ACTIONS = "migrate, live-migrate, terminate, terminate-hard, undepl
 
 ```
 
+Restart OpenNebula
+
+```
+sudo systemctl restart opennebula
+```
+
 <a name="2---virtualization-node-setup"></a>
 # 2 - Virtualization Node setup
 
