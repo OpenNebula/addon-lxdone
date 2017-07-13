@@ -16,8 +16,7 @@ The purpose of this guide is to create a fully functional working environment. Y
     - [2.5 Loop devices](#25-loop-devices)
     - [2.6 LXD](#26-lxd)
 - [3 - Virtual Appliance](#3---virtual-appliance)
-    - [3.1 Copying from an image server](#31-copying-from-an-image-server)
-    - [3.2 Export](#32-export)
+    - [Image creation](#image-creation)
 - [4 - Usage](#4---usage)
     - [4.1 Image Upload](#41-image-upload)
     - [4.2 Virtualization node](#42-virtualization-node)
@@ -223,10 +222,18 @@ We moved from privileged containers to unprivileged containers by default and su
 
 <a name="3---virtual-appliance"></a>
 # 3 - Virtual Appliance
-A virtual appliance is available at the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). Also, we've uploaded a base container to [google drive](http://https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U). The image creation tweaks are covered in depth [here](Image.md), but we wont update it anymore, for simplicity we show just a method in this guide. You can SKIP to [step 4](Setup.md#4---usage) if google drive or marketplace works for you, we STRONGLY recommend it. Also there is a script [build-img.sh](image-handling/build-img.sh) that automates the process.
+A virtual appliance is available at the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). Also, we've uploaded a base container to online storage. This is a 130MB tarball, just extract it before uploading to OpenNebula. You'll have a 650MB image, used at 90% if you require more space, just copy the contents (keeping the same file permissions and ownership) to a bigger block device. Here are the links:
+- [google drive](https://drive.google.com/file/d/0B6vgzbpLofKjNkliM2tCVzl0eVE/view?usp=sharing). 
+- [mega](https://mega.nz/#!gsYkCaxZ!c8Kc6dddCBGgRuFGjm5NsDI4TpExBO2j6KH-N4dA5nU)
+- [dropbox](https://www.dropbox.com/s/gg9l6n9fncqh4u7/lxdone.tar.xz?dl=0)
+
+The image creation tweaks are covered in depth [here](Image.md) for creating an image, but we wont update it anymore, for simplicity we show just a method in this guide. There is a script [build-img.sh](image-handling/build-img.sh) that automates the process, it must be run as root. We STRONGLY recommend to SKIP to [step 4](Setup.md#4---usage) if google drive or marketplace works for you.
+
+<a name="image-creation"></a>
+## Image creation
 
 <a name="31-copying-from-an-image-server"></a>
-## 3.1 Copying from an image server
+### 3.1 Copying from an image server
 Copy an image into local image store.
 
 ```
@@ -234,7 +241,7 @@ lxc image copy ubuntu: local: --alias ubuntu1604
 ```
 
 <a name="32-export"></a>
-## 3.2 Export
+### 3.2 Export
 Export the image from LXD local image store to current directory. Maybe will create two tarballs.
 
 ```
