@@ -255,12 +255,8 @@ try:
     vm_id = sys.argv[1]
 
     if vm_id == '-t':
-        lc.log_function("INFO", 50 * "-")
-        lc.log_function("INFO", "parameter: -t")
         pc.print_all_vm_template(hypervisor)
     elif vm_id:
-        lc.log_function("INFO", 50 * "-")
-        lc.log_function("INFO", "parameter: vm_id")
         pc.print_one_vm_info(hypervisor, vm_id)
 
 except Exception:
