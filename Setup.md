@@ -127,7 +127,7 @@ Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_i
 ## 2.1 Install required packages
 
 ```
-sudo apt install lxd lxd-tools criu bridge-utils python-pylxd python-ws4py python-pip
+sudo apt install lxd lxd-tools python-pylxd criu bridge-utils python-ws4py python-pip
 ```
 
 #### Note
@@ -145,18 +145,19 @@ sudo pip install isoparser
 
 <a name="22-vnc-server"></a>
 ## 2.2 VNC server
-**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This package enables the **VNC** option in the VM template definition. It's already compiled for Ubuntu 16.04. Install the required dependencies from repositories.
+**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This enables the **VNC** option in the VM template definition. We compiled and provided it for Ubuntu 16.04 in our releases. Install the required dependencies from repositories.
 
 ```
+wget svncterm
 sudo dpkg -i svncterm_1.2-1ubuntu_amd64.deb
 ```
 
 <a name="23-lxd-bridge-optional"></a>
 ## 2.3 LXD Bridge (optional)
-**LXD** comes by default with an optional bridge called **lxdbr0**, it offers ease of use for containers networking and provides DHCP suport. We can use this bridge alternative configuration to standard OpenNebula networking:
+**LXD** comes by default with an optional bridge called **lxdbr0**, it offers ease of use for containers networking and provides DHCP suport. We can use this bridge alternative configuration to standard OpenNebula networking. Run as root:
 
 ```
-sudo echo -e " USE_LXD_BRIDGE="true" \n
+echo -e " USE_LXD_BRIDGE="true" \n
 LXD_BRIDGE="lxdbr0" \n
 UPDATE_PROFILE="true" \n
 LXD_CONFILE="" \n
@@ -172,17 +173,17 @@ LXD_IPV6_MASK="" \n
 LXD_IPV6_NETWORK="" \n
 LXD_IPV6_NAT="false" \n
 LXD_IPV6_PROXY="false" " > /etc/default/lxd-bridge
-# service lxd-bridge restart
+service lxd-bridge restart
 ```
 
 <a name="24-oneadmin"></a>
 ## 2.4 oneadmin
 
-Allow oneadmin to execute commands as root and add it to lxd group
+Allow oneadmin to execute commands as root and add it to lxd group. Run as root.
 
 ```
-sudo echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers
-sudo adduser oneadmin lxd
+echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers
+adduser oneadmin lxd
 ```
 
 <a name="25-loop-devices"></a>
@@ -228,12 +229,13 @@ We moved from privileged containers to unprivileged containers by default and su
 
 <a name="3---virtual-appliance"></a>
 # 3 - Virtual Appliance
-A virtual appliance is available at the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). Also, we've uploaded a base container to online storage. This is a 130MB tarball, just extract it before uploading to OpenNebula. You'll have a 650MB image, used at 90% if you require more space, just copy the contents (keeping the same file permissions and ownership) to a bigger block device. Here are the links:
+A virtual appliance is available at the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). Also, we've uploaded a base container to online storage. This is tarball, just extract it before uploading to OpenNebula. You'll have a 1GB image, if you require more space, just copy the contents (keeping the same file permissions and ownership) to a bigger block device. The team user has password *root* and  here are the links:
 - [google drive](https://drive.google.com/file/d/0B6vgzbpLofKjNkliM2tCVzl0eVE/view?usp=sharing). 
 - [mega](https://mega.nz/#!gsYkCaxZ!c8Kc6dddCBGgRuFGjm5NsDI4TpExBO2j6KH-N4dA5nU)
 - [dropbox](https://www.dropbox.com/s/gg9l6n9fncqh4u7/lxdone.tar.xz?dl=0)
 
-The image creation tweaks are covered in depth [here](Image.md) for creating an image, but we wont update it anymore, for simplicity we show just a method in this guide. There is a script [build-img.sh](image-handling/build-img.sh) that automates the process, it must be run as root. We STRONGLY recommend to SKIP to [step 4](Setup.md#4---usage) if google drive or marketplace works for you.
+You can generate your custom image following [this](Image.md)
+The image creation tweaks are covered in depth [here]() for creating an image, but we wont update it anymore, for simplicity we show just a method in this guide. There is a script [build-img.sh](image-handling/build-img.sh) that automates the process, it must be run as root and will create a privileged container. We STRONGLY recommend to SKIP to [step 4](Setup.md#4---usage) if google drive or marketplace works for you.
 
 <a name="image-creation"></a>
 ## Image creation
@@ -294,21 +296,21 @@ exit
 Overwrite modified context
 
 ```
-sudo cp -p /path/to/addon-lxdone/src/one-wait/10-network rootfs/etc/one-context.d
-sudo cp -p /path/to/addon-lxdone/src/one-wait/one-contextd rootfs/usr/sbin
+sudo cp /path/to/addon-lxdone/src/one-wait/10-network rootfs/etc/one-context.d
+sudo cp /path/to/addon-lxdone/src/one-wait/one-contextd rootfs/usr/sbin
 ```
 Set the appropriate permissions
 
 ```
 sudo chown root:root rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
-sudo chmod 755 rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
+sudo chmod 700 rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
 ```
 
 ### 3.5 Block Device creation
-At the end of every one of the previous methods you'll have to save your work in a raw image that will be uploaded to a Datastore. So regardless the method you choose you'll have to do this before beginning the method, except for **LXCoNe**:
+Push container into block device. You may change the 650M size:
 
 ```bash
-truncate -s <size_in_GB>G /var/tmp/lxdone.img
+truncate -s 650M /var/tmp/lxdone.img
 loop=$(sudo losetup --find --show /var/tmp/lxdone.img)
 mkfs.ext4 $loop
 mount $loop /mnt/
@@ -316,7 +318,7 @@ mount $loop /mnt/
 
 Check you are in the image root folder cheking the output of ***ls -lh*** :
 
-```bash
+```
 total 16K
 -r--------  1 root root 1.5K Jan 31 00:38 backup.yaml
 -rw-r--r--  1 root root 1.4K Jan 26 16:36 metadata.yaml
@@ -326,7 +328,7 @@ drwxr-xr-x  2 root root 4.0K Nov  2  2016 templates
 
 And copy cotents to block device
 
-```
+```bash
 sudo cp -rpa * /mnt/
 sudo umount $loop
 sudo losetup -d $loop

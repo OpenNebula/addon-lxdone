@@ -7,7 +7,7 @@ if [[ $? -ne 0 ]]; then
     read
     apt install -y debootstrap
     if [[ $? -ne 0 ]]; then
-        echo "failed to install debootstrap check your mirror configuration"
+        echo "failed to install debootstrap"
         exit -1
     fi
     echo
@@ -52,88 +52,27 @@ if [[ $? -ne 0 ]]; then
     exit -1
 fi
 
-moment=$(date +%s)
 arch=$(uname --machine)
 
-cat << EOT > ./lxdone/metadata.yaml
+cp -pa ../metadata/metadata.yaml ./lxdone  
+cp -rpa  ../metadata/templates ./lxdone
 
-{
-    "architecture": "$arch",
-    "creation_date": $moment,
-    "templates": {
-        "/etc/hostname": {
-            "template": "hostname.tpl",
-            "when": [
-                "start"
-            ]
-        },
-        "/etc/hosts": {
-            "template": "hosts.tpl",
-            "when": [
-                "start"
-            ]
-        },
-        "/etc/init/console.override": {
-            "template": "upstart-override.tpl",
-            "when": [
-                "create"
-            ]
-        },
-        "/etc/init/tty1.override": {
-            "template": "upstart-override.tpl",
-            "when": [
-                "create"
-            ]
-        },
-        "/etc/init/tty2.override": {
-            "template": "upstart-override.tpl",
-            "when": [
-                "create"
-            ]
-        },
-        "/etc/init/tty3.override": {
-            "template": "upstart-override.tpl",
-            "when": [
-                "create"
-            ]
-        },
-        "/etc/init/tty4.override": {
-            "template": "upstart-override.tpl",
-            "when": [
-                "create"
-            ]
-        }
-    }
-}
-
-EOT
-
-mkdir -p ./lxdone/templates
-cat << EOT > ./lxdone/templates/hosts.tpl
-127.0.0.1   localhost
-127.0.1.1   {{ config_get("user.hostname", "lxdone")}}
-
-# The following lines are desirable for IPv6 capable hosts
-::1     ip6-localhost ip6-loopback
-fe00::0 ip6-localnet
-ff00::0 ip6-mcastprefix
-ff02::1 ip6-allnodes
-ff02::2 ip6-allrouters
-
-EOT
-
-echo "{{ config_get("user.hostname", "lxdone")}}" > ./lxdone/templates/hostname.tpl
-echo "manual" > ./lxdone/templates/upstart-override.tpl
-
-cp -p $(dirname $0)/bash-enhancements/.[a-zA-Z]* ./lxdone/rootfs/root
+cp -p $(dirname $0)/shell-tweak/.[a-zA-Z]* ./lxdone/rootfs/root
 chown root:root ./lxdone/rootfs/root/.[a-zA-Z]*
 
 wget -P ./lxdone/rootfs/root $contexturl
+
 if [[ $? -eq 0 ]]; then
     contextdeb=./lxdone/rootfs/root/$(basename $contexturl)
     if [[ -f $contextdeb ]]; then
+
         dpkg -i --root=./lxdone/rootfs/ --instdir=./lxdone/rootfs/ --admindir=./lxdone/rootfs/var/lib/dpkg ./$contextdeb
-        sed -i 's%\(^[ \t]*ip link show | \).*$%\1awk '\''/^[0-9]+: [A-Za-z0-9@]+:/ { device=$2; gsub(/:/, "",device); split(device,dev,"\\@")} /link\\/ether/ { print dev[1]  " " $2 }'\''%' ./lxdone/rootfs/etc/one-context.d/10-network
+
+        cp -pa ../src/context/10-network ./lxdone/rootfs/etc/one-context.d 
+        cp -pa ../src/context/one-contextd ./lxdone/rootfs/usr/sbin 
+        
+        chown root:root rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
+        chmod 755 rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
     fi
 fi
 

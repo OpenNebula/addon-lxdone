@@ -51,7 +51,7 @@ The master branch is subject to changes. We recomend to use one of the stables [
 Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 
 # Features
-## 1702
+## [5.2-1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-1)
 - Life cycle control:
     - Start and Poweroff
     - Reboot and Reset
@@ -76,17 +76,17 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 - Contextualization compatibility
 - 802.1Q network driver compatibility
 
-## 1703
+## [5.2-2](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-2)
 - Virtual Appliance creation script
 
-## 1705 
+## [5.2-3.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-3.1)
 - NIC Hotplug
 - Virtual Appliance uploaded to [google drive](https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U)
 - Enhanced buildimg.sh, thanks @sw37th
     + Bugfixes
     + Included auto-contextualization
 
-## 1707
+## [5.2-4](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4)
 - [VNC fixed](https://github.com/OpenNebula/addon-lxdone/issues/6)
 - Context reworked
 - Logs reworked
@@ -94,6 +94,10 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
     - privileged/unprivileged containers
     - nesting
 - vmm scripts execution times reduced 40-60% 
+
+## [5.2-4.1]()
+- New image available and in markeplace image updated
+- build-img.sh updated
 
 ## TODO
 - Full live VM configurations 
