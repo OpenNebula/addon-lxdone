@@ -102,15 +102,16 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 - Poll minor bug fixed
 
 ## TODO
-- Full live VM configurations 
 - Use password in VNC
-- Use updated svncterm 1.5-2
-- Create ubuntu package for lxdone releases
-- Create ubuntu package for custom context
-- Snapshots
 - Bandwidth limitation
-- LVM storage backend
-- Migration
-- HDD Hotplug
-- Use Ceph with LXD future native support
+- Snapshots
 - Code migration to Python 3
+- IO throttling
+- Create ubuntu package for custom context
+- Create ubuntu package for lxdone releases
+- Use updated svncterm 1.5-2
+- Full live VM configurations 
+- Migration
+- LVM storage backend
+- Use Ceph with LXD native support
+- HDD Hotplug
