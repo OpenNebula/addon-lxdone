@@ -95,9 +95,11 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
     - nesting
 - vmm scripts execution times reduced 40-60% 
 
-## [5.2-4.1]()
-- New image available and in markeplace image updated
-- build-img.sh updated
+## [5.2-4.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1)
+- Base image updated with new context and dotfiles
+- build-img.sh reworked
+- Virtual Appliance generation guide reworked 
+- Poll minor bug fixed
 
 ## TODO
 - Full live VM configurations 
