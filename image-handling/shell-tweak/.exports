@@ -1,5 +1,0 @@
-#!/bin/bash
-
-export HISTCONTROL=ignoredups
-export VISUAL=nano
-export EDITOR=nano
