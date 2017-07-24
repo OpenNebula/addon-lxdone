@@ -1,4 +1,4 @@
-#Virtual Appliance Creation
+# Virtual Appliance Creation
 LXD native images are basically compressed files. OpenNebula uses block based images in its default operation mode. The default LXD images will NOT work with **LXDoNe**. This guide is meant for converting a LXD image into a OpenNebula-ready LXD image.
 
 ## Create a default container
