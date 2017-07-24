@@ -38,14 +38,14 @@ The master branch is subject to changes. We recomend to use one of the stables [
 - **Akihiko Ota**     [@sw37th]
 
 # Compatibility
-**LXDoNe** is not an update of **LXCoNe** so your old containers won't be manageable out of the box, but you can  adapt them to the new image format, read [Virtual Appliance](Image.md).
+**LXDoNe** is not an update of **LXCoNe** so your old containers won't be manageable out of the box. Default compressed LXD images won't work either. For more information read [Virtual Appliance](Image.md).
 
 ## Tested OpenNebula versions
 [![OpenNebula](https://img.shields.io/badge/one-5.2.1-blue.svg?style=flat-square)](https://opennebula.org)
 [![OpenNebula](https://img.shields.io/badge/one-5.2.0-blue.svg?style=flat-square)](https://opennebula.org)
 
 ## Tested Linux Distributions
-[![ubuntu](https://img.shields.io/badge/ubuntu-1604-orange.svg?style=flat-square)](https://ubuntu.com)
+[![ubuntu](https://img.shields.io/badge/ubuntu-1604-orange.svg)](https://ubuntu.com)
 
 # Setup
 Check the [Setup Guide](Setup.md)  to deploy a working scenario.
@@ -81,7 +81,7 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 
 ## [5.2-3.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-3.1)
 - NIC Hotplug
-- Virtual Appliance uploaded to [google drive](https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U)
+- Virtual Appliance uploaded
 - Enhanced buildimg.sh, thanks @sw37th
     + Bugfixes
     + Included auto-contextualization
@@ -97,7 +97,6 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 
 ## [5.2-4.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1)
 - Base image updated with new context and dotfiles
-- build-img.sh reworked
 - Virtual Appliance generation guide reworked 
 - Poll minor bug fixed
 

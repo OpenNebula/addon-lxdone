@@ -39,16 +39,16 @@ Follow [frontend installation](https://docs.opennebula.org/5.2/deployment/openne
 
 <a name="141-drivers"></a>
 ### 1.2.1 Drivers
-Download the latest addon:
+[Download the latest release](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1) and untar it:
 
 ```bash
-git clone https://github.com/OpenNebula/addon-lxdone.git
+tar -xf <filename>.tar.gz
 ```
 
 Copy scripts to oneadmin drivers directory: 
 
 ```
-cd addon-lxdone
+cd <filename>
 cp -rpa src/remotes/ /var/lib/one/
 ```
 
@@ -141,11 +141,10 @@ sudo pip install isoparser
 
 <a name="22-vnc-server"></a>
 ## 2.2 VNC server
-**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This enables the **VNC** option in the VM template definition. We compiled and provided it for Ubuntu 16.04 in our releases. Install the required dependencies from repositories.
+**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This enables the **VNC** option in the VM template definition. We compiled and provided it for Ubuntu 16.04 in our releases. [Download it](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1) and install the required dependencies from repositories.
 
 ```
-wget svncterm
-sudo dpkg -i svncterm_1.2-1ubuntu_amd64.deb
+sudo dpkg -i <source_path_to>/svncterm_1.2-1ubuntu_amd64.deb
 ```
 
 <a name="24-oneadmin"></a>
@@ -216,9 +215,9 @@ root:100000:65536
 # 3 - Virtual Appliance
 A virtual appliance is available at the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). Also, we've uploaded a base container to online storage service providers. This is a compressed raw block tarball, just extract it before uploading to OpenNebula. You'll have a 1GB image, if you require more space, just copy the contents (keeping the same file permissions and ownership) to a bigger block device. The team user has *team* password:
 
-- [google drive](https://drive.google.com/open?id=0B6vgzbpLofKjRGtUWUJDSHRlUVU). 
-- [mega](https://mega.nz/#!ElIyCRCT!28MDUZc5g4m9cLoTO0t24a0-NNX7r7k6HXEXTt7vfQk)
-- [dropbox](https://www.dropbox.com/s/4lgqnezxbmr2wae/lxdone-5.2-4.1.img.tar.xz?dl=0)
+- [google drive](https://drive.google.com/open?id=0B6vgzbpLofKjbXFzTjI1QmZ4X1U)
+- [mega](https://mega.nz/#!U8pXxBpI!2UjFmQO8Fr8hz5oHt7z6QeIqYR3ziZ74OcNP1HByO4c)
+- [dropbox](https://www.dropbox.com/s/p9s1tzc47tpgxqg/lxdone-5.2-4.1.img.tar.xz?dl=0)
 
 <!-- You can generate your custom image following [this](Image.md) but we encourage you to use the ones we've uploaded, since it can get a bit tricky. -->
 
