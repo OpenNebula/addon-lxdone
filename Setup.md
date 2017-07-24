@@ -120,6 +120,9 @@ sudo systemctl restart opennebula
 
 Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#), up to [step 6](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#step-6-storage-configuration). If you want to use Ceph to store Virtual Images, follow [Ceph Datastore Guide](https://docs.opennebula.org/5.2/deployment/open_cloud_storage_setup/ceph_ds.html) and configure it just as you would for KVM.
 
+#### Note
+> ***opennebula-node*** package installs kvm-required software. You may remove most of them and/or disable services like libvirt-bin as they aren't required by LXD. Don't remove libvirt package, it is required for ceph storage.
+
 <a name="21-install-required-packages"></a>
 ## 2.1 Install required packages
 
@@ -186,7 +189,7 @@ sudo lxd init --auto \
 Containers inherit properties from a profile.
 
 #### Network
-The default profile contains a network device, we'll remove this one as it's not managed by OpenNebula.
+The default profile contains a network device, we'll remove this one as isn't managed by OpenNebula.
 
 ```
 lxc profile device remove default eth0
@@ -217,7 +220,7 @@ A virtual appliance is available at the [marketplace](https://marketplace.openne
 - [mega](https://mega.nz/#!ElIyCRCT!28MDUZc5g4m9cLoTO0t24a0-NNX7r7k6HXEXTt7vfQk)
 - [dropbox](https://www.dropbox.com/s/4lgqnezxbmr2wae/lxdone-5.2-4.1.img.tar.xz?dl=0)
 
-You can generate your custom image following [this](Image.md) but we encourage you to use the ones we've uploaded, since it can get a bit tricky.
+<!-- You can generate your custom image following [this](Image.md) but we encourage you to use the ones we've uploaded, since it can get a bit tricky. -->
 
 <a name="4---usage"></a>
 # 4 - Usage
