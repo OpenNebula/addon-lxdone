@@ -47,14 +47,14 @@ tar -xf <filename>.tar.gz
 
 Copy scripts to oneadmin drivers directory: 
 
-```
+```bash
 cd <filename>
 cp -rpa src/remotes/ /var/lib/one/
 ```
 
 Set the appropriate permissions
 
-```
+```bash
 sudo cd /var/lib/one/remotes/
 sudo chown -R oneadmin:oneadmin vmm/lxd im/lxd*
 sudo chmod 755 -R vmm/lxd im/lxd*
@@ -64,7 +64,7 @@ sudo chmod 644 im/lxd.d/collectd-client.rb
 ### Optional. Add support for 802.1Q driver (VLANs).
 Replace /var/lib/one/remotes/vnm.rb file for ur modified version.
 
-```
+```bash
 cp -rpa src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
 sudo chown oneadmin:oneadmin /var/lib/one/remotes/vnm/nic.rb
 sudo chmod 755 /var/lib/one/remotes/vnm/nic.rb
@@ -111,7 +111,7 @@ IMPORTED_VMS_ACTIONS = "migrate, live-migrate, terminate, terminate-hard, undepl
 
 Restart OpenNebula
 
-```
+```bash
 sudo systemctl restart opennebula
 ```
 
@@ -126,7 +126,7 @@ Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_i
 <a name="21-install-required-packages"></a>
 ## 2.1 Install required packages
 
-```
+```bash
 sudo apt install lxd lxd-tools python-pylxd/xenial-updates criu bridge-utils python-ws4py python-pip
 ```
 
@@ -135,7 +135,7 @@ sudo apt install lxd lxd-tools python-pylxd/xenial-updates criu bridge-utils pyt
 
 Install isoparser by pip
 
-```
+```bash
 sudo pip install isoparser
 ```
 
@@ -143,7 +143,7 @@ sudo pip install isoparser
 ## 2.2 VNC server
 **LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This enables the **VNC** option in the VM template definition. We compiled and provided it for Ubuntu 16.04 in our releases. [Download it](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1) and install the required dependencies from repositories.
 
-```
+```bash
 sudo dpkg -i <source_path_to>/svncterm_1.2-1ubuntu_amd64.deb
 ```
 
@@ -152,7 +152,7 @@ sudo dpkg -i <source_path_to>/svncterm_1.2-1ubuntu_amd64.deb
 
 Allow oneadmin to execute commands as root and add it to lxd group. Run as root:
 
-```
+```bash
 echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers
 adduser oneadmin lxd
 ```
@@ -162,7 +162,7 @@ adduser oneadmin lxd
 
 Every file system image used by **LXDoNe** will require one ***loop device***. The default limit for ***loop devices*** is 8, so it needs to be increased. Run as root:
 
-```
+```bash
 echo "options loop max_loop=128" >> /etc/modprobe.d/local-loop.conf
 echo "loop" >> /etc/modules-load.d/modules.conf
 depmod
@@ -175,7 +175,7 @@ depmod
 ### 2.6.1 Daemon
 This is the daemon configuration we'll use
 
-```
+```bash
 sudo lxd init --auto \
 --storage-backend dir \
 --network-address 0.0.0.0 \
@@ -190,7 +190,7 @@ Containers inherit properties from a profile.
 #### Network
 The default profile contains a network device, we'll remove this one as isn't managed by OpenNebula.
 
-```
+```bash
 lxc profile device remove default eth0
 ```
 
@@ -198,7 +198,7 @@ lxc profile device remove default eth0
 
 We moved from privileged containers to unprivileged containers by default and supported nesting since LXDoNe 5.2-4. More about this [here](http://linuxcontainers.org/lxc/security/#privileged-containers) and [here](https://insights.ubuntu.com/2016/04/15/lxd-2-0-lxd-in-lxd-812/). It is no longer required the use of a default profile with ***security.privileged: true***. Remove it if you had it:
 
-```
+```bash
 lxc profile unset default security.privileged
 ```
 
@@ -206,7 +206,7 @@ lxc profile unset default security.privileged
 
 Check your ***/etc/subuid*** and ***/etc/subgid*** files has the following entries for lxd and root.
 
-```
+```bash
 lxd:100000:65536
 root:100000:65536
 ```
