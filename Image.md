@@ -3,13 +3,13 @@ LXD native images are basically compressed files. OpenNebula uses block based im
 
 ## Create a default container
 
-```
+```bash
 lxc launch images:16.04 lxdone
 ```
 
 Now you should have a container named **lxdone** running. To check the container state: 
 
-```
+```bash
 lxc list
 ```
 
@@ -25,13 +25,13 @@ The output should be like this:
 
 LXD default profiles attaches a NIC to every new container. This behaviour must be removed for a lxd-node controlled by OpenNebula. If you did this in the [setup guide](Setup.md) then attach a NIC by: 
 
-```
+```bash
 lxc config device add lxdone eth0 nic nictype=bridged parent=br0
 ```
 
 Enter the container as root.
 
-```
+```bash
 lxc exec lxdone bash 
 root@lxdone:
 ```
@@ -39,7 +39,7 @@ root@lxdone:
 ## Container tweaking:
 Customize your container all you want
 
-```
+```bash
 root@lxdone: apt install one-context
 root@lxdone: passwd 
 ......
@@ -50,7 +50,7 @@ root@lxdone: exit
 ### OpenNebula contextualization
 Follow [KVM contextualization](link). Then install curl and openssh-server for ssh contextualization.
 
-```
+```bash
 root@lxdone: apt install openssh-server curl
 ```
 
@@ -129,7 +129,7 @@ in **/var/lib/lxd/lxdone/metadata.yaml**
 
 Force custom hooks
 
-```
+```bash
 echo "{{ config_get("user.hostname", "lxdone")}}" > /var/lib/lxd/lxdone/templates/hostname.tpl
 sudo sed -i 's/127.0.1.1   {{ container.name }}/127.0.1.1   {{ config_get("user.hostname", "lxdone")}}/' /var/lib/lxd/lxdone/templates/hosts.tpl
 ```
@@ -138,7 +138,7 @@ sudo sed -i 's/127.0.1.1   {{ container.name }}/127.0.1.1   {{ config_get("user.
 
 Check how much space your container needs.
 
-```
+```bash
 sudo du -sh /var/lib/lxd/containers/lxdone/
 ```
 
@@ -155,13 +155,13 @@ sudo cp -rpa sudo du -sh /var/lib/lxd/containers/lxdone/* /mnt/
 
 Make sure there were no errors regarding space in the previous output.
 
-```
+```bash
 sudo umount $loop
 sudo losetup -d $loop
 ```
 
 Optionally compress your image. This is useful if you copy it to **/var/tmp/** in the frontend, extract it there and upload via "Path in OpenNebula server" in the image upload section in Sunstone.
 
-```
+```bash
 tar cvJpf lxdone-custom.tar.xz lxdone.img
 ```
