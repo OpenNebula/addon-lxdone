@@ -160,7 +160,7 @@ sudo umount $loop
 sudo losetup -d $loop
 ```
 
-Optionally compress your image. This is useful if you copy it to **/var/tmp/** in the frontend, then extract it there and upload via "Path in OpenNebula server" in the image upload section on Sunstone.
+Optionally compress your image. This is useful if you copy it to **/var/tmp/** in the frontend, extract it there and upload via "Path in OpenNebula server" in the image upload section in Sunstone.
 
 ```
 tar cvJpf lxdone-custom.tar.xz lxdone.img
