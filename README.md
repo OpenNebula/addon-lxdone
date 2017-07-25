@@ -45,7 +45,7 @@ The master branch is subject to changes. We recomend to use one of the stables [
 [![OpenNebula](https://img.shields.io/badge/one-5.2.0-blue.svg?style=flat-square)](https://opennebula.org)
 
 ## Tested Linux Distributions
-[![ubuntu](https://img.shields.io/badge/ubuntu-1604-orange.svg)](https://ubuntu.com)
+[![ubuntu](https://img.shields.io/badge/ubuntu-1604-orange.svg?style=flat-square)](https://ubuntu.com)
 
 # Setup
 Check the [Setup Guide](Setup.md)  to deploy a working scenario.
