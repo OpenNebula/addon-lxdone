@@ -42,23 +42,24 @@ Follow [frontend installation](https://docs.opennebula.org/5.2/deployment/openne
 Download the [latest release](https://github.com/OpenNebula/addon-lxdone/releases/) and untar it:
 
 ```bash
-tar -xf <filename>.tar.gz
+tar -xf <lxdone-release>.tar.gz
 ```
 
 Copy scripts to oneadmin drivers directory: 
 
 ```bash
-cd <filename>
+cd <lxdone-release>
 cp -rpa src/remotes/ /var/lib/one/
 ```
 
 Set the appropriate permissions
 
 ```bash
-sudo cd /var/lib/one/remotes/
+cd /var/lib/one/remotes/
 sudo chown -R oneadmin:oneadmin vmm/lxd im/lxd*
 sudo chmod 755 -R vmm/lxd im/lxd*
 sudo chmod 644 im/lxd.d/collectd-client.rb
+cd -
 ```
 
 ### Optional. Add support for 802.1Q driver (VLANs).
@@ -144,7 +145,7 @@ sudo pip install isoparser
 **LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This enables the **VNC** option in the VM template definition. We compiled and provided it for Ubuntu 16.04 in our releases. Download it from the [latest release](https://github.com/OpenNebula/addon-lxdone/releases/) and install the required dependencies from repositories.
 
 ```bash
-sudo dpkg -i <source_path_to>/svncterm_1.2-1ubuntu_amd64.deb
+sudo dpkg -i <path_to>/svncterm_1.2-1ubuntu_amd64.deb
 ```
 
 <a name="24-oneadmin"></a>
@@ -219,7 +220,7 @@ A virtual appliance is available at the [marketplace](https://marketplace.openne
 - [mega](https://mega.nz/#!U8pXxBpI!2UjFmQO8Fr8hz5oHt7z6QeIqYR3ziZ74OcNP1HByO4c)
 - [dropbox](https://www.dropbox.com/s/p9s1tzc47tpgxqg/lxdone-5.2-4.1.img.tar.xz?dl=0)
 
-<!-- You can generate your custom image following [this](Image.md) but we encourage you to use the ones we've uploaded, since it can get a bit tricky. -->
+You can generate your custom image following [Image.md](Image.md) but we encourage you to use the ones we've uploaded, since it can get a bit tricky.
 
 <a name="4---usage"></a>
 # 4 - Usage
@@ -286,6 +287,8 @@ Upload the Virtual Appliance to OpenNebula.
 > VCPU stands for the amount of cores the container can use, if the container if you leave it blank, the container will use all the cores up to a fraction defined by CPU.
 > ex. for a host with 8 CPUs, if the VM template states 2 VCPU, then the container has 2/8 CPUs allocated.
 
+![](picts/template.png)
+
 ### Optional data:
 * Network:
     * Select one or many network interfaces. They will appear inside the container configured.
@@ -297,9 +300,8 @@ Upload the Virtual Appliance to OpenNebula.
     * LXD_SECURITY_PRIVILEGED = '**true**' for make the container privileged.
 
 
-![](picts/template.png)
 
-![Alt text](/home/dann1/Projects/addon-lxdone/picts/lxd-security.png "Optional title") 
+![](picts/lxd-security.png) 
 
 <a name="46-deploy"></a>
 ## 4.6 Deploy

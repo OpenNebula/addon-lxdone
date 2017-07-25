@@ -48,7 +48,7 @@ root@lxdone: exit
 ```
 
 ### OpenNebula contextualization
-Follow [KVM contextualization](link). Then install curl and openssh-server for ssh contextualization.
+Follow [KVM contextualization](https://docs.opennebula.org/5.2/operation/vm_setup/kvm.html). Then install curl and openssh-server for ssh contextualization.
 
 ```bash
 root@lxdone: apt install openssh-server curl
@@ -105,14 +105,14 @@ inside _get_new_context_ function, before ```elif vmware_context ; then```. Shou
 
 ### Tips
 - When using *sudo* as a non-root user inside a container you will likely receive *sudo: no tty present and no askpass program specified*. When appending -S to sudo this gets fixed. It would be a good idea to create an alias.
-- using *su* behaves abnormally too, but the fix for this is not that comfortable. You can find info about this [here](<!-- link a stgraber + dann1 -->)
+- using *su* behaves abnormally too, but the fix for this is not that comfortable. Refer to [this lxd issue](https://github.com/lxc/lxd/issues/3218)
 - This strange behaviour occurs when entering by *lxc exec*, when you log by ssh things work normal.
 - When login occurs via svncterm (which is the same as *lxc exec*), entering backspace key prints *^H* instead of deleting the last character. Replace *ERASECHAR       0177* by *ERASECHAR       010* in **/etc/login.defs** to correct this. Ctrl+U keybinding deletes the whole line in the login prompt.
 
 ### Modify LXD-metadata
 In order to populate **/etc/hosts** and **/etc/hostname** inside the container managed by OpenNebula. We'll need to modify container metadata.
 
-Replace 
+In **/var/lib/lxd/lxdone/metadata.yaml** replace
 
 ```
         "/etc/hostname": {
@@ -147,9 +147,7 @@ by
             ]
 ```
 
-in **/var/lib/lxd/lxdone/metadata.yaml**
-
-Force custom hooks
+Apply custom hooks
 
 ```bash
 echo "{{ config_get("user.hostname", "lxdone")}}" > /var/lib/lxd/lxdone/templates/hostname.tpl
