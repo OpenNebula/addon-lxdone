@@ -39,7 +39,7 @@ Follow [frontend installation](https://docs.opennebula.org/5.2/deployment/openne
 
 <a name="141-drivers"></a>
 ### 1.2.1 Drivers
-[Download the latest release](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1) and untar it:
+[Download the latest release](https://github.com/OpenNebula/addon-lxdone/releases/) and untar it:
 
 ```bash
 tar -xf <filename>.tar.gz
@@ -141,7 +141,7 @@ sudo pip install isoparser
 
 <a name="22-vnc-server"></a>
 ## 2.2 VNC server
-**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This enables the **VNC** option in the VM template definition. We compiled and provided it for Ubuntu 16.04 in our releases. [Download it](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1) and install the required dependencies from repositories.
+**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This enables the **VNC** option in the VM template definition. We compiled and provided it for Ubuntu 16.04 in our releases. [Download it](https://github.com/OpenNebula/addon-lxdone/releases/) and install the required dependencies from repositories.
 
 ```bash
 sudo dpkg -i <source_path_to>/svncterm_1.2-1ubuntu_amd64.deb
