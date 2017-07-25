@@ -54,9 +54,9 @@ Follow [KVM contextualization](link). Then install curl and openssh-server for s
 root@lxdone: apt install openssh-server curl
 ```
 
-Replace 
+In **/etc/one-context.d/10-network** replace _get_interface_mac_ function
 
-```
+```bash
 get_interface_mac()
 {
     ip link show | awk '/^[0-9]+: [A-Za-z0-9]+:/ { device=$2; gsub(/:/, "",device)} /link\/ether/ { print device " " $2 }'
@@ -65,21 +65,43 @@ get_interface_mac()
 
 by 
 
-```
+```bash
 get_interface_mac()
 {
     ip link show | awk '/^[0-9]+: [A-Za-z0-9@]+:/ { device=$2; gsub(/:/, "",device); split(device,dev,"\@")} /link\/ether/ { print dev[1]  " " $2 }'
 }
 ```
 
-in **/etc/one-context.d/10-network** and add 
+and, in **/usr/sbin/one-contextd**, add
 
-```
+```bash
     elif [ -f /mnt/context.sh ]; then
+        # for LXD. the deploy driver injects context files into container directly.
         cp /mnt/context.sh ${CONTEXT_NEW}
 ```
 
-before ```elif vmware_context ; then``` in **/usr/sbin/one-contextd**
+inside _get_new_context_ function, before ```elif vmware_context ; then```. Should look like this:
+```bash
+    function get_new_context {
+    CONTEXT_DEV=`blkid -l -t LABEL="CONTEXT" -o device`
+    if [ -e "$CONTEXT_DEV" ]; then
+        mount -t iso9660 -L CONTEXT -o ro /mnt
+        if [ -f /mnt/context.sh ]; then
+            cp /mnt/context.sh ${CONTEXT_NEW}
+        fi
+
+        echo "umount /mnt" > ${END_CONTEXT}
+    elif [ -f /mnt/context.sh ]; then
+        # for LXD. the deploy driver injects context files into container directly.
+        cp /mnt/context.sh ${CONTEXT_NEW}
+    elif vmware_context ; then
+        vmtoolsd --cmd 'info-get guestinfo.opennebula.context' | \
+            openssl base64 -d > ${CONTEXT_NEW}
+    elif curl -o ${CONTEXT_NEW} http://169.254.169.254/latest/user-data ; then
+        echo -n ""
+    fi
+}
+```
 
 ### Tips
 - When using *sudo* as a non-root user inside a container you will likely receive *sudo: no tty present and no askpass program specified*. When appending -S to sudo this gets fixed. It would be a good idea to create an alias.
