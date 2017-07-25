@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/python
 
 # -------------------------------------------------------------------------- #
 # Copyright 2016-2017                                                        #
@@ -18,4 +18,22 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-../../vmm/lxd/poll -t
+import subprocess as sp
+
+def uniimg_container_wipe(client, container):
+    # get image's fingerprint
+    fingerprint = container.config['volatile.base_image']
+
+    container.delete(wait=True)
+
+    # wipe image if no container using
+    container_list = client.containers.all()
+    if len(container_list) == 0:
+        # no running container
+        image = client.images.get(fingerprint)
+        image.delete()
+
+    elif len(filter(lambda x: x.config['volatile.base_image'] == fingerprint, container_list)) == 0:
+        # no container using this image
+        image = client.images.get(fingerprint)
+        image.delete()
