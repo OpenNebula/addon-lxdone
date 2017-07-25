@@ -186,10 +186,6 @@ def storage_context(container, contextiso):
             continue
         container.files.put('/mnt/' + i.name, i.content)
 
-# def storage_context_map(container, CONTEXT_DISK_ID, DISK_SOURCE, DS_ID, VM_ID):
-    # context_disk = storage_sysmap(CONTEXT_DISK_ID, 'FILE', DISK_SOURCE, VM_ID, DS_ID, None)
-    # context_disk = {'CONTEXT': {'path': context_disk, 'type': 'unix-block'}}
-    # container.devices.update(context_disk)
 
 # LXD CONFIG MAPPING
 

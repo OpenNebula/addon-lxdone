@@ -11,13 +11,10 @@ The purpose of this guide is to create a fully functional working environment. Y
 - [2 - Virtualization Node setup](#2---virtualization-node-setup)
     - [2.1 Install required packages](#21-install-required-packages)
     - [2.2 VNC server](#22-vnc-server)
-    - [2.3 LXD Bridge \(optional\)](#23-lxd-bridge-optional)
     - [2.4 oneadmin](#24-oneadmin)
     - [2.5 Loop devices](#25-loop-devices)
     - [2.6 LXD](#26-lxd)
 - [3 - Virtual Appliance](#3---virtual-appliance)
-    - [3.1 Copying from an image server](#31-copying-from-an-image-server)
-    - [3.2 Export](#32-export)
 - [4 - Usage](#4---usage)
     - [4.1 Image Upload](#41-image-upload)
     - [4.2 Virtualization node](#42-virtualization-node)
@@ -34,48 +31,48 @@ The purpose of this guide is to create a fully functional working environment. Y
 <a name="11-installation"></a>
 ## 1.1 Installation
 
-Follow [OpenNebula Deployment Guide](https://docs.opennebula.org/5.2/deployment/opennebula_installation/frontend_installation.html) to deploy a fully functional OpenNebula frontend.
+Follow [frontend installation](https://docs.opennebula.org/5.2/deployment/opennebula_installation/frontend_installation.html) in OpenNebula deployment guide.
 
 <a name="12-lxdone-integration"></a>
 ## 1.2 LXDoNe integration
-**LXDoNe** is a set of scripts functioning as virtualization and monitorization drivers, so they have to be integrated to the ***frontend***. 
-
+**LXDoNe** is a set of scripts operating as virtualization and monitorization drivers, so they have to be integrated to the ***frontend***. 
 
 <a name="141-drivers"></a>
 ### 1.2.1 Drivers
-Download the addon:
+Download the [latest release](https://github.com/OpenNebula/addon-lxdone/releases/) and untar it:
 
 ```bash
-git clone https://github.com/OpenNebula/addon-lxdone.git
-cd addon-lxdone
+tar -xf <lxdone-release>.tar.gz
 ```
 
 Copy scripts to oneadmin drivers directory: 
 
-```
+```bash
+cd <lxdone-release>
 cp -rpa src/remotes/ /var/lib/one/
 ```
 
 Set the appropriate permissions
 
-```
-sudo cd /var/lib/one/remotes/
+```bash
+cd /var/lib/one/remotes/
 sudo chown -R oneadmin:oneadmin vmm/lxd im/lxd*
 sudo chmod 755 -R vmm/lxd im/lxd*
 sudo chmod 644 im/lxd.d/collectd-client.rb
+cd -
 ```
 
 ### Optional. Add support for 802.1Q driver (VLANs).
-Replace /var/lib/one/remotes/vnm.rb file.
+Replace /var/lib/one/remotes/vnm.rb file for ur modified version.
 
-```
+```bash
 cp -rpa src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
 sudo chown oneadmin:oneadmin /var/lib/one/remotes/vnm/nic.rb
 sudo chmod 755 /var/lib/one/remotes/vnm/nic.rb
 ```
 
 #### Note
-> A pull request was made to add this functionality to OpenNebula's official Network Driver.
+> A pull request was made to OpenNebula's official Network Driver to add this functionality by default.
 
 <a name="142-enable-lxd"></a>
 ### 1.2.2 Enable LXD
@@ -113,82 +110,63 @@ IMPORTED_VMS_ACTIONS = "migrate, live-migrate, terminate, terminate-hard, undepl
 
 ```
 
+Restart OpenNebula
+
+```bash
+sudo systemctl restart opennebula
+```
+
 <a name="2---virtualization-node-setup"></a>
 # 2 - Virtualization Node setup
 
 Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#), up to [step 6](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#step-6-storage-configuration). If you want to use Ceph to store Virtual Images, follow [Ceph Datastore Guide](https://docs.opennebula.org/5.2/deployment/open_cloud_storage_setup/ceph_ds.html) and configure it just as you would for KVM.
 
+#### Note
+> ***opennebula-node*** package installs kvm-required software. You may remove most of them and/or disable services like libvirt-bin as they aren't required by LXD. Don't remove libvirt package, it is required for ceph storage.
+
 <a name="21-install-required-packages"></a>
 ## 2.1 Install required packages
 
-```
-sudo apt install lxd lxd-tools criu bridge-utils python-pylxd python-ws4py python-pip
+```bash
+sudo apt install lxd lxd-tools python-pylxd/xenial-updates criu bridge-utils python-ws4py python-pip
 ```
 
 #### Note
-> Be sure to have **pylxd 2.0.5**, or the driver **won't work properly**. Check the last output of the command below. You can find it on xenial-updates repositories.
-
-```
-sudo apt show python-pylxd | grep 2.0.5 | grep 2.0.5
-```
+> Be sure to have **pylxd 2.0.5**, or the driver **won't work properly**.
 
 Install isoparser by pip
 
-```
+```bash
 sudo pip install isoparser
 ```
 
 <a name="22-vnc-server"></a>
 ## 2.2 VNC server
-**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This package enables the **VNC** option in the VM template definition. It's already compiled for Ubuntu 16.04. Install the required dependencies from repositories.
+**LXDoNe** uses **svncterm** by **dealfonso@github** as **VNC** server. This enables the **VNC** option in the VM template definition. We compiled and provided it for Ubuntu 16.04 in our releases. Download it from the [latest release](https://github.com/OpenNebula/addon-lxdone/releases/) and install the required dependencies from repositories.
 
-```
-sudo dpkg -i svncterm_1.2-1ubuntu_amd64.deb
-```
-
-<a name="23-lxd-bridge-optional"></a>
-## 2.3 LXD Bridge (optional)
-**LXD** comes by default with an optional bridge called **lxdbr0**, it offers ease of use for containers networking and provides DHCP suport. We can use this bridge alternative configuration to standard OpenNebula networking:
-
-```
-sudo echo -e " USE_LXD_BRIDGE="true" \n
-LXD_BRIDGE="lxdbr0" \n
-UPDATE_PROFILE="true" \n
-LXD_CONFILE="" \n
-LXD_DOMAIN="lxd" \n
-LXD_IPV4_ADDR="192.168.1.1" \n
-LXD_IPV4_NETMASK="255.255.255.0" \n
-LXD_IPV4_NETWORK="192.168.1.1/24" \n
-LXD_IPV4_DHCP_RANGE="192.168.1.2,192.168.1.254" \n
-LXD_IPV4_DHCP_MAX="252" \n
-LXD_IPV4_NAT="true" \n
-LXD_IPV6_ADDR="" \n
-LXD_IPV6_MASK="" \n
-LXD_IPV6_NETWORK="" \n
-LXD_IPV6_NAT="false" \n
-LXD_IPV6_PROXY="false" " > /etc/default/lxd-bridge
-# service lxd-bridge restart
+```bash
+sudo dpkg -i <path_to>/svncterm_1.2-1ubuntu_amd64.deb
 ```
 
 <a name="24-oneadmin"></a>
 ## 2.4 oneadmin
 
-Allow oneadmin to execute commands as root and add it to lxd group
+Allow oneadmin to execute commands as root and add it to lxd group. Run as root:
 
-```
-sudo echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers
-sudo adduser oneadmin lxd
+```bash
+echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers
+adduser oneadmin lxd
 ```
 
 <a name="25-loop-devices"></a>
 ## 2.5 Loop devices
 
-Every file system image used by **LXDoNe** will require one ***loop device***. The default limit for ***loop devices*** is 8, so it needs to be increased.
+Every file system image used by **LXDoNe** will require one ***loop device***. The default limit for ***loop devices*** is 8, so it needs to be increased. Run as root:
 
-```
-sudo echo "options loop max_loop=128" >> /etc/modprobe.d/local-loop.conf
-sudo echo "loop" >> /etc/modules
-sudo depmod
+```bash
+echo "options loop max_loop=128" >> /etc/modprobe.d/local-loop.conf
+echo "loop" >> /etc/modules-load.d/modules.conf
+depmod
 ```
 
 <a name="26-lxd"></a>
@@ -198,7 +176,7 @@ sudo depmod
 ### 2.6.1 Daemon
 This is the daemon configuration we'll use
 
-```
+```bash
 sudo lxd init --auto \
 --storage-backend dir \
 --network-address 0.0.0.0 \
@@ -211,113 +189,38 @@ sudo lxd init --auto \
 Containers inherit properties from a profile.
 
 #### Network
-The default profile contains a network device, we'll remove this one as it's not managed by OpenNebula.
+The default profile contains a network device, we'll remove this one as isn't managed by OpenNebula.
 
-```
-sudo lxc profile device remove default eth0
+```bash
+lxc profile device remove default eth0
 ```
 
 #### Security & Nesting:
 
-We moved from privileged containers to unprivileged containers by default and supported nesting since LXDoNe 1707. More of this [here](http://linuxcontainers.org/lxc/security/#privileged-containers) and [here](https://insights.ubuntu.com/2016/04/15/lxd-2-0-lxd-in-lxd-812/). It is no longer required the use of a default profile with ***security.privileged: true***.
+We moved from privileged containers to unprivileged containers by default and supported nesting since LXDoNe 5.2-4. More about this [here](http://linuxcontainers.org/lxc/security/#privileged-containers) and [here](https://insights.ubuntu.com/2016/04/15/lxd-2-0-lxd-in-lxd-812/). It is no longer required the use of a default profile with ***security.privileged: true***. Remove it if you had it:
+
+```bash
+lxc profile unset default security.privileged
+```
+
+### 2.6.3 User IDs
+
+Check your ***/etc/subuid*** and ***/etc/subgid*** files has the following entries for lxd and root.
+
+```bash
+lxd:100000:65536
+root:100000:65536
+```
 
 <a name="3---virtual-appliance"></a>
 # 3 - Virtual Appliance
-A virtual appliance is available at the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). Also, we've uploaded a base container to [google drive](http://https://drive.google.com/uc?export=download&confirm=FkpQ&id=0B97YSqohwcQ0bTFRUE5RMmphT1U). The image creation tweaks are covered in depth [here](Image.md), but we wont update it anymore, for simplicity we show just a method in this guide. You can SKIP to [step 4](Setup.md#4---usage) if google drive or marketplace works for you, we STRONGLY recommend it. Also there is a script [build-img.sh](image-handling/build-img.sh) that automates the process.
+A virtual appliance is available at the [marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). Also, we've uploaded a base container to online storage service providers. This is a compressed raw block tarball, just extract it before uploading to OpenNebula. You'll have a 1GB image, if you require more space, just copy the contents (keeping the same file permissions and ownership) to a bigger block device. The team user has *team* password:
 
-<a name="31-copying-from-an-image-server"></a>
-## 3.1 Copying from an image server
-Copy an image into local image store.
+- [google drive](https://drive.google.com/open?id=0B6vgzbpLofKjbXFzTjI1QmZ4X1U)
+- [mega](https://mega.nz/#!U8pXxBpI!2UjFmQO8Fr8hz5oHt7z6QeIqYR3ziZ74OcNP1HByO4c)
+- [dropbox](https://www.dropbox.com/s/p9s1tzc47tpgxqg/lxdone-5.2-4.1.img.tar.xz?dl=0)
 
-```
-lxc image copy ubuntu: local: --alias ubuntu1604
-```
-
-<a name="32-export"></a>
-## 3.2 Export
-Export the image from LXD local image store to current directory. Maybe will create two tarballs.
-
-```
-lxc image export ubuntu1604
-ls -l
--rw------- 1 oneadmin oneadmin 126715472 May 30 15:29 8fa08537ae51c880966626561987153e72d073cbe19dfe5abc062713d929254d.tar.xz
--rw------- 1 oneadmin oneadmin       840 May 30 15:29 meta-8fa08537ae51c880966626561987153e72d073cbe19dfe5abc062713d929254d.tar.xz
-```
-
-### 3.3 Extract tarballs
-```
-sudo mkdir -p image/rootfs
-cd image
-sudo tar xvpf ../8fa08537ae51c880966626561987153e72d073cbe19dfe5abc062713d929254d.tar.xz -C rootfs
-sudo tar xvpf ../meta-8fa08537ae51c880966626561987153e72d073cbe19dfe5abc062713d929254d.tar.xz
-ls -l image
--rw-r--r--  1 root   root   1566 May 16 15:26 metadata.yaml
-drwxr-xr-x 22 root   root   4096 May 31 14:29 rootfs
-drwxr-xr-x  2 root   root   4096 May 16 15:26 templates
-```
-
-### 3.4 Install one-context package (optional)
-Download one-context_*.deb package if you use OpenNebula CONTEXT scripts instead of cloud-init
-
-```
-wget https://github.com/OpenNebula/addon-context-linux/releases/download/v5.0.3/one-context_5.0.3.deb
-sudo mv one-context_5.0.3.deb rootfs/
-```
-
-Chroot to rootfs/
-
-```
-sudo chroot rootfs/ /bin/bash
-```
-
-Install one-context and disable cloud-init
-
-```
-sudo dpkg -i ./one-context_5.0.3.deb
-sudo systemctl disable cloud-init.service cloud-init-local.service cloud-final.service cloud-config.service
-exit
-```
-
-Overwrite modified context
-
-```
-sudo cp -p /path/to/addon-lxdone/src/one-wait/10-network rootfs/etc/one-context.d
-sudo cp -p /path/to/addon-lxdone/src/one-wait/one-contextd rootfs/usr/sbin
-```
-Set the appropriate permissions
-
-```
-sudo chown root:root rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
-sudo chmod 755 rootfs/usr/sbin/one-contextd rootfs/etc/one-context.d/10-network
-```
-
-### 3.5 Block Device creation
-At the end of every one of the previous methods you'll have to save your work in a raw image that will be uploaded to a Datastore. So regardless the method you choose you'll have to do this before beginning the method, except for **LXCoNe**:
-
-```bash
-truncate -s <size_in_GB>G /var/tmp/lxdone.img
-loop=$(sudo losetup --find --show /var/tmp/lxdone.img)
-mkfs.ext4 $loop
-mount $loop /mnt/
-```
-
-Check you are in the image root folder cheking the output of ***ls -lh*** :
-
-```bash
-total 16K
--r--------  1 root root 1.5K Jan 31 00:38 backup.yaml
--rw-r--r--  1 root root 1.4K Jan 26 16:36 metadata.yaml
-drwxr-xr-x 21 root root 4.0K May 15 15:49 rootfs
-drwxr-xr-x  2 root root 4.0K Nov  2  2016 templates
-```
-
-And copy cotents to block device
-
-```
-sudo cp -rpa * /mnt/
-sudo umount $loop
-sudo losetup -d $loop
-```
+You can generate your custom image following [Image.md](Image.md) but we encourage you to use the ones we've uploaded, since it can get a bit tricky.
 
 <a name="4---usage"></a>
 # 4 - Usage
@@ -384,6 +287,8 @@ Upload the Virtual Appliance to OpenNebula.
 > VCPU stands for the amount of cores the container can use, if the container if you leave it blank, the container will use all the cores up to a fraction defined by CPU.
 > ex. for a host with 8 CPUs, if the VM template states 2 VCPU, then the container has 2/8 CPUs allocated.
 
+![](picts/template.png)
+
 ### Optional data:
 * Network:
     * Select one or many network interfaces. They will appear inside the container configured.
@@ -395,9 +300,8 @@ Upload the Virtual Appliance to OpenNebula.
     * LXD_SECURITY_PRIVILEGED = '**true**' for make the container privileged.
 
 
-![](picts/template.png)
 
-![Alt text](/home/dann1/Projects/addon-lxdone/picts/lxd-security.png "Optional title") 
+![](picts/lxd-security.png) 
 
 <a name="46-deploy"></a>
 ## 4.6 Deploy
