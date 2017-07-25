@@ -93,7 +93,7 @@ def create_profile(xml):
 
 def apply_profile(profile, container):
     """
-    apply config and devices and quota to container
+    apply config and devices to container
     """
     # STORAGE_CONFIG
     VM_ID = profile['VM_ID']
@@ -118,21 +118,17 @@ def apply_profile(profile, container):
         try:
             container.config.update(i)
             container.save(wait=True)
-            # lc.log_function('INFO', 'container: ' + i.keys()[0] + ': ' + i[i.keys()[0]])
         except LXDAPIException as lxdapie:
             lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             lc.sys.exit(1)
-            # del container.config[i.keys()[0]]
 
     for i in profile['devices']:
         try:
             container.devices.update(i)
             container.save(wait=True)
-            # lc.log_function('INFO', 'container: ' + i.keys()[0] + ': added')
         except LXDAPIException as lxdapie:
             lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             lc.sys.exit(1)
-            # del container.config[i.keys()[0]]
 
 
 # READ_XML
@@ -159,7 +155,6 @@ apply_profile(profile, container)
 try:
     container.start(wait=True)
     container.config['user.xml']  # validate config
-    # lc.log_function('INFO', 'container: ' + VM_NAME + ' running')
 except LXDAPIException as lxdapie:
     if container.status == 'Running':
         container.stop(wait=True)

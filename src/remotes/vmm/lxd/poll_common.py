@@ -57,7 +57,6 @@ def print_all_vm_template(hypervisor):
 
             print string
 
-            # vnc_babysiter(info)
     except:
         return None
 
