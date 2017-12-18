@@ -35,13 +35,14 @@ def create_profile(xml):
     """
     dicc = lc.xml_start(xml)
     profile = {'config': [], 'devices': []}
+    mapped_entries = [lc.map_ram(xqi('MEMORY', dicc)),
+                      lc.map_cpu(xqi('CPU', dicc)),
+                      lc.map_vcpu(xqi('VCPU', dicc)),
+                      lc.map_xml(xml),
+                      {'user.hostname': dicc["/VM/NAME"][0]}]
 
-    # GENERAL_CONFIG
-    profile['config'].append(lc.map_ram(xqi('MEMORY', dicc)))
-    profile['config'].append(lc.map_cpu(xqi('CPU', dicc)))  # cpu percentage
-    profile['config'].append(lc.map_vcpu(xqi('VCPU', dicc)))  # cpu core
-    profile['config'].append({'user.hostname': dicc["/VM/NAME"][0]})
-    profile['config'].append(lc.map_xml(xml))
+    for x in mapped_entries:
+        profile['config'].append(x)
 
     # IDs
     VM_ID = profile['VM_ID'] = dicc["/VM/ID"][0]
@@ -82,7 +83,8 @@ def create_profile(xml):
     if num_hdds > 1:
         DISK_ID = xql('DISK/DISK_ID', dicc)
         for x in xrange(1, num_hdds):
-            source = lc.storage_sysmap(DISK_ID[x], DISK_TYPE[x], DISK_SOURCE[x], VM_ID, DS_ID, DISK_CLONE[x])
+            source = lc.storage_sysmap(DISK_ID[x], DISK_TYPE[x],
+                                       DISK_SOURCE[x], VM_ID, DS_ID, DISK_CLONE[x])
             profile['devices'].append(lc.map_disk(profile['DISK_TARGET'][x], source))
 
     # dicc (for lc.vnc_start())
@@ -145,9 +147,7 @@ lc.log_function('INFO', 40 * "#")
 init = {'name': VM_NAME, 'source': {'type': 'none'}}
 try:
     container = client.containers.create(init, wait=True)
-except LXDAPIException as lxdapie:
-    # probably this container already exists
-    lc.log_function('INFO', 'container: ' + VM_NAME + ' ' + str(lxdapie))
+except LXDAPIException as lxdapie:  # probably this container already exists
     container = client.containers.get(VM_NAME)
 
 # BOOT_CONTAINER

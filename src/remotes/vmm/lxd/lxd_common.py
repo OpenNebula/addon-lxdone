@@ -38,7 +38,6 @@ def log_function(severity, message):
 def clock(t0, VM_ID):
     'Calculates and logs in the logfile the time passed since $t0'
     duration = str(time() - t0)
-    # log_info('Script executed in almost ' + duration + ' seconds', VM_ID)
     log_function("INFO", 'Script executed in almost ' + duration + ' seconds')
 
 
