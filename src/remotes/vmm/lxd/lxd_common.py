@@ -29,10 +29,15 @@ import isoparser
 
 
 # MISC
-
 def log_function(severity, message):
+    'print message with a definded severity in stderr'
     sep = ': '
-    print(severity + sep + os.path.basename(sys.argv[0]) + sep + message, file=sys.stderr)
+    if severity == "e":
+        severity = "ERROR"
+    elif severity == "i":
+        severity = "INFO"
+
+    print(severity + sep + os.path.basename(sys.argv[0]) + sep + str(message), file=sys.stderr)
 
 
 def clock(t0, VM_ID):
