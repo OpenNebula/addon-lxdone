@@ -71,6 +71,7 @@ def container_wipe(num_hdds, container, DISK_TARGET, DISK_TYPE):
             source = storage_lazer(source)
             storage_sysunmap(DISK_TYPE[x], source)
     storage_rootfs_umount(DISK_TYPE[0], container.config)
+    # validate the existance in container rootfs directory before the deletion
     container.delete()
 
 

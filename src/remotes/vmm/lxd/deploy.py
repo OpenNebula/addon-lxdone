@@ -30,11 +30,10 @@ client = lc.Client()
 
 
 def create_profile(xml):
-    """
-    create container's profile from deployment.N XML file
-    """
+    'create a container profile from OpenNebula VM template'
     dicc = lc.xml_start(xml)
     profile = {'config': [], 'devices': []}
+
     mapped_entries = [lc.map_ram(xqi('MEMORY', dicc)),
                       lc.map_cpu(xqi('CPU', dicc)),
                       lc.map_vcpu(xqi('VCPU', dicc)),
@@ -44,21 +43,14 @@ def create_profile(xml):
     for x in mapped_entries:
         profile['config'].append(x)
 
-    # IDs
     VM_ID = profile['VM_ID'] = dicc["/VM/ID"][0]
     profile['CONTEXT_DISK_ID'] = xqi('CONTEXT/DISK_ID', dicc)
 
-    # LXD security.privileged
-    if dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_PRIVILEGED'):
-        profile['config'].append(
-            {'security.privileged':
-             dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_PRIVILEGED')[0]})
-
-    # LXD security.nesting
-    if dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_NESTING'):
-        profile['config'].append(
-            {'security.nesting':
-             dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_NESTING')[0]})
+    # Security
+    for x in ["privileged", "nesting"]:
+        item = '/VM/USER_TEMPLATE/LXD_SECURITY_' + x.swapcase()
+        if dicc.get(item):
+            profile['config'].append({'security.' + x: dicc.get(item)[0]})
 
     # NETWORK_CONFIG
     NIC = xql('NIC/NIC_ID', dicc)
@@ -94,9 +86,7 @@ def create_profile(xml):
 
 
 def apply_profile(profile, container):
-    """
-    apply config and devices to container
-    """
+    'apply config and devices to container'
     # STORAGE_CONFIG
     VM_ID = profile['VM_ID']
     DS_ID = profile['DS_ID']
@@ -134,9 +124,7 @@ def apply_profile(profile, container):
 
 
 # READ_XML
-xml = lc.sys.argv[1]
-
-profile = create_profile(xml)
+profile = create_profile(lc.sys.argv[1]) # xml is passed by opennebula as argument ex. deployment.0
 
 VM_ID = profile['VM_ID']
 VM_NAME = 'one-' + VM_ID
@@ -149,9 +137,9 @@ try:
     container = client.containers.create(init, wait=True)
 except LXDAPIException as lxdapie:  # probably this container already exists
     container = client.containers.get(VM_NAME)
+apply_profile(profile, container)
 
 # BOOT_CONTAINER
-apply_profile(profile, container)
 try:
     container.start(wait=True)
     container.config['user.xml']  # validate config

@@ -5,7 +5,6 @@ import lxd_common as lc
 t0 = lc.time()
 client = lc.Client()
 VM_ID = lc.sys.argv[1]
-
 container = client.containers.get('one-' + VM_ID)
 
 # READ_XML
