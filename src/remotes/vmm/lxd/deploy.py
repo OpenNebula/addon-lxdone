@@ -33,6 +33,7 @@ def create_profile(xml):
     dicc = lc.xml_start(xml)
     profile = {'config': [], 'devices': []}
 
+    # General
     mapped_entries = [lc.map_ram(xqi('MEMORY', dicc)),
                       lc.map_cpu(xqi('CPU', dicc)),
                       lc.map_vcpu(xqi('VCPU', dicc)),
@@ -44,6 +45,10 @@ def create_profile(xml):
 
     VM_ID = profile['VM_ID'] = dicc["/VM/ID"][0]
     profile['CONTEXT_DISK_ID'] = xqi('CONTEXT/DISK_ID', dicc)
+
+    # VNC
+    for x in ['PASSWD', 'PORT']:
+        profile['VNC_' + x] = xqi('GRAPHICS/' + x, dicc)
 
     # Security
     for x in ["privileged", "nesting"]:
@@ -76,7 +81,6 @@ def create_profile(xml):
         for x in xrange(1, num_hdds):
             source = lc.storage_sysmap(DISK_ID[x], DISK_TYPE[x], DISK_SOURCE[x], VM_ID, DS_ID, DISK_CLONE[x])
             profile['devices'].append(lc.map_disk(profile['DISK_TARGET'][x], source))
-    profile['dicc'] = dicc     # dicc (for lc.vnc_start())
 
     return profile
 
@@ -144,6 +148,6 @@ except lc.LXDAPIException as lxdapie:
     lc.log_function('ERROR', 'container: ' + str(lxdapie))
     lc.sys.exit(1)
 
-lc.vnc_start(VM_ID, profile['dicc'])
+lc.vnc_start(profile['VM_ID'], profile['VNC_PORT'], profile['VNC_PASSWD'])
 lc.clock(t0)
 print VM_NAME

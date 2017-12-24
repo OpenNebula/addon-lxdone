@@ -51,20 +51,12 @@ def clock(t0):
     log_function("INFO", 'Script executed in almost ' + duration + ' seconds')
 
 
-def vnc_start(VM_ID, dicc):
-    'If graphics are defined in the VM template, starts VNC server in the one-$VM_ID container shell'
-    VNC_PORT = xml_query_item('GRAPHICS/PORT', dicc)
-    if VNC_PORT:
-        VNC_PASSWD = xml_query_item('GRAPHICS/PASSWD', dicc)
-        try:
-            if VNC_PASSWD:
-                VNC_PASSWD = "-passwd " + VNC_PASSWD
-            else:
-                VNC_PASSWD = ""
-            sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' +
-                     VM_ID + " " + VNC_PORT, shell=True)
-        except Exception as e:
-            log_function("ERROR", e)
+def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):  # TODO implement password protection
+    'Starts VNC server in the one-$VM_ID container shell'
+    try: # TODO fix hardcoded vnc.bash location
+        sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' + VM_ID + " " + VNC_PORT + " " + VNC_PASSWD, shell=True)
+    except Exception as e:
+        log_function("e", e)
 
 
 def dir_empty(directory):
