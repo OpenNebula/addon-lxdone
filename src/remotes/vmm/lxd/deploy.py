@@ -23,7 +23,6 @@ t0 = lc.time()
 from lxd_common import xml_query_list as xql
 from lxd_common import xml_query_dict as xqd
 from lxd_common import xml_query_item as xqi
-from pylxd.exceptions import LXDAPIException
 
 
 client = lc.Client()
@@ -106,7 +105,7 @@ def apply_profile(profile, container):
         try:
             container.config.update(i)
             container.save(wait=True)
-        except LXDAPIException as lxdapie:
+        except lc.LXDAPIException as lxdapie:
             lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             lc.sys.exit(1)
 
@@ -114,7 +113,7 @@ def apply_profile(profile, container):
         try:
             container.devices.update(i)
             container.save(wait=True)
-        except LXDAPIException as lxdapie:
+        except lc.LXDAPIException as lxdapie:
             lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             lc.sys.exit(1)
 
@@ -128,7 +127,7 @@ lc.log_function('INFO', 40 * "#")
 
 try:
     container = client.containers.create(init, wait=True)
-except LXDAPIException as lxdapie:  # probably this container already exists
+except lc.LXDAPIException as lxdapie:  # probably this container already exists
     container = client.containers.get(VM_NAME)
     if container.status == 'Running':
         lc.log_function('e', "A container with the same ID is already running")
@@ -138,7 +137,7 @@ apply_profile(profile, container)
 # BOOT_CONTAINER
 try:
     container.start(wait=True)
-except LXDAPIException as lxdapie:
+except lc.LXDAPIException as lxdapie:
     if container.status == 'Running':
         container.stop(wait=True)
     lc.container_wipe(container, profile)

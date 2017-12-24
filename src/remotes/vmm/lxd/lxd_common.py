@@ -24,11 +24,16 @@ import subprocess as sp
 import sys
 import xml.etree.ElementTree as ET
 from time import time
-from pylxd.client import Client
 import isoparser
+from pylxd.client import Client
+from pylxd.exceptions import LXDAPIException
 
+# variables
+containers_dir = "/var/lib/lxd/containers/"
 
 # MISC
+
+
 def log_function(severity, message):
     'print message with a definded severity in stderr'
     sep = ': '
@@ -62,6 +67,15 @@ def vnc_start(VM_ID, dicc):
             log_function("ERROR", e)
 
 
+def dir_empty(directory):
+    directory = str(directory)
+    if not os.listdir(directory):
+        status = "empty"
+    else:
+        status = "non_empty"
+    return status
+
+
 def container_wipe(container, dicc):
     'Deletes $container after unmounting and unmapping its related storage'
     DISK_TYPE = xml_query_list('DISK/TYPE', dicc)
@@ -73,10 +87,16 @@ def container_wipe(container, dicc):
             source = storage_lazer(source)
             storage_sysunmap(DISK_TYPE[x], source)
     storage_rootfs_umount(DISK_TYPE[0], container.config)
-    container.delete()  # TODO validate the existance in container rootfs directory before the deletion
-
+    status = dir_empty(containers_dir + str(container.name))
+    if status == "non_empty":
+        log_function('e', "Cannot delete non_empty container rootfs")
+        sys.exit(1)
+    else:
+        container.delete()
 
 # XML RELATED
+
+
 def xml_start(xml):
     'Stores $xml file in $dicc dictionary'
 
@@ -171,7 +191,10 @@ def storage_lazer(device):
 def storage_rootfs_mount(VM_ID, DISK_TYPE, DS_ID, DISK_SOURCE, DISK_CLONE):
     'Mounts rootfs for container one-$VM_ID'
     source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE)
-    target = '/var/lib/lxd/containers/' + "one-" + VM_ID
+    target = containers_dir + "one-" + VM_ID
+    if dir_empty(target) == "non_empty":
+        log_function('e', "Cannot mount container image over populated container directory")
+        sys.exit(1)
     sp.call("mount " + source + " " + target, shell=True)
     return {'user.rootfs': source}
 
