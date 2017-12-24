@@ -40,7 +40,7 @@ def log_function(severity, message):
     print(severity + sep + os.path.basename(sys.argv[0]) + sep + str(message), file=sys.stderr)
 
 
-def clock(t0, VM_ID):
+def clock(t0):
     'Calculates and logs in the logfile the time passed since $t0'
     duration = str(time() - t0)
     log_function("INFO", 'Script executed in almost ' + duration + ' seconds')
@@ -59,12 +59,12 @@ def vnc_start(VM_ID, dicc):
             sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' +
                      VM_ID + " " + VNC_PORT, shell=True)
         except Exception as e:
-            # log_info(e, VM_ID)
             log_function("ERROR", e)
 
 
-def container_wipe(num_hdds, container, DISK_TARGET, DISK_TYPE):
+def container_wipe(container, DISK_TARGET, DISK_TYPE):
     'Deletes $container after unmounting and unmapping its related storage'
+    num_hdds = len(DISK_TYPE)
     if num_hdds > 1:
         for x in xrange(1, num_hdds):
             source = unmap(container.devices, DISK_TARGET[x])
@@ -160,18 +160,16 @@ def storage_sysunmap(DISK_TYPE, source):
 
 
 def storage_lazer(device):
-    'Returns the target device based on minor and major number'
-    major = device['major']
-    minor = device['minor']
-    return sp.check_output('udevadm info -rq name /sys/dev/block/' + major + ':' + minor,
-                           shell=True).strip('\n')
+    'Returns the system device based on container mapped device'
+    return sp.check_output('udevadm info -rq name /sys/dev/block/' + device['major'] + ':' + device['minor'], shell=True).strip('\n')
 
 
 # STORAGE COMPOSED
+
+
 def storage_rootfs_mount(VM_ID, DISK_TYPE, DS_ID, DISK_SOURCE, DISK_CLONE):
     'Mounts rootfs for container one-$VM_ID'
-    source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE,
-                            VM_ID, DS_ID, DISK_CLONE)
+    source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE)
     target = '/var/lib/lxd/containers/' + "one-" + VM_ID
     sp.call("mount " + source + " " + target, shell=True)
     return {'user.rootfs': source}
@@ -201,8 +199,7 @@ def map_disk(DISK_TARGET, path):
     dev_stat = os.stat(path)
     major = str(os.major(dev_stat.st_rdev))
     minor = str(os.minor(dev_stat.st_rdev))
-    return {DISK_TARGET: {'path': '/dev/' + DISK_TARGET, 'type': 'unix-block', 'minor': minor,
-                          'major': major}}
+    return {DISK_TARGET: {'path': '/dev/' + DISK_TARGET, 'type': 'unix-block', 'minor': minor, 'major': major}}
 
 
 def map_cpu(CPU):
@@ -232,8 +229,7 @@ def map_xml(xml):
 
 def map_nic(nic_name, NIC_BRIDGE, NIC_MAC, NIC_TARGET):
     'Creates a dicitionary for LXD containing $nic_name network interface configuration'
-    return {nic_name: {'name': nic_name, 'type': 'nic', 'hwaddr': NIC_MAC, 'nictype': 'bridged',
-                       'parent': NIC_BRIDGE, 'host_name': NIC_TARGET}}
+    return {nic_name: {'name': nic_name, 'type': 'nic', 'hwaddr': NIC_MAC, 'nictype': 'bridged', 'parent': NIC_BRIDGE, 'host_name': NIC_TARGET}}
 
 
 def unmap(container_devices, device_name):

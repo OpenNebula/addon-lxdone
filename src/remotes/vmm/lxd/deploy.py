@@ -75,12 +75,9 @@ def create_profile(xml):
     if num_hdds > 1:
         DISK_ID = xql('DISK/DISK_ID', dicc)
         for x in xrange(1, num_hdds):
-            source = lc.storage_sysmap(DISK_ID[x], DISK_TYPE[x],
-                                       DISK_SOURCE[x], VM_ID, DS_ID, DISK_CLONE[x])
+            source = lc.storage_sysmap(DISK_ID[x], DISK_TYPE[x], DISK_SOURCE[x], VM_ID, DS_ID, DISK_CLONE[x])
             profile['devices'].append(lc.map_disk(profile['DISK_TARGET'][x], source))
-
-    # dicc (for lc.vnc_start())
-    profile['dicc'] = dicc
+    profile['dicc'] = dicc     # dicc (for lc.vnc_start())
 
     return profile
 
@@ -93,7 +90,7 @@ def apply_profile(profile, container):
     DISK_TYPE = profile['DISK_TYPE']
     DISK_SOURCE = profile['DISK_SOURCE']
     DISK_CLONE = profile['DISK_CLONE']
-    # rootfs
+
     root_source = lc.storage_rootfs_mount(VM_ID, DISK_TYPE[0], DS_ID, DISK_SOURCE[0], DISK_CLONE[0])
     profile['config'].append(root_source)
 
@@ -101,7 +98,6 @@ def apply_profile(profile, container):
         CONTEXT_DISK_ID = profile['CONTEXT_DISK_ID']
         DS_ID = profile['DS_ID']
         DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
-        # push context files into the container
         contextiso = lc.isoparser.parse(DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
         lc.storage_context(container, contextiso)
 
@@ -123,36 +119,34 @@ def apply_profile(profile, container):
             lc.sys.exit(1)
 
 
-# READ_XML
+# INITIALIZE_CONTAINER
 profile = create_profile(lc.sys.argv[1]) # xml is passed by opennebula as argument ex. deployment.0
-
 VM_ID = profile['VM_ID']
 VM_NAME = 'one-' + VM_ID
-
+init = {'name': VM_NAME, 'source': {'type': 'none'}}
 lc.log_function('INFO', 40 * "#")
 
-# INITIALIZE_CONTAINER
-init = {'name': VM_NAME, 'source': {'type': 'none'}}
 try:
     container = client.containers.create(init, wait=True)
 except LXDAPIException as lxdapie:  # probably this container already exists
     container = client.containers.get(VM_NAME)
+    if container.status == 'Running':
+        lc.log_function('e', "A container with the same ID is already running")
+        lc.sys.exit(1)
 apply_profile(profile, container)
 
 # BOOT_CONTAINER
 try:
     container.start(wait=True)
-    container.config['user.xml']  # validate config
 except LXDAPIException as lxdapie:
     if container.status == 'Running':
         container.stop(wait=True)
     DISK_TYPE = profile['DISK_TYPE']
     DISK_TARGET = profile['DISK_TARGET']
-    num_hdds = profile['num_hdds']
-    lc.container_wipe(num_hdds, container, DISK_TARGET, DISK_TYPE)
+    lc.container_wipe(container, DISK_TARGET, DISK_TYPE)
     lc.log_function('ERROR', 'container: ' + str(lxdapie))
     lc.sys.exit(1)
 
 lc.vnc_start(VM_ID, profile['dicc'])
-lc.clock(t0, VM_ID)
+lc.clock(t0)
 print VM_NAME
