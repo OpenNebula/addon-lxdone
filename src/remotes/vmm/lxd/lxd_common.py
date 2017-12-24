@@ -62,17 +62,18 @@ def vnc_start(VM_ID, dicc):
             log_function("ERROR", e)
 
 
-def container_wipe(container, DISK_TARGET, DISK_TYPE):
+def container_wipe(container, dicc):
     'Deletes $container after unmounting and unmapping its related storage'
+    DISK_TYPE = xml_query_list('DISK/TYPE', dicc)
     num_hdds = len(DISK_TYPE)
     if num_hdds > 1:
+        DISK_TARGET = xml_query_list('DISK/TARGET', dicc)
         for x in xrange(1, num_hdds):
             source = unmap(container.devices, DISK_TARGET[x])
             source = storage_lazer(source)
             storage_sysunmap(DISK_TYPE[x], source)
     storage_rootfs_umount(DISK_TYPE[0], container.config)
-    # validate the existance in container rootfs directory before the deletion
-    container.delete()
+    container.delete()  # TODO validate the existance in container rootfs directory before the deletion
 
 
 # XML RELATED

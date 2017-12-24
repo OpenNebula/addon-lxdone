@@ -120,7 +120,7 @@ def apply_profile(profile, container):
 
 
 # INITIALIZE_CONTAINER
-profile = create_profile(lc.sys.argv[1]) # xml is passed by opennebula as argument ex. deployment.0
+profile = create_profile(lc.sys.argv[1])  # xml is passed by opennebula as argument ex. deployment.0
 VM_ID = profile['VM_ID']
 VM_NAME = 'one-' + VM_ID
 init = {'name': VM_NAME, 'source': {'type': 'none'}}
@@ -141,9 +141,7 @@ try:
 except LXDAPIException as lxdapie:
     if container.status == 'Running':
         container.stop(wait=True)
-    DISK_TYPE = profile['DISK_TYPE']
-    DISK_TARGET = profile['DISK_TARGET']
-    lc.container_wipe(container, DISK_TARGET, DISK_TYPE)
+    lc.container_wipe(container, profile)
     lc.log_function('ERROR', 'container: ' + str(lxdapie))
     lc.sys.exit(1)
 
