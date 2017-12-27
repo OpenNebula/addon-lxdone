@@ -41,7 +41,7 @@ Follow [frontend installation](https://docs.opennebula.org/5.2/deployment/openne
 <a name="12-lxdone-integration"></a>
 ## 1.2 LXDoNe integration
 
-* The **LXDoNe** drivers must be installed on the OpenNebula ***frontend*** server to add LXD virtualization and monitoring support. 
+* The **LXDoNe** drivers must be installed on the OpenNebula ***frontend*** server to add LXD virtualization and monitoring support.
 
 
 
@@ -141,7 +141,7 @@ systemctl restart opennebula
 
 ### Installed KVM Packages which are not needed for LXD support
 
-- The ***opennebula-node*** package installs kvm-required software.
+- The ***opennebula-node*** package installs KVM-required software.
 - Many of the KVM packages may be removed if you do not want to support KVM VM's.
 - If you will be using **Ceph storage**, do not remove the **libvirt** package, it is required for Ceph storage.
 
@@ -242,7 +242,7 @@ lxd init --auto \
          --network-address 0.0.0.0 \
          --network-port    8443 \
          --trust-password  password
-         
+
 lsof | grep -i lxd | egrep --color '(LISTEN|sock)'
 
 lxc config show
@@ -280,6 +280,15 @@ lxc profile show default
 lxc profile device remove default eth0
 ```
 
+#### Autostarting
+
+- When the LXD server is shut down, containers will go to the state they were in the moment of powering off the LXd host.
+- That is, if a container was running before shutting down the LXD server machine, the container will start after the server boots up.
+- This is a behavior not managed by OpenNebula, so it needs to be removed.
+
+```bash
+lxc profile set default boot.autostart 0
+```
 
 
 #### Security and Nesting
@@ -294,7 +303,7 @@ lxc profile unset default security.nesting
 
 ##### Unix Block device Mounting
 
-LXD can add regular devices in the host, see [storage docummentation](https://lxd.readthedocs.io/en/stable-2.0/containers/index.html#type-unix-block). However, [unprivileged containers aren't allowed to mount most filesystems](https://discuss.linuxcontainers.org/t/unix-block-device-mounting/565). In order to mount non-rootfs devices in unprivileged containers you need to set a flag in the LXD server.
+LXD can add regular devices in the host, see [storage documentation](https://lxd.readthedocs.io/en/stable-2.0/containers/index.html#type-unix-block). However, [unprivileged containers aren't allowed to mount most filesystems](https://discuss.linuxcontainers.org/t/unix-block-device-mounting/565). In order to mount non-rootfs devices in unprivileged containers you need to set a flag in the LXD server.
 
 ```bash
  echo Y > /sys/module/ext4/parameters/userns_mounts
@@ -334,7 +343,7 @@ root:100000:65536
 
 ### Download pre-built image
 
-- **Download** a pre-build **OpenNebula-compatible LXD Image for Ubuntu 16.04** from the [OpenNebula marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f). 
+- **Download** a pre-build **OpenNebula-compatible LXD Image for Ubuntu 16.04** from the [OpenNebula marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f).
 - The **default username** is: **team**
 - The **default password** for the team user is: **team**
 
@@ -425,7 +434,7 @@ root:100000:65536
 
 
 
-![](picts/lxd-security.png) 
+![](picts/lxd-security.png)
 
 
 
