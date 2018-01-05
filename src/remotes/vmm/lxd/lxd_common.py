@@ -209,10 +209,9 @@ def storage_context(container, contextiso):
 # LXD CONFIG MAPPING
 
 
-def map_disk(DISK_TARGET, path):
-    'Creates a dictionary for LXD containing $path disk configuration, $DISK_TARGET will be $path \
-    inside the container'
-    dev_stat = os.stat(path)
+def map_disk(DISK_TARGET, host_device):
+    'Creates a dictionary for LXD disk configuration, $DISK_TARGET will be path inside the container'
+    dev_stat = os.stat(host_device)
     major = str(os.major(dev_stat.st_rdev))
     minor = str(os.minor(dev_stat.st_rdev))
     return {DISK_TARGET: {'path': '/dev/' + DISK_TARGET, 'type': 'unix-block', 'minor': minor, 'major': major}}
