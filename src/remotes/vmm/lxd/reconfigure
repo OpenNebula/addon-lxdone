@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # -------------------------------------------------------------------------- #
-# Copyright 2016-2017                                                        #
+# Copyright 2016-2018                                                        #
 #                                                                            #
 # Portions copyright OpenNebula Project (OpenNebula.org), CG12 Labs          #
 #                                                                            #
