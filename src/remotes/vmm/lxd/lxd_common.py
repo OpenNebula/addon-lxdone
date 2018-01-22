@@ -141,8 +141,8 @@ def xml_query_dict(value, id_list, dicc):
 
 
 # STORAGE SIMPLE
-def storage_sysmap(DISK_ID, DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE):
-    'Maps a $DISK_SOURCE device into the host corresponding block device, CEPH, LVM or FILESYSTEM'
+def storage_sysmap(DISK_ID, DISK_TYPE, DISK_IMAGE, VM_ID, DS_ID, DISK_CLONE):
+    'Maps a $DISK_IMAGE device into the host corresponding block device, CEPH, LVM or FILESYSTEM'
 
     def storage_pre(command):
         blockdev = sp.check_output(command, shell=True)
@@ -150,15 +150,14 @@ def storage_sysmap(DISK_ID, DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE):
 
     disk = None
     if DISK_TYPE == "FILE":
-        disk = "/var/lib/one/datastores/" + DS_ID + \
-            "/" + VM_ID + "/" + 'disk.' + DISK_ID
+        disk = "/var/lib/one/datastores/" + DS_ID + "/" + VM_ID + "/" + 'disk.' + DISK_ID  # TODO fix hardcoded
         disk = storage_pre("losetup -f --show " + disk)
     elif DISK_TYPE == "BLOCK":
         pass
     elif DISK_TYPE == "RBD":
         if DISK_CLONE == 'YES':
-            DISK_SOURCE = DISK_SOURCE + '-' + VM_ID + '-' + DISK_ID
-        disk = storage_pre('rbd --id libvirt map ' + DISK_SOURCE)
+            DISK_IMAGE = DISK_IMAGE + '-' + VM_ID + '-' + DISK_ID
+        disk = storage_pre('rbd --id libvirt map ' + DISK_IMAGE)
     return disk
 
 
