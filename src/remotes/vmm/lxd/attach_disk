@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/python2
 
 # -------------------------------------------------------------------------- #
 # Copyright 2016-2018                                                        #
@@ -18,7 +18,55 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-source $(dirname $0)/../../scripts_common.sh
+import lxd_common as lc
+t0 = lc.time()
+from base64 import b64decode
 
-log_error $0" is not yet supported"
-exit 1
+DOMAIN = lc.sys.argv[1]  # Domain name: one-101
+SOURCE = lc.sys.argv[2]  # Image path
+TARGET = lc.sys.argv[3]  # Device in the guest: hda, sdc, vda, xvdc
+TARGET_INDEX = lc.sys.argv[4]  # Position in the list of disks
+DRV_ACTION = lc.sys.argv[5]  # action xml. Base: /VMM_DRIVER_ACTION_DATA/VM/TEMPLATE/DISK[ATTACH='YES']
+VM_ID = lc.sys.argv[6]
+
+
+def convert_b64xml(xml64, file_location):
+    "Returns an xml file from a string b64 xml. File is $file_location"
+    xml = b64decode(xml64)
+    with open(file_location, 'w') as f:
+        f.write(xml)
+    f.closed
+    return lc.xml_start(file_location)
+
+
+client = lc.Client()
+container = client.containers.get(DOMAIN)
+
+
+xml = convert_b64xml(DRV_ACTION, '/tmp/' + DOMAIN + 'attach_disk_xml')
+prefix = "/VMM_DRIVER_ACTION_DATA/"
+mapped_target_index = int(TARGET_INDEX) - 1
+
+lc.log_function('i', 40 * "-")
+
+DS_ID = xml[prefix + "VM/HISTORY_RECORDS/HISTORY/DS_ID"][0]
+disk_data = {'DISK_ID': "", 'DISK_TYPE': "", 'SOURCE': "", 'CLONE': ""}
+
+for x in disk_data:
+    disk_data[x] = lc.xml_query_list(x, xml, prefix + "VM/TEMPLATE/DISK/")[mapped_target_index]
+
+
+host_device = lc.storage_sysmap(disk_data["DISK_ID"], disk_data["DISK_TYPE"],
+                                disk_data["SOURCE"], VM_ID, DS_ID, disk_data["CLONE"])
+config = lc.map_disk(TARGET, host_device)
+
+try:
+    container.devices.update(config)
+    container.save(wait=True)
+except lc.LXDAPIException as lxdapie:
+    lc.log_function('i', lxdapie)
+    lc.storage_sysunmap(disk_data["DISK_TYPE"], host_device)
+    lc.sys.exit(1)
+
+lc.clock(t0)
+lc.sys.exit(0)
