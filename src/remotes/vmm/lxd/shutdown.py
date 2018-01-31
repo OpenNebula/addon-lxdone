@@ -5,7 +5,7 @@ import lxd_common as lc
 t0 = lc.time()
 
 DOMAIN = lc.sys.argv[1]
-# HOST = lc.sys.argv[2]
+HOST = lc.sys.argv[2]
 VM_ID = lc.sys.argv[3]
 
 client = lc.Client()

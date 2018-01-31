@@ -18,6 +18,4 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-VM_ID=$3
-
-sudo python $(dirname $0)/shutdown.py $VM_ID
+sudo python $(dirname $0)/shutdown.py $1 $2 $3
