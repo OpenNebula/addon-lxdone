@@ -110,7 +110,7 @@ def apply_profile(profile, container):
             container.config.update(i)
             container.save(wait=True)
         except lc.LXDAPIException as lxdapie:
-            lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
+            lc.log_function(i.keys()[0] + ': ' + str(lxdapie), 'e')
             lc.sys.exit(1)
 
     for i in profile['devices']:
@@ -118,23 +118,22 @@ def apply_profile(profile, container):
             container.devices.update(i)
             container.save(wait=True)
         except lc.LXDAPIException as lxdapie:
-            lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
+            lc.log_function(i.keys()[0] + ': ' + str(lxdapie), 'e')
             lc.sys.exit(1)
 
 
 # INITIALIZE_CONTAINER
 profile = create_profile(lc.sys.argv[1])  # xml is passed by opennebula as argument ex. deployment.0
-VM_ID = profile['VM_ID']
-VM_NAME = 'one-' + VM_ID
+VM_NAME = 'one-' + profile['VM_ID']
 init = {'name': VM_NAME, 'source': {'type': 'none'}}
-lc.log_function('INFO', 40 * "#")
+lc.log_function(lc.separator)
 
 try:
     container = client.containers.create(init, wait=True)
 except lc.LXDAPIException as lxdapie:  # probably this container already exists
     container = client.containers.get(VM_NAME)
     if container.status == 'Running':
-        lc.log_function('e', "A container with the same ID is already running")
+        lc.log_function("A container with the same ID is already running", 'e')
         lc.sys.exit(1)
 apply_profile(profile, container)
 
@@ -145,7 +144,7 @@ except lc.LXDAPIException as lxdapie:
     if container.status == 'Running':
         container.stop(wait=True)
     lc.container_wipe(container, profile)
-    lc.log_function('ERROR', 'container: ' + str(lxdapie))
+    lc.log_function(lxdapie, 'e')
     lc.sys.exit(1)
 
 lc.vnc_start(profile['VM_ID'], profile['VNC_PORT'], profile['VNC_PASSWD'])

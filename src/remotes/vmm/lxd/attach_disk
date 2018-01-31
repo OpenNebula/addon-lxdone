@@ -47,7 +47,7 @@ xml = convert_b64xml(DRV_ACTION, '/tmp/' + DOMAIN + 'attach_disk_xml')
 prefix = "/VMM_DRIVER_ACTION_DATA/"
 mapped_target_index = int(TARGET_INDEX) - 1
 
-lc.log_function('i', 40 * "-")
+lc.log_function(lc.separator)
 
 DS_ID = xml[prefix + "VM/HISTORY_RECORDS/HISTORY/DS_ID"][0]
 disk_data = {'DISK_ID': "", 'DISK_TYPE': "", 'SOURCE': "", 'CLONE': ""}
@@ -64,7 +64,7 @@ try:
     container.devices.update(config)
     container.save(wait=True)
 except lc.LXDAPIException as lxdapie:
-    lc.log_function('i', lxdapie)
+    lc.log_function(lxdapie, 'e')
     lc.storage_sysunmap(disk_data["DISK_TYPE"], host_device)
     lc.sys.exit(1)
 

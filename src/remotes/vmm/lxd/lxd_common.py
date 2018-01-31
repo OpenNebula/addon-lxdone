@@ -34,7 +34,7 @@ containers_dir = "/var/lib/lxd/containers/"
 # MISC
 
 
-def log_function(severity, message):
+def log_function(message, severity="i"):
     'print message with a definded severity in stderr'
     sep = ': '
     if severity == "e":
@@ -48,7 +48,7 @@ def log_function(severity, message):
 def clock(t0):
     'Calculates and logs in the logfile the time passed since $t0'
     duration = str(time() - t0)
-    log_function("INFO", 'Script executed in almost ' + duration + ' seconds')
+    log_function('Script executed in almost ' + duration + ' seconds')
 
 
 def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):  # TODO implement password protection
@@ -56,7 +56,7 @@ def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):  # TODO implement password protectio
     try:  # TODO fix hardcoded vnc.bash location
         sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' + VM_ID + " " + VNC_PORT, shell=True)
     except Exception as e:
-        log_function("e", e)
+        log_function(e, 'e')
 
 
 def dir_empty(directory):
@@ -81,7 +81,7 @@ def container_wipe(container, dicc):
     storage_rootfs_umount(DISK_TYPE[0], container.config)
     status = dir_empty(containers_dir + str(container.name))
     if status == "non_empty":
-        log_function('e', "Cannot delete non_empty container rootfs")
+        log_function("Cannot delete non_empty container rootfs", 'e')
         sys.exit(1)
     else:
         container.delete()
@@ -184,7 +184,7 @@ def storage_rootfs_mount(VM_ID, DISK_TYPE, DS_ID, DISK_SOURCE, DISK_CLONE):
     source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE)
     target = containers_dir + "one-" + VM_ID
     if dir_empty(target) == "non_empty":
-        log_function('e', "Cannot mount container image over populated container directory")
+        log_function("Cannot mount container image over populated container directory", 'e')
         sys.exit(1)
     sp.call("mount " + source + " " + target, shell=True)
     return {'user.rootfs': source}
