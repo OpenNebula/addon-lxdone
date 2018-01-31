@@ -303,12 +303,12 @@ lxc profile unset default security.nesting
 
 ##### Unix Block device Mounting
 
-LXD can add regular devices in the host, see [storage documentation](https://lxd.readthedocs.io/en/stable-2.0/containers/index.html#type-unix-block). However, [unprivileged containers aren't allowed to mount most filesystems](https://discuss.linuxcontainers.org/t/unix-block-device-mounting/565). In order to mount non-rootfs devices in unprivileged containers you need to set a flag in the LXD server.
+LXD can add regular devices in the host, see [storage documentation](https://lxd.readthedocs.io/en/stable-2.0/containers/index.html#type-unix-block). However, [unprivileged containers aren't allowed to mount most block devices](https://discuss.linuxcontainers.org/t/unix-block-device-mounting/565). In order to mount non-rootfs devices in unprivileged containers you need to set a flag in the LXD server.
 
 ```bash
  echo Y > /sys/module/ext4/parameters/userns_mounts
 ```
-
+* It should be made permanent, you can achieve that using ***/etc/rc.local***
 <a name="253-user-ids"></a>
 
 ### 2.6.3 User IDs
