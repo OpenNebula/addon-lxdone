@@ -43,7 +43,7 @@ client = lc.Client()
 container = client.containers.get(DOMAIN)
 
 
-xml = convert_b64xml(DRV_ACTION, '/tmp/' + DOMAIN + 'attach_disk_xml')
+xml = convert_b64xml(DRV_ACTION, lc.tmp_xml_dir + DOMAIN + 'attach_disk_xml')
 prefix = "/VMM_DRIVER_ACTION_DATA/"
 mapped_target_index = int(TARGET_INDEX) - 1
 
