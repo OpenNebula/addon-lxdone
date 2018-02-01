@@ -124,12 +124,6 @@ def xml_query_list(value, dicc):  # iplement item query or list query
     return value
 
 
-def xml_query_item(value, dicc):
-    'Returns the first element of the list $value obtained by calling xml_query'
-    value = xml_query_list(value, dicc)
-    return value[0]
-
-
 def xml_query_dict(value, id_list, dicc):
     'Tries to return a dict with $value instances from $dicc'
     try:
