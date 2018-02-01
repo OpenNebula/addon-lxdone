@@ -31,6 +31,7 @@ from pylxd.exceptions import LXDAPIException
 # variables
 containers_dir = "/var/lib/lxd/containers/"
 tmp_xml_dir = "/tmp/"
+xml_pre = '/VM/TEMPLATE/'
 
 # MISC
 
@@ -115,7 +116,9 @@ def xml_start(xml):
 def xml_query_list(value, dicc):  # iplement item query or list query
     'Tries to return a list with $value instances from $dicc'
     try:
-        value = dicc['/VM/TEMPLATE/' + value]
+        value = dicc[value]
+        # if len(value) == 1:
+        #     value = value[0]
     except:
         value = [None]
     return value
