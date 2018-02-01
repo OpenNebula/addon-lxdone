@@ -53,7 +53,7 @@ def clock(t0):
 
 def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):  # TODO implement password protection
     'Starts VNC server in the one-$VM_ID container shell'
-    try:  # TODO fix hardcoded vnc.bash location
+    try:  # hardcoded vnc.bash location
         sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' + VM_ID + " " + VNC_PORT, shell=True)
     except Exception as e:
         log_function(e, 'e')
@@ -111,7 +111,7 @@ def xml_start(xml):
     return dicc
 
 
-def xml_query_list(value, dicc):
+def xml_query_list(value, dicc):  # iplement item query or list query
     'Tries to return a list with $value instances from $dicc'
     try:
         value = dicc['/VM/TEMPLATE/' + value]
@@ -141,7 +141,7 @@ def xml_query_dict(value, id_list, dicc):
 
 
 # STORAGE SIMPLE
-def storage_sysmap(DISK_ID, DISK_TYPE, DISK_IMAGE, VM_ID, DS_ID, DISK_CLONE):
+def storage_sysmap(DISK_ID, DISK_TYPE, DISK_IMAGE, VM_ID, DS_ID, DISK_CLONE):  # TODO read disk specific arguments in a list
     'Maps a $DISK_IMAGE device into the host corresponding block device, CEPH, LVM or FILESYSTEM'
 
     def storage_pre(command):
