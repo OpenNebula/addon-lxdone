@@ -1,1 +1,4 @@
-/.project
+.project
+*sublime*
+*.TODO
+*.todo

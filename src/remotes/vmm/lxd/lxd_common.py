@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # -------------------------------------------------------------------------- #
-# Copyright 2016-2017                                                        #
+# Copyright 2016-2018                                                        #
 #                                                                            #
 # Portions copyright OpenNebula Project (OpenNebula.org), CG12 Labs          #
 #                                                                            #
@@ -24,53 +24,71 @@ import subprocess as sp
 import sys
 import xml.etree.ElementTree as ET
 from time import time
-from pylxd.client import Client
 import isoparser
+from pylxd.client import Client
+from pylxd.exceptions import LXDAPIException
 
+# variables
+containers_dir = "/var/lib/lxd/containers/"
 
 # MISC
 
+
 def log_function(severity, message):
+    'print message with a definded severity in stderr'
     sep = ': '
-    print(severity + sep + os.path.basename(sys.argv[0]) + sep + message, file=sys.stderr)
+    if severity == "e":
+        severity = "ERROR"
+    elif severity == "i":
+        severity = "INFO"
+
+    print(severity + sep + os.path.basename(sys.argv[0]) + sep + str(message), file=sys.stderr)
 
 
-def clock(t0, VM_ID):
+def clock(t0):
     'Calculates and logs in the logfile the time passed since $t0'
     duration = str(time() - t0)
-    # log_info('Script executed in almost ' + duration + ' seconds', VM_ID)
     log_function("INFO", 'Script executed in almost ' + duration + ' seconds')
 
 
-def vnc_start(VM_ID, dicc):
-    'If graphics are defined in the VM template, starts VNC server in the one-$VM_ID container shell'
-    VNC_PORT = xml_query_item('GRAPHICS/PORT', dicc)
-    if VNC_PORT:
-        VNC_PASSWD = xml_query_item('GRAPHICS/PASSWD', dicc)
-        try:
-            if VNC_PASSWD:
-                VNC_PASSWD = "-passwd " + VNC_PASSWD
-            else:
-                VNC_PASSWD = ""
-            sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' +
-                     VM_ID + " " + VNC_PORT, shell=True)
-        except Exception as e:
-            # log_info(e, VM_ID)
-            log_function("ERROR", e)
+def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):  # TODO implement password protection
+    'Starts VNC server in the one-$VM_ID container shell'
+    try:  # TODO fix hardcoded vnc.bash location
+        sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' + VM_ID + " " + VNC_PORT, shell=True)
+    except Exception as e:
+        log_function("e", e)
 
 
-def container_wipe(num_hdds, container, DISK_TARGET, DISK_TYPE):
+def dir_empty(directory):
+    directory = str(directory)
+    if not os.listdir(directory):
+        status = "empty"
+    else:
+        status = "non_empty"
+    return status
+
+
+def container_wipe(container, dicc):
     'Deletes $container after unmounting and unmapping its related storage'
+    DISK_TYPE = xml_query_list('DISK/TYPE', dicc)
+    num_hdds = len(DISK_TYPE)
     if num_hdds > 1:
+        DISK_TARGET = xml_query_list('DISK/TARGET', dicc)
         for x in xrange(1, num_hdds):
             source = unmap(container.devices, DISK_TARGET[x])
             source = storage_lazer(source)
             storage_sysunmap(DISK_TYPE[x], source)
     storage_rootfs_umount(DISK_TYPE[0], container.config)
-    container.delete()
-
+    status = dir_empty(containers_dir + str(container.name))
+    if status == "non_empty":
+        log_function('e', "Cannot delete non_empty container rootfs")
+        sys.exit(1)
+    else:
+        container.delete()
 
 # XML RELATED
+
+
 def xml_start(xml):
     'Stores $xml file in $dicc dictionary'
 
@@ -155,19 +173,20 @@ def storage_sysunmap(DISK_TYPE, source):
 
 
 def storage_lazer(device):
-    'Returns the target device based on minor and major number'
-    major = device['major']
-    minor = device['minor']
-    return sp.check_output('udevadm info -rq name /sys/dev/block/' + major + ':' + minor,
-                           shell=True).strip('\n')
+    'Returns the system device based on container mapped device'
+    return sp.check_output('udevadm info -rq name /sys/dev/block/' + device['major'] + ':' + device['minor'], shell=True).strip('\n')
 
 
 # STORAGE COMPOSED
+
+
 def storage_rootfs_mount(VM_ID, DISK_TYPE, DS_ID, DISK_SOURCE, DISK_CLONE):
     'Mounts rootfs for container one-$VM_ID'
-    source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE,
-                            VM_ID, DS_ID, DISK_CLONE)
-    target = '/var/lib/lxd/containers/' + "one-" + VM_ID
+    source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE)
+    target = containers_dir + "one-" + VM_ID
+    if dir_empty(target) == "non_empty":
+        log_function('e', "Cannot mount container image over populated container directory")
+        sys.exit(1)
     sp.call("mount " + source + " " + target, shell=True)
     return {'user.rootfs': source}
 
@@ -190,14 +209,12 @@ def storage_context(container, contextiso):
 # LXD CONFIG MAPPING
 
 
-def map_disk(DISK_TARGET, path):
-    'Creates a dictionary for LXD containing $path disk configuration, $DISK_TARGET will be $path \
-    inside the container'
-    dev_stat = os.stat(path)
+def map_disk(DISK_TARGET, host_device):
+    'Creates a dictionary for LXD disk configuration, $DISK_TARGET will be path inside the container'
+    dev_stat = os.stat(host_device)
     major = str(os.major(dev_stat.st_rdev))
     minor = str(os.minor(dev_stat.st_rdev))
-    return {DISK_TARGET: {'path': '/dev/' + DISK_TARGET, 'type': 'unix-block', 'minor': minor,
-                          'major': major}}
+    return {DISK_TARGET: {'path': '/dev/' + DISK_TARGET, 'type': 'unix-block', 'minor': minor, 'major': major}}
 
 
 def map_cpu(CPU):
@@ -227,8 +244,7 @@ def map_xml(xml):
 
 def map_nic(nic_name, NIC_BRIDGE, NIC_MAC, NIC_TARGET):
     'Creates a dicitionary for LXD containing $nic_name network interface configuration'
-    return {nic_name: {'name': nic_name, 'type': 'nic', 'hwaddr': NIC_MAC, 'nictype': 'bridged',
-                       'parent': NIC_BRIDGE, 'host_name': NIC_TARGET}}
+    return {nic_name: {'name': nic_name, 'type': 'nic', 'hwaddr': NIC_MAC, 'nictype': 'bridged', 'parent': NIC_BRIDGE, 'host_name': NIC_TARGET}}
 
 
 def unmap(container_devices, device_name):

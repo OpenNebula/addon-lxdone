@@ -17,9 +17,9 @@
 #--------------------------------------------------------------------------- #
 
 if [ -f /proc/cpuinfo ]; then
-
-    echo -n "MODELNAME=\""
-    grep -m 1 "model name" /proc/cpuinfo | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$/"/'
-
+    if grep -Fq "model name" /proc/cpuinfo; then
+        echo -n "MODELNAME=\""
+        grep -m 1 "model name" /proc/cpuinfo | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$/"/'
+    fi
 fi
 

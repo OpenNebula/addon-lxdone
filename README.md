@@ -4,12 +4,11 @@
 
 <br />
 
-[![LXDoNe](https://img.shields.io/badge/release-5.2--4.1-3c97f3.svg?style=flat-square)](https://github.com/OpenNebula/addon-lxdone/releases)
 [![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=I%20want%20freedom.%20I%20want%20efficiency.%20Faster%20private%20clouds%20for%20everyone.%20%23LXDoNe%20%2B%20%40opennebula%20%3D%20performance%20⚡️%20https%3A%2F%2Fgithub.com/OpenNebula/addon-lxdone%2F&source=webclient)
 
 [![LXD](https://img.shields.io/badge/lxd-LTS-orange.svg?style=flat-square)](https://linuxcontainers.org/lxd/)
 [![Ceph](https://img.shields.io/badge/ceph-LTS-red.svg?style=flat-square)](https://ceph.com)
-[![OpenNebula](https://img.shields.io/badge/one-5.2.1-blue.svg?style=flat-square)](https://opennebula.org)
+[![OpenNebula](https://img.shields.io/badge/one-5.4.1-blue.svg?style=flat-square)](https://opennebula.org)
 
 [![pylxd](https://img.shields.io/badge/pylxd-2.0.5-brightgreen.svg?style=flat-square)](https://pylxd.readthedocs.io/en/stable/)
 [![VNC](https://img.shields.io/badge/svncterm-1.2-yellow.svg?style=flat-square)](https://github.com/dealfonso/svncterm)
@@ -25,7 +24,7 @@
 
 [LXD](https://linuxcontainers.org/lxd/) is a daemon which provides a REST API to drive **LXC** containers. Containers are lightweight OS-level Virtualization instances, they behave like Virtual Machines but don't suffer from hardware emulation processing penalties by sharing the kernel with the host. They run bare-metal-like, simple containers can boot up in 2 seconds consuming less than 32MB of RAM and a minimal fraction of a CPU Core. Check out this [performance comparison against KVM](https://insights.ubuntu.com/2015/05/18/lxd-crushes-kvm-in-density-and-speed/) if you don't know much about LXD.
 
-The master branch is subject to changes. We recomend to use one of the stables [releases](https://github.com/OpenNebula/addon-lxcone/releases) you can check at the top of this page.
+The master branch is subject to changes. We recommend to use one of the stables [releases](https://github.com/OpenNebula/addon-lxcone/releases) you can check at the top of this page.
 
 # Developers
 
@@ -41,8 +40,8 @@ The master branch is subject to changes. We recomend to use one of the stables [
 **LXDoNe** is not an update of **LXCoNe** so your old containers won't be manageable out of the box. Default compressed LXD images won't work either. For more information read [Virtual Appliance](Image.md).
 
 ## Tested OpenNebula versions
+[![OpenNebula](https://img.shields.io/badge/one-5.4.1-blue.svg?style=flat-square)](https://opennebula.org)
 [![OpenNebula](https://img.shields.io/badge/one-5.2.1-blue.svg?style=flat-square)](https://opennebula.org)
-[![OpenNebula](https://img.shields.io/badge/one-5.2.0-blue.svg?style=flat-square)](https://opennebula.org)
 
 ## Tested Linux Distributions
 [![ubuntu](https://img.shields.io/badge/ubuntu-1604-orange.svg?style=flat-square)](https://ubuntu.com)
@@ -51,6 +50,39 @@ The master branch is subject to changes. We recomend to use one of the stables [
 Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 
 # Features
+
+## [5.4-5](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.4-5)
+- Tested OpenNebula 5.4.1
+- Added validations in several container life moments
+- Setup process updated
+- Created a script for updating ***vmm*** and ***im*** drivers.
+- Several minor improvements and bug fixes
+- Fixed extra hdd mounting permission issues
+
+## [5.2-4.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1)
+- Base image updated with new context and dotfiles
+- Virtual Appliance generation guide reworked
+- Poll minor bug fixed
+
+## [5.2-4](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4)
+- [VNC fixed](https://github.com/OpenNebula/addon-lxdone/issues/6)
+- Context reworked
+- Logs reworked
+- Allow use of LXD features in VM Template:
+    - privileged/unprivileged containers
+    - nesting
+- vmm scripts execution times reduced 40-60%
+
+## [5.2-3.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-3.1)
+- NIC Hotplug
+- Virtual Appliance uploaded
+- Enhanced buildimg.sh, thanks @sw37th
+    + Bug fixes
+    + Included auto-contextualization
+
+## [5.2-2](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-2)
+- Virtual Appliance creation script
+
 ## [5.2-1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-1)
 - Life cycle control:
     - Start and Poweroff
@@ -76,40 +108,16 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 - Contextualization compatibility
 - 802.1Q network driver compatibility
 
-## [5.2-2](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-2)
-- Virtual Appliance creation script
-
-## [5.2-3.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-3.1)
-- NIC Hotplug
-- Virtual Appliance uploaded
-- Enhanced buildimg.sh, thanks @sw37th
-    + Bugfixes
-    + Included auto-contextualization
-
-## [5.2-4](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4)
-- [VNC fixed](https://github.com/OpenNebula/addon-lxdone/issues/6)
-- Context reworked
-- Logs reworked
-- Allow use of LXD feaures in VM Template:
-    - privileged/unprivileged containers
-    - nesting
-- vmm scripts execution times reduced 40-60% 
-
-## [5.2-4.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1)
-- Base image updated with new context and dotfiles
-- Virtual Appliance generation guide reworked 
-- Poll minor bug fixed
-
 ## TODO
 - Use password in VNC
 - Bandwidth limitation
 - Snapshots
 - Code migration to Python 3
 - IO throttling
-- Create ubuntu package for custom context
-- Create ubuntu package for lxdone releases
+- Create Ubuntu package for custom context
+- Create Ubuntu package for lxdone releases
 - Use updated svncterm 1.5-2
-- Full live VM configurations 
+- Full live VM configurations
 - Migration
 - LVM storage backend
 - Use Ceph with LXD native support

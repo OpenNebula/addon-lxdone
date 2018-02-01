@@ -8,31 +8,25 @@
 
 <!-- MarkdownTOC -->
 
-- [1 - Frontend setup](#1-frontend-setup)
-    - [1.1 Installation](#11-installation)
-    - [1.2 LXDoNe integration](#12-lxdone-integration)
-        - [1.2.1 Drivers](#121-drivers)
-        - [1.2.2 Enable LXD](#122-enable-lxd)
-- [2 - Virtualization Node setup](#2-virtualization-node-setup)
-    - [2.1 Install required packages](#21-install-required-packages)
-    - [2.2 VNC server](#22-vnc-server)
-    - [2.3 oneadmin](#23-oneadmin)
-    - [2.4 Loop devices](#24-loop-devices)
-    - [2.5 LXD](#25-lxd)
-    - [2.5 LXD](#25-lxd)
-        - [2.5.1 Configure the LXD Daemon](251-daemon)
-        - [2.5.2 LXD Profile](252-lxd-profile)
-        - [2.5.3 User IDs](253-user-ids)
-- [3 - Add a LXD Image](#3-add-lxd-image)
-- [4 - Add a LXD Virtualization Node to OpenNebula](#4-add-lxd-node)
-- [5 - Add the LXD bridged network](#5-add-the-lxd-bridge)
-- [6 - LXD Template Creation in OpenNebula](#6-lxd-template-creation)
-- [7 - Provision a new LXD Container from the template](#7-provision)
+- [1 - Frontend Setup](#1---frontend-setup)
+  - [1.1 Installation](#11-installation)
+  - [1.2 LXDoNe integration](#12-lxdone-integration)
+- [2 - Virtualization Node setup](#2---virtualization-node-setup)
+  - [2.1 Install required packages](#21-install-required-packages)
+  - [2.2 VNC server](#22-vnc-server)
+  - [2.3 oneadmin](#23-oneadmin)
+  - [2.4 Loopback devices](#24-loopback-devices)
+  - [2.5 LXD](#25-lxd)
+- [3 - Add a LXD Image](#3---add-a-lxd-image)
+- [4 - Add a LXD Virtualization Node to OpenNebula](#4---add-a-lxd-virtualization-node-to-opennebula)
+- [5 - Add the LXD bridged network](#5---add-the-lxd-bridged-network)
+- [6 - LXD Template Creation in OpenNebula](#6---lxd-template-creation-in-opennebula)
+  - [7 - Provision a new LXD Container from the template](#7---provision-a-new-lxd-container-from-the-template)
 
 <!-- /MarkdownTOC -->
 
 
-<a name="1-frontend-setup"></a>
+<a name="1---frontend-setup"></a>
 # 1 - Frontend Setup
 
 <a name="11-installation"></a>
@@ -44,9 +38,10 @@ Follow [frontend installation](https://docs.opennebula.org/5.2/deployment/openne
 
 <a name="12-lxdone-integration"></a>
 
+<a name="12-lxdone-integration"></a>
 ## 1.2 LXDoNe integration
 
-* The **LXDoNe** drivers must be installed on the OpenNebula ***frontend*** server to add LXD virtualization and monitoring support. 
+* The **LXDoNe** drivers must be installed on the OpenNebula ***frontend*** server to add LXD virtualization and monitoring support.
 
 
 
@@ -56,8 +51,8 @@ Follow [frontend installation](https://docs.opennebula.org/5.2/deployment/openne
 #### Download the [latest release](https://github.com/OpenNebula/addon-lxdone/releases/) and extract it to the oneadmin drivers directory
 
 ```bash
-tar -xf addon-lxdone-<lxdone-release>.tar.gz
-cp -rpa addon-lxdone-*/src/remotes/ /var/lib/one/
+tar -xf <lxdone-release>.tar.gz
+cp -r addon-lxdone-*/src/remotes/ /var/lib/one/
 ```
 
 
@@ -92,7 +87,7 @@ chmod 755 /var/lib/one/remotes/vnm/nic.rb
 
 ### 1.2.2 Enable LXD
 
-Modify **/etc/one/oned.conf**.
+Modify **/etc/one/oned.conf** as root.
 Under **Information Driver Configuration** add this:
 
 ```
@@ -133,8 +128,10 @@ systemctl restart opennebula
 
 
 
+
 <a name="2-virtualization-node-setup"></a>
 
+<a name="2---virtualization-node-setup"></a>
 # 2 - Virtualization Node setup
 
 - Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#), up to [step 6](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#step-6-storage-configuration).
@@ -144,28 +141,29 @@ systemctl restart opennebula
 
 ### Installed KVM Packages which are not needed for LXD support
 
-- The ***opennebula-node*** package installs kvm-required software.
-- Many of the KVM packages may be removed if you do not want to support KVM VM's, the **libvirt-bin** service may be disabled.
+- The ***opennebula-node*** package installs KVM-required software.
+- Many of the KVM packages may be removed if you do not want to support KVM VM's.
 - If you will be using **Ceph storage**, do not remove the **libvirt** package, it is required for Ceph storage.
 
 
 
 <a name="21-install-required-packages"></a>
 
+<a name="21-install-required-packages"></a>
 ## 2.1 Install required packages
 
 ### Ubuntu 16.04 (Xenial Xerus)
 
 ```bash
-apt-get install lxd lxd-tools python-pylxd/xenial-updates \
+apt install lxd lxd-tools python-pylxd/xenial-updates \
                 criu bridge-utils \
                 python-ws4py python-pip
 ```
 
-#### Check that pylxd 2.0.5 or newer is installed, or the LXD driver will not work correctly
+#### Check that pylxd 2.0.5 or the LXD driver will not work correctly
 
-```
-dpkg -s pylxd
+```bash
+dpkg -s python-pylxd | grep 2.0.5 || echo "ERROR pylxd version not 2.05"
 ```
 
 
@@ -182,28 +180,20 @@ pip install isoparser
 
 
 
+<a name="22-vnc-server"></a>
 ## 2.2 VNC server
 
 - **LXDoNe** uses **[Simple VNC Terminal Emulator (svncterm)](https://github.com/dealfonso/svncterm)** as the **VNC** server.
 - svncterm is a fork of [vncterm](https://github.com/proxmox/vncterm), with a simplified codebase, including *the removal of tls support*.
 - svncterm allows the **VNC** option to be used in the VM template definition.
+- We provide a pre-created package for ubuntu 16.04 un our releases section.For compiling svncterm for your distro follow instructions on svncterm's [README](https://github.com/dealfonso/svncterm/blob/master/README)
 
-### Compile and install svncterm
+### Install svncterm
+
 
 ```bash
-https://github.com/dealfonso/svncterm/archive/v1.2.tar.gz
-wget -O svncterm.zip https://codeload.github.com/dealfonso/svncterm/zip/master
-tar zxf v1.2.tar.gz
-cd snvcterm-master
-cd svncterm-1.2/
-##
-## Dependencies for compiling on Ubuntu:
-##
-apt-get install -y make build-essential zlib1g-dev console-data \
-                        quilt libgnutls-dev libjpeg-dev libvncserver-dev
-
-make
-make install
+wget https://github.com/OpenNebula/addon-lxdone/releases/download/v5.2-4.1/svncterm_1.2-1ubuntu_amd64.deb
+apt install libjpeg62 libvncserver1 && dpkg -i svncterm_1.2-1ubuntu_amd64.deb
 ```
 
 <a name="23-oneadmin"></a>
@@ -216,7 +206,7 @@ echo "oneadmin ALL= NOPASSWD: ALL" >> /etc/sudoers.d/oneadmin
 usermod -a -G lxd oneadmin
 ```
 
-<a name="24-loop-devices"></a>
+<a name="24-loopback-devices"></a>
 ## 2.4 Loopback devices
 
 - Every file system image used by **LXDoNe** will require one ***loop device***.
@@ -236,7 +226,7 @@ depmod
 ### 2.5.1 Configure the LXD Daemon
 - By **default**, LXD does not activate a TCP listener, it listens on a **local unix socket**, and so it's not available via the network.
 
-```Bash
+```bash
 lsof | grep -i lxd | egrep --color '(LISTEN|sock)'
 
 lxc config show
@@ -252,7 +242,7 @@ lxd init --auto \
          --network-address 0.0.0.0 \
          --network-port    8443 \
          --trust-password  password
-         
+
 lsof | grep -i lxd | egrep --color '(LISTEN|sock)'
 
 lxc config show
@@ -275,7 +265,7 @@ lxc config show
 - Containers inherit properties from a configuration profile.
 - The installation of LXD will create a **default** profile which needs to be modified to work with OpenNebula.
 
-```shell
+```bash
 lxc profile list
 lxc profile show default
 ```
@@ -290,6 +280,15 @@ lxc profile show default
 lxc profile device remove default eth0
 ```
 
+#### Autostarting
+
+- When the LXD server is shut down, containers will go to the state they were in the moment of powering off the LXd host.
+- That is, if a container was running before shutting down the LXD server machine, the container will start after the server boots up.
+- This is a behavior not managed by OpenNebula, so it needs to be removed.
+
+```bash
+lxc profile set default boot.autostart 0
+```
 
 
 #### Security and Nesting
@@ -302,7 +301,13 @@ lxc profile unset default security.privileged
 lxc profile unset default security.nesting
 ```
 
+##### Unix Block device Mounting
 
+LXD can add regular devices in the host, see [storage documentation](https://lxd.readthedocs.io/en/stable-2.0/containers/index.html#type-unix-block). However, [unprivileged containers aren't allowed to mount most filesystems](https://discuss.linuxcontainers.org/t/unix-block-device-mounting/565). In order to mount non-rootfs devices in unprivileged containers you need to set a flag in the LXD server.
+
+```bash
+ echo Y > /sys/module/ext4/parameters/userns_mounts
+```
 
 <a name="253-user-ids"></a>
 
@@ -327,25 +332,30 @@ root:100000:65536
 
 <a name="3-add-lxd-image"></a>
 
+<a name="3---add-a-lxd-image"></a>
 # 3 - Add a LXD Image
 - **LXD** native images are basically compressed files.
 - However, **OpenNebula** uses block based images by default.
 - Because the formats are different, the **default LXD images will not work** with LXDoNe.
-- LXD Images must be converted to the OpenNebula compatible format. More information about **[creating OpenNebula compatible LXD images](Image.md)** is available in [Image.md](Image.md)
+- LXD Images must be converted to the OpenNebula compatible format. More information about **creating OpenNebula compatible LXD images** is available [here](Image.md)
 
 
 
 ### Download pre-built image
 
-- **Download** a pre-build **[OpenNebula-compatible LXD Image for Ubuntu 16.04 from the OpenNebula](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f)**. 
+- **Download** a pre-build **OpenNebula-compatible LXD Image for Ubuntu 16.04** from the [OpenNebula marketplace](https://marketplace.opennebula.systems/appliance/7dd50db7-33c4-4b39-940c-f6a55432622f).
 - The **default username** is: **team**
 - The **default password** for the team user is: **team**
 
-
+#### We also keep the images in:
+ - [MEGA](https://mega.nz/#!U8pXxBpI!2UjFmQO8Fr8hz5oHt7z6QeIqYR3ziZ74OcNP1HByO4c)
+ - [Dropbox](https://www.dropbox.com/s/p9s1tzc47tpgxqg/lxdone-5.2-4.1.img.tar.xz?dl=0)
+ - [Google Drive](https://drive.google.com/open?id=0B6vgzbpLofKjbXFzTjI1QmZ4X1U)
 
 
 <a name="4-add-lxd-node"></a>
 
+<a name="4---add-a-lxd-virtualization-node-to-opennebula"></a>
 # 4 - Add a LXD Virtualization Node to OpenNebula
 
 
@@ -371,6 +381,7 @@ root:100000:65536
 
 <a name="5-add-the-lxd-bridge"></a>
 
+<a name="5---add-the-lxd-bridged-network"></a>
 # 5 - Add the LXD bridged network
 
 - In the **OpenNebula web console** in the **Network** section
@@ -388,7 +399,7 @@ root:100000:65536
 
 ![](picts/nic.png)
 
-<a name="6-lxd-template-creation"></a>
+<a name="6---lxd-template-creation-in-opennebula"></a>
 # 6 - LXD Template Creation in OpenNebula
 
 - In the **OpenNebula web console** in the **Templates** section
@@ -423,7 +434,7 @@ root:100000:65536
 
 
 
-![](picts/lxd-security.png) 
+![](picts/lxd-security.png)
 
 
 
@@ -431,6 +442,7 @@ root:100000:65536
 
 <a name="7-provision"></a>
 
+<a name="7---provision-a-new-lxd-container-from-the-template"></a>
 ## 7 - Provision a new LXD Container from the template
 - In the **OpenNebula web console** in the **Instances** section
 - Choose **VMs**

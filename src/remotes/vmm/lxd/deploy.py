@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # -------------------------------------------------------------------------- #
-# Copyright 2016-2017                                                        #
+# Copyright 2016-2018                                                        #
 #                                                                            #
 # Portions copyright OpenNebula Project (OpenNebula.org), CG12 Labs          #
 #                                                                            #
@@ -23,41 +23,38 @@ t0 = lc.time()
 from lxd_common import xml_query_list as xql
 from lxd_common import xml_query_dict as xqd
 from lxd_common import xml_query_item as xqi
-from pylxd.exceptions import LXDAPIException
 
 
 client = lc.Client()
 
 
 def create_profile(xml):
-    """
-    create container's profile from deployment.N XML file
-    """
+    'create a container profile from OpenNebula VM template'
     dicc = lc.xml_start(xml)
     profile = {'config': [], 'devices': []}
 
-    # GENERAL_CONFIG
-    profile['config'].append(lc.map_ram(xqi('MEMORY', dicc)))
-    profile['config'].append(lc.map_cpu(xqi('CPU', dicc)))  # cpu percentage
-    profile['config'].append(lc.map_vcpu(xqi('VCPU', dicc)))  # cpu core
-    profile['config'].append({'user.hostname': dicc["/VM/NAME"][0]})
-    profile['config'].append(lc.map_xml(xml))
+    # General
+    mapped_entries = [lc.map_ram(xqi('MEMORY', dicc)),
+                      lc.map_cpu(xqi('CPU', dicc)),
+                      lc.map_vcpu(xqi('VCPU', dicc)),
+                      lc.map_xml(xml),
+                      {'user.hostname': dicc["/VM/NAME"][0]}]
 
-    # IDs
+    for x in mapped_entries:
+        profile['config'].append(x)
+
     VM_ID = profile['VM_ID'] = dicc["/VM/ID"][0]
     profile['CONTEXT_DISK_ID'] = xqi('CONTEXT/DISK_ID', dicc)
 
-    # LXD security.privileged
-    if dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_PRIVILEGED'):
-        profile['config'].append(
-            {'security.privileged':
-             dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_PRIVILEGED')[0]})
+    # VNC
+    for x in ['PASSWD', 'PORT']:
+        profile['VNC_' + x] = xqi('GRAPHICS/' + x, dicc)
 
-    # LXD security.nesting
-    if dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_NESTING'):
-        profile['config'].append(
-            {'security.nesting':
-             dicc.get('/VM/USER_TEMPLATE/LXD_SECURITY_NESTING')[0]})
+    # Security
+    for x in ["privileged", "nesting"]:
+        item = '/VM/USER_TEMPLATE/LXD_SECURITY_' + x.swapcase()
+        if dicc.get(item):
+            profile['config'].append({'security.' + x: dicc.get(item)[0]})
 
     # NETWORK_CONFIG
     NIC = xql('NIC/NIC_ID', dicc)
@@ -85,23 +82,18 @@ def create_profile(xml):
             source = lc.storage_sysmap(DISK_ID[x], DISK_TYPE[x], DISK_SOURCE[x], VM_ID, DS_ID, DISK_CLONE[x])
             profile['devices'].append(lc.map_disk(profile['DISK_TARGET'][x], source))
 
-    # dicc (for lc.vnc_start())
-    profile['dicc'] = dicc
-
     return profile
 
 
 def apply_profile(profile, container):
-    """
-    apply config and devices to container
-    """
+    'apply config and devices to container'
     # STORAGE_CONFIG
     VM_ID = profile['VM_ID']
     DS_ID = profile['DS_ID']
     DISK_TYPE = profile['DISK_TYPE']
     DISK_SOURCE = profile['DISK_SOURCE']
     DISK_CLONE = profile['DISK_CLONE']
-    # rootfs
+
     root_source = lc.storage_rootfs_mount(VM_ID, DISK_TYPE[0], DS_ID, DISK_SOURCE[0], DISK_CLONE[0])
     profile['config'].append(root_source)
 
@@ -109,7 +101,6 @@ def apply_profile(profile, container):
         CONTEXT_DISK_ID = profile['CONTEXT_DISK_ID']
         DS_ID = profile['DS_ID']
         DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
-        # push context files into the container
         contextiso = lc.isoparser.parse(DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
         lc.storage_context(container, contextiso)
 
@@ -118,7 +109,7 @@ def apply_profile(profile, container):
         try:
             container.config.update(i)
             container.save(wait=True)
-        except LXDAPIException as lxdapie:
+        except lc.LXDAPIException as lxdapie:
             lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             lc.sys.exit(1)
 
@@ -126,45 +117,37 @@ def apply_profile(profile, container):
         try:
             container.devices.update(i)
             container.save(wait=True)
-        except LXDAPIException as lxdapie:
+        except lc.LXDAPIException as lxdapie:
             lc.log_function('ERROR', 'container: ' + i.keys()[0] + ': ' + str(lxdapie))
             lc.sys.exit(1)
 
 
-# READ_XML
-xml = lc.sys.argv[1]
-
-profile = create_profile(xml)
-
+# INITIALIZE_CONTAINER
+profile = create_profile(lc.sys.argv[1])  # xml is passed by opennebula as argument ex. deployment.0
 VM_ID = profile['VM_ID']
 VM_NAME = 'one-' + VM_ID
-
+init = {'name': VM_NAME, 'source': {'type': 'none'}}
 lc.log_function('INFO', 40 * "#")
 
-# INITIALIZE_CONTAINER
-init = {'name': VM_NAME, 'source': {'type': 'none'}}
 try:
     container = client.containers.create(init, wait=True)
-except LXDAPIException as lxdapie:
-    # probably this container already exists
-    lc.log_function('INFO', 'container: ' + VM_NAME + ' ' + str(lxdapie))
+except lc.LXDAPIException as lxdapie:  # probably this container already exists
     container = client.containers.get(VM_NAME)
+    if container.status == 'Running':
+        lc.log_function('e', "A container with the same ID is already running")
+        lc.sys.exit(1)
+apply_profile(profile, container)
 
 # BOOT_CONTAINER
-apply_profile(profile, container)
 try:
     container.start(wait=True)
-    container.config['user.xml']  # validate config
-except LXDAPIException as lxdapie:
+except lc.LXDAPIException as lxdapie:
     if container.status == 'Running':
         container.stop(wait=True)
-    DISK_TYPE = profile['DISK_TYPE']
-    DISK_TARGET = profile['DISK_TARGET']
-    num_hdds = profile['num_hdds']
-    lc.container_wipe(num_hdds, container, DISK_TARGET, DISK_TYPE)
+    lc.container_wipe(container, profile)
     lc.log_function('ERROR', 'container: ' + str(lxdapie))
     lc.sys.exit(1)
 
-lc.vnc_start(VM_ID, profile['dicc'])
-lc.clock(t0, VM_ID)
+lc.vnc_start(profile['VM_ID'], profile['VNC_PORT'], profile['VNC_PASSWD'])
+lc.clock(t0)
 print VM_NAME
