@@ -57,7 +57,7 @@ def create_profile(xml):
             profile['config'].append({'security.' + x: dicc.get(item)[0]})
 
     # NETWORK_CONFIG
-    NIC = xql('NIC/NIC_ID', dicc)
+    NIC = xql('NIC/NIC_ID', dicc)  # NIC_NAME?
     if NIC[0]:
         NIC_BRIDGE = xqd('NIC/BRIDGE', NIC, dicc)
         NIC_MAC = xqd('NIC/MAC', NIC, dicc)
@@ -100,7 +100,7 @@ def apply_profile(profile, container):
     if profile['CONTEXT_DISK_ID']:
         CONTEXT_DISK_ID = profile['CONTEXT_DISK_ID']
         DS_ID = profile['DS_ID']
-        DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
+        DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'  # TODO fix hardcoded
         contextiso = lc.isoparser.parse(DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
         lc.storage_context(container, contextiso)
 
