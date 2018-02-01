@@ -31,6 +31,7 @@ from pylxd.exceptions import LXDAPIException
 # variables
 containers_dir = "/var/lib/lxd/containers/"
 tmp_xml_dir = "/tmp/"
+separator = 40 * "-"
 xml_pre = '/VM/TEMPLATE/'
 
 # MISC
