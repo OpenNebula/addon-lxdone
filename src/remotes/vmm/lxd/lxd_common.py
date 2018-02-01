@@ -73,14 +73,15 @@ def dir_empty(directory):
 
 def container_wipe(container, dicc):
     'Deletes $container after unmounting and unmapping its related storage'
-    DISK_TYPE = xml_query_list('DISK/TYPE', dicc)
+    DISK_TYPE = xml_query_list(xml_pre + 'DISK/TYPE', dicc)
     num_hdds = len(DISK_TYPE)
     if num_hdds > 1:
-        DISK_TARGET = xml_query_list('DISK/TARGET', dicc)
+        DISK_TARGET = xml_query_list(xml_pre + 'DISK/TARGET', dicc)
         for x in xrange(1, num_hdds):
             source = unmap(container.devices, DISK_TARGET[x])
             source = storage_lazer(source)
             storage_sysunmap(DISK_TYPE[x], source)
+
     storage_rootfs_umount(DISK_TYPE[0], container.config)
     status = dir_empty(containers_dir + str(container.name))
     if status == "non_empty":
