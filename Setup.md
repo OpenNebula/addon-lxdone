@@ -74,7 +74,7 @@ cd -
 Replace **/var/lib/one/remotes/vnm.rb** with the one from the **addon-lxdone**.
 
 ```bash
-cp -rpa src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
+cp -rpa addon-lxdone-*/src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
 chown oneadmin:oneadmin /var/lib/one/remotes/vnm/nic.rb
 chmod 755 /var/lib/one/remotes/vnm/nic.rb
 ```
