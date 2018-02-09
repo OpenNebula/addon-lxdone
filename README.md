@@ -57,6 +57,7 @@ Check the [Setup Guide](Setup.md)  to deploy a working scenario.
 - Setup process updated
 - Created a script for updating ***vmm*** and ***im*** drivers.
 - Several minor improvements and bug fixes
+- Fixed extra hdd mounting permission issues
 
 ## [5.2-4.1](https://github.com/OpenNebula/addon-lxdone/releases/tag/v5.2-4.1)
 - Base image updated with new context and dotfiles
