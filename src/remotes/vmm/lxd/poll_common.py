@@ -43,7 +43,8 @@ def print_all_vm_template(hypervisor):
                 id_number = info['NAME'].split('-')[1]
 
             string = "VM=[\n"
-            string += "  ID=%s,\n  DEPLOY_ID=%s,\n" % (id_number, info['NAME'])
+            string += "  ID=%s,\n  DEPLOY_ID=%s,\n  VM_NAME=%s,\n" % (
+                id_number, info['DEPLOY_ID'], info['NAME'])
 
             # Wild VMs
             # try:

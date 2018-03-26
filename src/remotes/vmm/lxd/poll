@@ -46,11 +46,12 @@ class LXD(object):
             if vm.name == one_vm:
                 try:
                     values = self.get_values(vm)
-                    # Wild VMs
-                    # if 'one-' not in vm.name:
+                    
+                    # if 'one-' not in vm.name: # Wild VMs
                     #     uuid, template = self.config_to_one(vm)
                     #     values["TEMPLATE"] = base64.b64encode(template).replace(' ', '')
                     #     values["VM_NAME"] = uuid
+
                 except Exception:
                     values = {"STATE": '-'}
 
@@ -107,6 +108,7 @@ class LXD(object):
     def get_values(self, vm):
         values = {
             "NAME": vm.name,
+            "DEPLOY_ID": vm.name,
             "STATE": self.get_state_info(vm)
         }
         if values["STATE"] == "a":
