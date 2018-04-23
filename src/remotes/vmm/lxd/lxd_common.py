@@ -43,8 +43,15 @@ def log_function(message, severity="i"):
         severity = "ERROR"
     elif severity == "i":
         severity = "INFO"
+    elif severity == "d":
+        severity = "DEBUG"
 
     print(severity + sep + os.path.basename(sys.argv[0]) + sep + str(message), file=sys.stderr)
+
+
+def log_function_verbose(message):
+    for i in separator, message, separator:
+        log_function(i, "d")
 
 
 def clock(t0):
