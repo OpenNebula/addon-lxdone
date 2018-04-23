@@ -56,8 +56,8 @@ def clock(t0):
 def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):  # TODO implement password protection
     'Starts VNC server in the one-$VM_ID container shell'
     try:  # hardcoded vnc.bash location
-        sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' +
-                 VM_ID + " " + VNC_PORT, shell=True)
+        sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash %s %s %s' %
+                 (VM_ID, VNC_PORT, VNC_PASSWD), shell=True)
     except Exception as e:
         log_function(e, 'e')
 
