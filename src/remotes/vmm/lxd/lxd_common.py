@@ -53,11 +53,11 @@ def clock(t0):
     log_function('Script executed in almost ' + duration + ' seconds')
 
 
-def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):  # TODO implement password protection
+def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):
     'Starts VNC server in the one-$VM_ID container shell'
-    try:  # hardcoded vnc.bash location
-        sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash %s %s %s' %
-                 (VM_ID, VNC_PORT, VNC_PASSWD), shell=True)
+    try:
+        sp.Popen('bash %s/vnc.bash %s %s %s' %
+                 (sys.path[0], VM_ID, VNC_PORT, VNC_PASSWD), shell=True)
     except Exception as e:
         log_function(e, 'e')
 
