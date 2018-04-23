@@ -32,7 +32,7 @@ from pylxd.exceptions import LXDAPIException
 containers_dir = "/var/lib/lxd/containers/"
 tmp_xml_dir = "/tmp/"
 xml_pre = '/VM/TEMPLATE/'
-
+separator = 40 * "-"
 # MISC
 
 
@@ -56,7 +56,8 @@ def clock(t0):
 def vnc_start(VM_ID, VNC_PORT, VNC_PASSWD):  # TODO implement password protection
     'Starts VNC server in the one-$VM_ID container shell'
     try:  # hardcoded vnc.bash location
-        sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' + VM_ID + " " + VNC_PORT, shell=True)
+        sp.Popen('bash /var/tmp/one/vmm/lxd/vnc.bash ' +
+                 VM_ID + " " + VNC_PORT, shell=True)
     except Exception as e:
         log_function(e, 'e')
 
@@ -72,10 +73,10 @@ def dir_empty(directory):
 
 def container_wipe(container, dicc):
     'Deletes $container after unmounting and unmapping its related storage'
-    DISK_TYPE = xml_query_list('DISK/TYPE', dicc)
+    DISK_TYPE = xml_query_list(xml_pre + 'DISK/TYPE', dicc)
     num_hdds = len(DISK_TYPE)
     if num_hdds > 1:
-        DISK_TARGET = xml_query_list('DISK/TARGET', dicc)
+        DISK_TARGET = xml_query_list(xml_pre + 'DISK/TARGET', dicc)
         for x in xrange(1, num_hdds):
             source = unmap(container.devices, DISK_TARGET[x])
             source = storage_lazer(source)
@@ -145,7 +146,8 @@ def xml_query_dict(value, id_list, dicc):
 
 
 # STORAGE SIMPLE
-def storage_sysmap(DISK_ID, DISK_TYPE, DISK_IMAGE, VM_ID, DS_ID, DISK_CLONE):  # TODO read disk specific arguments in a list
+# TODO read disk specific arguments in a list
+def storage_sysmap(DISK_ID, DISK_TYPE, DISK_IMAGE, VM_ID, DS_ID, DISK_CLONE):
     'Maps a $DISK_IMAGE device into the host corresponding block device, CEPH, LVM or FILESYSTEM'
 
     def storage_pre(command):
@@ -154,7 +156,8 @@ def storage_sysmap(DISK_ID, DISK_TYPE, DISK_IMAGE, VM_ID, DS_ID, DISK_CLONE):  #
 
     disk = None
     if DISK_TYPE == "FILE":
-        disk = "/var/lib/one/datastores/" + DS_ID + "/" + VM_ID + "/" + 'disk.' + DISK_ID  # TODO fix hardcoded
+        disk = "/var/lib/one/datastores/" + DS_ID + "/" + \
+            VM_ID + "/" + 'disk.' + DISK_ID  # TODO fix hardcoded
         disk = storage_pre("losetup -f --show " + disk)
     elif DISK_TYPE == "BLOCK":
         pass
@@ -185,10 +188,12 @@ def storage_lazer(device):
 
 def storage_rootfs_mount(VM_ID, DISK_TYPE, DS_ID, DISK_SOURCE, DISK_CLONE):
     'Mounts rootfs for container one-$VM_ID'
-    source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE, VM_ID, DS_ID, DISK_CLONE)
+    source = storage_sysmap('0', DISK_TYPE, DISK_SOURCE,
+                            VM_ID, DS_ID, DISK_CLONE)
     target = containers_dir + "one-" + VM_ID
     if dir_empty(target) == "non_empty":
-        log_function("Cannot mount container image over populated container directory", 'e')
+        log_function(
+            "Cannot mount container image over populated container directory", 'e')
         sys.exit(1)
     sp.call("mount " + source + " " + target, shell=True)
     return {'user.rootfs': source}

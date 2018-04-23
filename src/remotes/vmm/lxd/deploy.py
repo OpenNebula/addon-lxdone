@@ -24,7 +24,6 @@ from lxd_common import xml_query_list as xql
 from lxd_common import xml_query_dict as xqd
 from lxd_common import xml_query_item as xqi
 
-
 client = lc.Client()
 
 
@@ -32,11 +31,11 @@ def create_profile(xml):
     'create a container profile from OpenNebula VM template'
     dicc = lc.xml_start(xml)
     profile = {'config': [], 'devices': []}
-
+    pre = lc.xml_pre
     # General
-    mapped_entries = [lc.map_ram(xqi('MEMORY', dicc)),
-                      lc.map_cpu(xqi('CPU', dicc)),
-                      lc.map_vcpu(xqi('VCPU', dicc)),
+    mapped_entries = [lc.map_ram(xqi(pre + 'MEMORY', dicc)),
+                      lc.map_cpu(xqi(pre + 'CPU', dicc)),
+                      lc.map_vcpu(xqi(pre + 'VCPU', dicc)),
                       lc.map_xml(xml),
                       {'user.hostname': dicc["/VM/NAME"][0]}]
 
@@ -44,11 +43,11 @@ def create_profile(xml):
         profile['config'].append(x)
 
     VM_ID = profile['VM_ID'] = dicc["/VM/ID"][0]
-    profile['CONTEXT_DISK_ID'] = xqi('CONTEXT/DISK_ID', dicc)
+    profile['CONTEXT_DISK_ID'] = xqi(pre + 'CONTEXT/DISK_ID', dicc)
 
     # VNC
     for x in ['PASSWD', 'PORT']:
-        profile['VNC_' + x] = xqi('GRAPHICS/' + x, dicc)
+        profile['VNC_' + x] = xqi(pre + 'GRAPHICS/' + x, dicc)
 
     # Security
     for x in ["privileged", "nesting"]:
@@ -57,30 +56,33 @@ def create_profile(xml):
             profile['config'].append({'security.' + x: dicc.get(item)[0]})
 
     # NETWORK_CONFIG
-    NIC = xql('NIC/NIC_ID', dicc)
+    NIC = xql(pre+'NIC/NIC_ID', dicc)
     if NIC[0]:
-        NIC_BRIDGE = xqd('NIC/BRIDGE', NIC, dicc)
-        NIC_MAC = xqd('NIC/MAC', NIC, dicc)
-        NIC_TARGET = xqd('NIC/TARGET', NIC, dicc)
+        NIC_BRIDGE = xqd(pre + 'NIC/BRIDGE', NIC, dicc)
+        NIC_MAC = xqd(pre + 'NIC/MAC', NIC, dicc)
+        NIC_TARGET = xqd(pre + 'NIC/TARGET', NIC, dicc)
         for iface in NIC:
             i = str(iface)
             name = 'eth%s' % (iface)
-            profile['devices'].append(lc.map_nic(name, NIC_BRIDGE[i], NIC_MAC[i], NIC_TARGET[i]))
+            profile['devices'].append(lc.map_nic(
+                name, NIC_BRIDGE[i], NIC_MAC[i], NIC_TARGET[i]))
 
     # STORAGE_CONFIG
     DS_ID = profile['DS_ID'] = dicc["/VM/HISTORY_RECORDS/HISTORY/DS_ID"][0]
-    DISK_TYPE = profile['DISK_TYPE'] = xql('DISK/TYPE', dicc)
-    DISK_CLONE = profile['DISK_CLONE'] = xql('DISK/CLONE', dicc)
-    DISK_SOURCE = profile['DISK_SOURCE'] = xql('DISK/SOURCE', dicc)
+    DISK_TYPE = profile['DISK_TYPE'] = xql(pre+'DISK/TYPE', dicc)
+    DISK_CLONE = profile['DISK_CLONE'] = xql(pre+'DISK/CLONE', dicc)
+    DISK_SOURCE = profile['DISK_SOURCE'] = xql(pre + 'DISK/SOURCE', dicc)
 
     # extra
     num_hdds = profile['num_hdds'] = len(profile['DISK_TYPE'])
-    profile['DISK_TARGET'] = xql('DISK/TARGET', dicc)
+    profile['DISK_TARGET'] = xql(pre+'DISK/TARGET', dicc)
     if num_hdds > 1:
-        DISK_ID = xql('DISK/DISK_ID', dicc)
+        DISK_ID = xql(pre+'DISK/DISK_ID', dicc)
         for x in xrange(1, num_hdds):
-            source = lc.storage_sysmap(DISK_ID[x], DISK_TYPE[x], DISK_SOURCE[x], VM_ID, DS_ID, DISK_CLONE[x])
-            profile['devices'].append(lc.map_disk(profile['DISK_TARGET'][x], source))
+            source = lc.storage_sysmap(
+                DISK_ID[x], DISK_TYPE[x], DISK_SOURCE[x], VM_ID, DS_ID, DISK_CLONE[x])
+            profile['devices'].append(lc.map_disk(
+                profile['DISK_TARGET'][x], source))
 
     return profile
 
@@ -94,14 +96,16 @@ def apply_profile(profile, container):
     DISK_SOURCE = profile['DISK_SOURCE']
     DISK_CLONE = profile['DISK_CLONE']
 
-    root_source = lc.storage_rootfs_mount(VM_ID, DISK_TYPE[0], DS_ID, DISK_SOURCE[0], DISK_CLONE[0])
+    root_source = lc.storage_rootfs_mount(
+        VM_ID, DISK_TYPE[0], DS_ID, DISK_SOURCE[0], DISK_CLONE[0])
     profile['config'].append(root_source)
 
     if profile['CONTEXT_DISK_ID']:
         CONTEXT_DISK_ID = profile['CONTEXT_DISK_ID']
         DS_ID = profile['DS_ID']
         DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
-        contextiso = lc.isoparser.parse(DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
+        contextiso = lc.isoparser.parse(
+            DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
         lc.storage_context(container, contextiso)
 
     # FIXME: duplicated block of code
@@ -123,7 +127,8 @@ def apply_profile(profile, container):
 
 
 # INITIALIZE_CONTAINER
-profile = create_profile(lc.sys.argv[1])  # xml is passed by opennebula as argument ex. deployment.0
+# xml is passed by opennebula as argument ex. deployment.0
+profile = create_profile(lc.sys.argv[1])
 VM_NAME = 'one-' + profile['VM_ID']
 init = {'name': VM_NAME, 'source': {'type': 'none'}}
 lc.log_function(lc.separator)
