@@ -31,12 +31,20 @@ DRV_ACTION = lc.sys.argv[5]
 VM_ID = lc.sys.argv[6]
 
 
-def convert_b64xml(xml64, file_location):
-    "Returns an xml file from a string b64 xml. File is $file_location"
+def xml_attach_disk_get(xml64, file_location):
+    "Returns a container template after being hot attached with a disk"
+
     xml = b64decode(xml64)
-    with open(file_location, 'w') as f:
+    with open(lc.xml_tmp, 'w') as f:
         f.write(xml)
     f.closed
+
+    tree = lc.ET.parse(lc.xml_tmp)
+    root = tree.getroot()
+    vm_template = root.find('VM')
+    tree._setroot(vm_template)
+    tree.write(file_location)
+
     return lc.xml_start(file_location)
 
 
@@ -45,26 +53,33 @@ container = client.containers.get(DOMAIN)
 
 lc.log_function(lc.separator)
 
-# attacch disk xml reading
-xml = convert_b64xml(DRV_ACTION, lc.tmp_xml_dir + DOMAIN + 'attach_disk_xml')
-prefix = "/VMM_DRIVER_ACTION_DATA/"
+# attach disk xml reading
+
+old_xml = lc.xml_start(container.config['user.xml'])
+DS_ID = old_xml["/VM/HISTORY_RECORDS/HISTORY/DS_ID"][0]
+
+xml_location = '%s/%s/%s/post_attach_disk_xml' % (lc.datastores, DS_ID, VM_ID)
+lc.log_function_verbose(xml_location)
+xml = xml_attach_disk_get(DRV_ACTION, xml_location)
+
 TARGET_INDEX = int(TARGET_INDEX) - 1
-DS_ID = xml[prefix + "VM/HISTORY_RECORDS/HISTORY/DS_ID"][0]
 disk_data = {'DISK_ID': "", 'DISK_TYPE': "", 'SOURCE': "", 'CLONE': ""}
 
 for x in disk_data:
     disk_data[x] = lc.xml_query_list(
-        prefix + "VM/TEMPLATE/DISK/"+x, xml)[TARGET_INDEX]
+        lc.xml_pre + "DISK/" + x, xml)[TARGET_INDEX]
 
 
 # Disk mapping
 host_device = lc.storage_sysmap(disk_data["DISK_ID"], disk_data["DISK_TYPE"],
                                 disk_data["SOURCE"], VM_ID, DS_ID, disk_data["CLONE"])
 
-# Update xml
+disk_config = lc.map_disk(TARGET, host_device)
+xml_config = lc.map_xml(xml_location)
+
 try:
-    config = lc.map_disk(TARGET, host_device)
-    container.devices.update(config)
+    container.devices.update(disk_config)
+    container.config.update(xml_config)
     container.save(wait=True)
 except lc.LXDAPIException as lxdapie:
     lc.log_function(lxdapie, 'e')
