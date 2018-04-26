@@ -30,6 +30,7 @@ client = lc.Client()
 def create_profile(xml):
     'create a container profile from OpenNebula VM template'
     dicc = lc.xml_start(xml)
+    pre = lc.xml_pre
     profile = {'config': [], 'devices': []}
     pre = lc.xml_pre
     # General
@@ -50,10 +51,10 @@ def create_profile(xml):
         profile['VNC_' + x] = xqi(pre + 'GRAPHICS/' + x, dicc)
 
     # Security
-    for x in ["privileged", "nesting"]:
+    for x in ['privileged', 'nesting']:
         item = '/VM/USER_TEMPLATE/LXD_SECURITY_' + x.swapcase()
         if dicc.get(item):
-            profile['config'].append({'security.' + x: dicc.get(item)[0]})
+            profile['config'].append({'security.' + x: xql(item, dicc)[0]})
 
     # NETWORK_CONFIG
     NIC = xql(pre+'NIC/NIC_ID', dicc)

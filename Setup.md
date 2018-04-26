@@ -32,7 +32,7 @@
 <a name="11-installation"></a>
 ## 1.1 Installation
 
-Follow [frontend installation](https://docs.opennebula.org/5.2/deployment/opennebula_installation/frontend_installation.html) in the OpenNebula deployment guide.
+Follow [frontend installation](https://docs.opennebula.org/5.4/deployment/opennebula_installation/frontend_installation.html) in the OpenNebula deployment guide.
 
 
 
@@ -74,7 +74,7 @@ cd -
 Replace **/var/lib/one/remotes/vnm.rb** with the one from the **addon-lxdone**.
 
 ```bash
-cp -rpa src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
+cp -rpa addon-lxdone-*/src/one_wait/nic.rb /var/lib/one/remotes/vnm/nic.rb
 chown oneadmin:oneadmin /var/lib/one/remotes/vnm/nic.rb
 chmod 755 /var/lib/one/remotes/vnm/nic.rb
 ```
@@ -134,8 +134,8 @@ systemctl restart opennebula
 <a name="2---virtualization-node-setup"></a>
 # 2 - Virtualization Node setup
 
-- Follow [KVM Node Installation](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#), up to [step 6](https://docs.opennebula.org/5.2/deployment/node_installation/kvm_node_installation.html#step-6-storage-configuration).
-- If you want to use **Ceph** to store Virtual Images, follow [Ceph Datastore Guide](https://docs.opennebula.org/5.2/deployment/open_cloud_storage_setup/ceph_ds.html) and configure it just as you would for **KVM**.
+- Follow [KVM Node Installation](https://docs.opennebula.org/5.4/deployment/node_installation/kvm_node_installation.html#), up to [step 6](https://docs.opennebula.org/5.4/deployment/node_installation/kvm_node_installation.html#step-6-storage-configuration).
+- If you want to use **Ceph** to store Virtual Images, follow [Ceph Datastore Guide](https://docs.opennebula.org/5.4/deployment/open_cloud_storage_setup/ceph_ds.html) and configure it just as you would for **KVM**.
 
 
 

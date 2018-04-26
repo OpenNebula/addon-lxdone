@@ -89,6 +89,7 @@ def container_wipe(container, dicc):
             source = unmap(container.devices, DISK_TARGET[x])
             source = storage_lazer(source)
             storage_sysunmap(DISK_TYPE[x], source)
+
     storage_rootfs_umount(DISK_TYPE[0], container.config)
     status = dir_empty(containers_dir + str(container.name))
     if status == "non_empty":
@@ -131,12 +132,6 @@ def xml_query_list(value, dicc):  # iplement item query or list query
     except:
         value = [None]
     return value
-
-
-def xml_query_item(value, dicc):
-    'Returns the first element of the list $value obtained by calling xml_query'
-    value = xml_query_list(value, dicc)
-    return value[0]
 
 
 def xml_query_dict(value, id_list, dicc):
