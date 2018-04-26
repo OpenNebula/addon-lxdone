@@ -30,8 +30,9 @@ from pylxd.exceptions import LXDAPIException
 
 # variables
 containers_dir = "/var/lib/lxd/containers/"
-tmp_xml_dir = "/tmp/"
+datastores = "/var/lib/one/datastores/"
 xml_pre = '/VM/TEMPLATE/'
+xml_tmp = '/tmp/one_xml_hot'
 separator = 40 * "-"
 # MISC
 
@@ -163,7 +164,7 @@ def storage_sysmap(DISK_ID, DISK_TYPE, DISK_IMAGE, VM_ID, DS_ID, DISK_CLONE):
 
     disk = None
     if DISK_TYPE == "FILE":
-        disk = "/var/lib/one/datastores/" + DS_ID + "/" + \
+        disk = datastores + DS_ID + "/" + \
             VM_ID + "/" + 'disk.' + DISK_ID  # TODO fix hardcoded
         disk = storage_pre("losetup -f --show " + disk)
     elif DISK_TYPE == "BLOCK":

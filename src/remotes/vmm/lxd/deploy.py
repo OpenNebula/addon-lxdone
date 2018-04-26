@@ -103,7 +103,7 @@ def apply_profile(profile, container):
     if profile['CONTEXT_DISK_ID']:
         CONTEXT_DISK_ID = profile['CONTEXT_DISK_ID']
         DS_ID = profile['DS_ID']
-        DS_LOCATION = '/var/lib/one/datastores/' + DS_ID + '/' + VM_ID + '/'
+        DS_LOCATION = lc.datastores + DS_ID + '/' + VM_ID + '/'
         contextiso = lc.isoparser.parse(
             DS_LOCATION + 'disk.' + CONTEXT_DISK_ID)
         lc.storage_context(container, contextiso)
