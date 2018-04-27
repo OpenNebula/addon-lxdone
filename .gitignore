@@ -4,3 +4,4 @@
 *.todo
 .vscode
 updater-bin
+*.pyc
