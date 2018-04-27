@@ -148,6 +148,12 @@ def xml_query_dict(value, id_list, dicc):
     return value_dict
 
 
+def xml_query_item(value, dicc):
+    'Returns the first element of the list $value obtained by calling xml_query'
+    value = xml_query_list(value, dicc)
+    return value[0]
+
+
 # STORAGE SIMPLE
 # TODO read disk specific arguments in a list
 def storage_sysmap(DISK_ID, DISK_TYPE, DISK_IMAGE, VM_ID, DS_ID, DISK_CLONE):
