@@ -21,6 +21,7 @@
 import lxd_common as lc
 t0 = lc.time()
 from base64 import b64decode
+import tempfile
 
 DOMAIN = lc.sys.argv[1]  # Domain name: one-101
 SOURCE = lc.sys.argv[2]  # Image path
@@ -34,12 +35,16 @@ VM_ID = lc.sys.argv[6]
 def xml_attach_disk_get(xml64, file_location):
     "Returns a container template after being hot attached with a disk"
 
-    xml = b64decode(xml64)
-    with open(lc.xml_tmp, 'w') as f:
-        f.write(xml)
-    f.closed
+    xml_content = b64decode(xml64)
 
-    tree = lc.ET.parse(lc.xml_tmp)
+    tmp_xml_file, file_path = tempfile.mkstemp()
+    with lc.os.fdopen(tmp_xml_file, 'w') as open_file:
+        open_file.write(xml_content)
+        open_file.close()
+
+    tree = lc.ET.parse(file_path)
+    lc.os.unlink(file_path)
+
     root = tree.getroot()
     vm_template = root.find('VM')
     tree._setroot(vm_template)
@@ -59,7 +64,6 @@ old_xml = lc.xml_start(container.config['user.xml'])
 DS_ID = old_xml["/VM/HISTORY_RECORDS/HISTORY/DS_ID"][0]
 
 xml_location = '%s/%s/%s/post_attach_disk_xml' % (lc.datastores, DS_ID, VM_ID)
-lc.log_function_verbose(xml_location)
 xml = xml_attach_disk_get(DRV_ACTION, xml_location)
 
 TARGET_INDEX = int(TARGET_INDEX) - 1
