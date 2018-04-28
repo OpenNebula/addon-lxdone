@@ -18,4 +18,4 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-sudo python $(dirname $0)/shutdown.py $1 $2 $3
+sudo python $(dirname $0)/shutdown.py $1 $2 $3 $0
