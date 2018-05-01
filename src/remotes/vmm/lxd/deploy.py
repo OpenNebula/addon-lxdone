@@ -30,7 +30,6 @@ client = lc.Client()
 def create_profile(xml):
     'create a container profile from OpenNebula VM template'
     dicc = lc.xml_start(xml)
-    pre = lc.xml_pre
     profile = {'config': [], 'devices': []}
     pre = lc.xml_pre
     # General
