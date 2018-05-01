@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/python2
 
 # -------------------------------------------------------------------------- #
 # Copyright 2016-2018                                                        #
@@ -18,7 +18,17 @@
 # limitations under the License.                                             #
 # -------------------------------------------------------------------------- #
 
-source $(dirname $0)/../../scripts_common.sh
+import lxd_common as lc
+t0 = lc.time()
 
-log_error $0" is not yet supported"
-exit 1
+DOMAIN = lc.sys.argv[1]  # Domain name: one-101
+SOURCE = lc.sys.argv[2]  # Image path
+TARGET = lc.sys.argv[3]  # Device in the guest: hda, sdc, vda, xvdc
+TARGET_INDEX = lc.sys.argv[4]  # Position in the list of disks
+VM_ID = lc.sys.argv[5]
+
+client = lc.Client()
+container = client.containers.get(DOMAIN)
+
+lc.clock(t0)
+lc.sys.exit(1)
