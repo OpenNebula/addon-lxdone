@@ -13,10 +13,14 @@ container = client.containers.get(DOMAIN)
 dicc = lc.xml_start(container.config['user.xml'])
 
 # CONTAINER_SHUTDOWN
-if len(lc.sys.argv) == 3:
+signal = lc.sys.argv[4].split("/")[-1]
+if signal == "cancel":
     container.stop(force=True, wait=True)
-else:
+elif signal == "shutdown":
     container.stop(wait=True)
+else:
+    lc.log_function("Unknown kill VM signal given", 'e')
+    lc.sys.exit(1)
 lc.container_wipe(container, dicc)
 
 lc.clock(t0)
