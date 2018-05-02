@@ -57,10 +57,10 @@ root@lxdone:
 <a id="markdown-container-tweaking" name="container-tweaking"></a>
 ## Container tweaking ##
 
-Customize your container all you want
+Customize your container all you want. You can configure the previous NIC now.
 
 ```bash
-root@lxdone: apt install one-context
+root@lxdone: apt install bunch-of-stuff
 root@lxdone: passwd
 ......
 ......
@@ -71,60 +71,12 @@ root@lxdone: exit
 <a id="markdown-opennebula-contextualization" name="opennebula-contextualization"></a>
 ### OpenNebula contextualization ###
 
-Follow [KVM contextualization](https://docs.opennebula.org/5.4/operation/vm_setup/kvm.html). Then install curl and openssh-server for ssh contextualization.
+Install [addon-context-linux-lxd](https://github.com/cloxcloud/addon-context-linux-lxd/). This is our modified version of OpenNebula contextualization package.
 
 ```bash
-root@lxdone: apt install openssh-server curl
+ context=one-context-lxd_5.4.2-1.deb
+ wget https://github.com/cloxcloud/addon-context-linux-lxd/releases/download/v5.4.2/$context && dpkg -i $context
 ```
-
-In **/etc/one-context.d/10-network** replace _get_interface_mac_ function
-
-```bash
-get_interface_mac()
-{
-    ip link show | awk '/^[0-9]+: [A-Za-z0-9]+:/ { device=$2; gsub(/:/, "",device)} /link\/ether/ { print device " " $2 }'
-}
-```
-
-by
-
-```bash
-get_interface_mac()
-{
-    ip link show | awk '/^[0-9]+: [A-Za-z0-9@]+:/ { device=$2; gsub(/:/, "",device); split(device,dev,"\@")} /link\/ether/ { print dev[1]  " " $2 }'
-}
-```
-
-and, in **/usr/sbin/one-contextd**, add
-
-```bash
-    elif [ -f /mnt/context.sh ]; then       #LXDoNe
-        cp /mnt/context.sh ${CONTEXT_NEW}   #LXDoNe
-```
-
-inside _get_new_context_ function, before ```elif vmware_context ; then```. Should look like this:
-
-```bash
-    function get_new_context {
-    CONTEXT_DEV=`blkid -l -t LABEL="CONTEXT" -o device`
-    if [ -e "$CONTEXT_DEV" ]; then
-        mount -t iso9660 -L CONTEXT -o ro /mnt
-        if [ -f /mnt/context.sh ]; then
-            cp /mnt/context.sh ${CONTEXT_NEW}
-        fi
-
-        echo "umount /mnt" > ${END_CONTEXT}
-    elif [ -f /mnt/context.sh ]; then       #LXDoNe
-        cp /mnt/context.sh ${CONTEXT_NEW}   #LXDoNe
-    elif vmware_context ; then
-        vmtoolsd --cmd 'info-get guestinfo.opennebula.context' | \
-            openssl base64 -d > ${CONTEXT_NEW}
-    elif curl -o ${CONTEXT_NEW} http://169.254.169.254/latest/user-data ; then
-        echo -n ""
-    fi
-}
-```
-
 
 <a id="markdown-tips" name="tips"></a>
 ### Tips ###
