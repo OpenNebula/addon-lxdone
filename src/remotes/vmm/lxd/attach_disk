@@ -90,5 +90,6 @@ except lc.LXDAPIException as lxdapie:
     lc.storage_sysunmap(disk_data["DISK_TYPE"], host_device)
     lc.sys.exit(1)
 
+lc.log_function("Attached disk with ID %s" % (TARGET_INDEX+1))
 lc.clock(t0)
 lc.sys.exit(0)
