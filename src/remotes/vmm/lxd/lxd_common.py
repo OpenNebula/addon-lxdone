@@ -39,14 +39,13 @@ separator = 40 * "-"
 def log_function(message, severity="i"):
     'print message with a definded severity in stderr'
     sep = ': '
-    if severity == "e":
-        severity = "ERROR"
-    elif severity == "i":
-        severity = "INFO"
-    elif severity == "d":
-        severity = "DEBUG"
+    case = {
+        "e": "ERROR",
+        "i": "INFO",
+        "d": "DEBUG"
+    }
 
-    print(severity + sep + os.path.basename(sys.argv[0]) + sep + str(message), file=sys.stderr)
+    print(case[severity] + sep + os.path.basename(sys.argv[0]) + sep + str(message), file=sys.stderr)
 
 
 def log_function_verbose(message):
