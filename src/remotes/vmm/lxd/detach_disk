@@ -30,5 +30,23 @@ VM_ID = lc.sys.argv[5]
 client = lc.Client()
 container = client.containers.get(DOMAIN)
 
+# Read XML
+dicc = lc.xml_start(container.config['user.xml'])
+TARGET_INDEX = int(TARGET_INDEX) - 1
+disk_type = lc.xml_query_list(
+    lc.xml_pre + "DISK/DISK_TYPE", dicc)[TARGET_INDEX]
+
+# Remove disk
+try:
+    lc.storage_unmap(container.devices, TARGET, disk_type)
+    container.devices.update(container.devices)
+    container.save(wait=True)
+except lc.LXDAPIException as lxdapie:
+    lc.log_function(lxdapie, 'e')
+    lc.sys.exit(1)
+
+# Update XML
+
+
 lc.clock(t0)
-lc.sys.exit(1)
+lc.sys.exit(0)
