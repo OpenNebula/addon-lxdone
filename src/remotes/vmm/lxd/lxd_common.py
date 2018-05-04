@@ -84,7 +84,12 @@ def container_wipe(container, dicc):
     if num_hdds > 1:
         DISK_TARGET = xml_query_list(xml_pre + 'DISK/TARGET', dicc)
         for x in xrange(1, num_hdds):
-            storage_unmap(container.devices, DISK_TARGET[x], DISK_TYPE[x])
+            try:
+                storage_unmap(container.devices, DISK_TARGET[x], DISK_TYPE[x])
+            except Exception as e:
+                expected = "Disk %s live removed previously" % (DISK_TARGET[x])
+                for info in e, expected:
+                    log_function(info)
 
     storage_rootfs_umount(DISK_TYPE[0], container.config)
     status = dir_empty(containers_dir + str(container.name))

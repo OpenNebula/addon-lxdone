@@ -45,8 +45,5 @@ except lc.LXDAPIException as lxdapie:
     lc.log_function(lxdapie, 'e')
     lc.sys.exit(1)
 
-# Update XML
-
-
 lc.clock(t0)
 lc.sys.exit(0)
