@@ -10,6 +10,8 @@ VM_ID = lc.sys.argv[3]
 
 client = lc.Client()
 container = client.containers.get(DOMAIN)
+lc.log_function(lc.separator)
+
 dicc = lc.xml_start(container.config['user.xml'])
 
 # CONTAINER_SHUTDOWN

@@ -29,6 +29,7 @@ VM_ID = lc.sys.argv[5]
 
 client = lc.Client()
 container = client.containers.get(DOMAIN)
+lc.log_function(lc.separator)
 
 # Read XML
 dicc = lc.xml_start(container.config['user.xml'])
@@ -45,5 +46,7 @@ except lc.LXDAPIException as lxdapie:
     lc.log_function(lxdapie, 'e')
     lc.sys.exit(1)
 
+disk_name = lc.xml_query_list(lc.xml_pre + "DISK/IMAGE", dicc)[TARGET_INDEX]
+lc.log_function("Detached disk %s" % (disk_name))
 lc.clock(t0)
 lc.sys.exit(0)

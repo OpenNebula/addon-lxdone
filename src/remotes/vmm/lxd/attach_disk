@@ -55,11 +55,9 @@ def xml_attach_disk_get(xml64, file_location):
 
 client = lc.Client()
 container = client.containers.get(DOMAIN)
-
 lc.log_function(lc.separator)
 
 # attach disk xml reading
-
 old_xml = lc.xml_start(container.config['user.xml'])
 DS_ID = old_xml["/VM/HISTORY_RECORDS/HISTORY/DS_ID"][0]
 
@@ -90,6 +88,7 @@ except lc.LXDAPIException as lxdapie:
     lc.storage_sysunmap(disk_data["DISK_TYPE"], host_device)
     lc.sys.exit(1)
 
-lc.log_function("Attached disk with ID %s" % (TARGET_INDEX+1))
+disk_name = lc.xml_query_list(lc.xml_pre + "DISK/IMAGE", xml)[TARGET_INDEX]
+lc.log_function("Attached disk %s" % (disk_name))
 lc.clock(t0)
 lc.sys.exit(0)
