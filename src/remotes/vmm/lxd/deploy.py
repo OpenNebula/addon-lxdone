@@ -126,12 +126,13 @@ def apply_profile(profile, container):
             lc.sys.exit(1)
 
 
+lc.log_function(lc.separator)
+
 # INITIALIZE_CONTAINER
 # xml is passed by opennebula as argument ex. deployment.0
 profile = create_profile(lc.sys.argv[1])
 VM_NAME = 'one-' + profile['VM_ID']
 init = {'name': VM_NAME, 'source': {'type': 'none'}}
-lc.log_function(lc.separator)
 
 try:
     container = client.containers.create(init, wait=True)

@@ -27,6 +27,7 @@ NIC_MAC = lc.sys.argv[2]
 HOST_IP = lc.sys.argv[4]
 
 container = client.containers.get(DOMAIN)
+lc.log_function(lc.separator)
 
 
 def get_interface(devices, hwaddr):

@@ -84,9 +84,12 @@ def container_wipe(container, dicc):
     if num_hdds > 1:
         DISK_TARGET = xml_query_list(xml_pre + 'DISK/TARGET', dicc)
         for x in xrange(1, num_hdds):
-            source = unmap(container.devices, DISK_TARGET[x])
-            source = storage_lazer(source)
-            storage_sysunmap(DISK_TYPE[x], source)
+            try:
+                storage_unmap(container.devices, DISK_TARGET[x], DISK_TYPE[x])
+            except Exception as e:
+                expected = "Disk %s live removed previously" % (DISK_TARGET[x])
+                for info in e, expected:
+                    log_function(info)
 
     storage_rootfs_umount(DISK_TYPE[0], container.config)
     status = dir_empty(containers_dir + str(container.name))
@@ -221,6 +224,11 @@ def storage_context(container, contextiso):
         container.files.put('/mnt/' + i.name, i.content)
 
 
+def storage_unmap(devices, disk_name, disk_type):
+    disk = unmap(devices, disk_name)
+    disk = storage_lazer(disk)
+    storage_sysunmap(disk_type, disk)
+
 # LXD CONFIG MAPPING
 
 
@@ -262,8 +270,8 @@ def map_nic(nic_name, NIC_BRIDGE, NIC_MAC, NIC_TARGET):
     return {nic_name: {'name': nic_name, 'type': 'nic', 'hwaddr': NIC_MAC, 'nictype': 'bridged', 'parent': NIC_BRIDGE, 'host_name': NIC_TARGET}}
 
 
-def unmap(container_devices, device_name):
+def unmap(devices, device_name):
     'Delete and returns $device_name from $container_devices'
-    source = container_devices[device_name]
-    del container_devices[device_name]
+    source = devices[device_name]
+    del devices[device_name]
     return source
