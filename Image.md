@@ -102,7 +102,7 @@ truncate -s 1G /var/tmp/lxdone.img
 loop=$(sudo losetup --find --show /var/tmp/lxdone.img)
 sudo mkfs.ext4 $loop
 sudo mount $loop /mnt/
-sudo cp -rpa sudo du -sh /var/lib/lxd/containers/lxdone/* /mnt/
+sudo cp -rpa /var/lib/lxd/containers/lxdone/* /mnt/
 ```
 
 Make sure there were no errors regarding space in the previous output.
